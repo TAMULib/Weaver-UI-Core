@@ -1,4 +1,4 @@
-subjectlibrarianUi.service("Utility",function() {
+core.service("Utility",function() {
 
 	var Utility = this;
 

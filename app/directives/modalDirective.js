@@ -1,6 +1,6 @@
 core.directive('modal', function ($controller) {
 	return {
-		templateUrl: 'views/modalWrapper.html',
+		templateUrl: 'bower_components/core/app/views/modalWrapper.html',
 		restrict: 'E',
 		replace: false,
 		transclude: true,

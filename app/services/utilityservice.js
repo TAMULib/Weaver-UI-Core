@@ -1,4 +1,4 @@
-core.service("Utility",function() {
+subjectlibrarianUi.service("Utility",function() {
 
 	var Utility = this;
 
@@ -18,9 +18,31 @@ core.service("Utility",function() {
 		return objList.filter(function(obj) {
 
 			for(var i in properties) {
-
-				if(typeof position != 'undefined') {
+				if(typeof position != 'undefined') {					
 					if(obj[properties[i]] != null) {
+						if(typeof obj[properties[i]] == 'object') {
+							for(var o in obj[properties[i]]) {
+								if(obj[properties[i]][o] != null) {
+									if(typeof obj[properties[i]][o] == 'object') {
+										for(var p in obj[properties[i]][o]) {
+											if(obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) == position) {
+												return true;
+											}
+										}
+									}
+									else {
+										if(obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) == position) {
+											return true;
+										}
+									}
+								}
+							}
+						}											
+						else if(typeof obj[properties[i]] == 'number') {
+							console.log("Can not filter on a position of a number!");
+							return false;
+						}
+
 						if(obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) == position) {
 							return true;
 						}
@@ -28,21 +50,61 @@ core.service("Utility",function() {
 				}
 				else {
 					if(obj[properties[i]] != null) {
-						if(obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) > -1) {
-							return true;
+						if(typeof obj[properties[i]] == 'number') {
+							if(target.indexOf(obj[properties[i]]) > -1) {
+								return true;
+							}							
 						}
-					}
+						else {
+							if(obj[properties[i]] instanceof Array) {
+								if(target == 0) {
+									if(obj[properties[i]].length == target) {
+										return true;
+									}
+								}
+								else {
+									if(obj[properties[i]].length >= target) {
+										return true;
+									}
+								}
+							}
+							else {
+								if(typeof obj[properties[i]] == 'object') {
+									for(var o in obj[properties[i]]) {
+										if(obj[properties[i]][o] != null) {
+											if(typeof obj[properties[i]][o] == 'object') {
+												for(var p in obj[properties[i]][o]) {
+													if(obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+														return true;
+													}
+												}
+											}
+											else {
+												if(obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+													return true;
+												}
+											}
+										}
+									}
+								}
+								else {
+									if(obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+										return true;
+									}
+								}
+							}														
+						}
+
+					}					
 				}
 			}
-
 			return false;
-
 		});
 
 	};
 
 	/*
-	 *	Search
+	 *	Binary Search
 	 *	
 	 *	@param objList		the list of objects to be searched
 	 *	@param property		the property of the object to searching against
@@ -55,45 +117,62 @@ core.service("Utility",function() {
 	 */
 	Utility.search = function(objList, property, ordered, target, position) {
 		
-		target = target.toUpperCase();
+		var isNumber = (typeof target == 'number');
+		
+		if(!isNumber) {
+			target = target.toUpperCase();
+		}
+		
 		
 		if(!ordered) {
-			objList = Utility.quickSort(objList, property, position);
+			objList = Utility.quickSort(objList, property, isNumber, position);
 			ordered = true;
 		}
 
-		var index = objList.length;
+		var start = 0;
+		var end = objList.length;
 
-        while(index > 1) {
+		var index = Math.round((end-start) / 2);
 
-            index = Math.round(objList.length / 2);
-            
-            var current = objList[index];
+		while(index > -1) {
 
-            var match = null;
+			var match = null;
 
             if(typeof position != 'undefined') {
             	match = objList[index][property].substring(position, position + target.length).toUpperCase();            	
             }
             else {
-            	match = objList[index][property].toUpperCase();
+            	if(!isNumber) {
+            		match = objList[index][property].toUpperCase();
+            	}
+            	else {
+            		match = objList[index][property];
+            	}
             }
 
-            if(match.indexOf(target) > -1) {
-                index = 0;
+            if(isNumber) {
+            	if(match == target) {
+					break;
+	            }
             }
             else {
-                if(match > target) {
-                    objList = objList.slice(0, index);
-                }
-                else {
-                    objList = objList.slice(index);
-                }
+            	if(match.indexOf(target) > -1) {
+					break;
+	            }
+            }
+            
+            if(match < target) {
+            	start = index;
+            	index += Math.round((end-start) / 2);
+            }
+            else {
+            	end = index;
+            	index -= Math.round((end-start) / 2);
             }
 
-        }
-        
-        return current;
+		}
+
+		return objList[index];
 
 	};
 
@@ -105,7 +184,7 @@ core.service("Utility",function() {
 	 *	@param position		optional argument in which to sort at a specific position in the property
 	 *
 	 */
-	Utility.quickSort = function(objList, property, position) {
+	Utility.quickSort = function(objList, property, isNumber, position) {
 
 	    if(objList.length == 0) {
 	    	return [];
@@ -125,11 +204,17 @@ core.service("Utility",function() {
 	 		pivot = objList[0];
 
 	 		for(var i = 1; i < objList.length; i++) {
-		        objList[i][property].toUpperCase() < pivot[property].toUpperCase() ? left.push(objList[i]) : right.push(objList[i]);
+	 			if(!isNumber) {
+	 				objList[i][property].toUpperCase() < pivot[property].toUpperCase() ? left.push(objList[i]) : right.push(objList[i]);
+	 			}
+	 			else {
+	 				objList[i][property] < pivot[property] ? left.push(objList[i]) : right.push(objList[i]);
+	 			}
+		        
 		    }
 	 	}
 	 
-	    return Utility.quickSort(left, property, position).concat(pivot, Utility.quickSort(right, property, position));
+	    return Utility.quickSort(left, property, isNumber, position).concat(pivot, Utility.quickSort(right, property, isNumber, position));
 	}
 
 	return Utility;

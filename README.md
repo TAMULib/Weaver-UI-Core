@@ -1,1 +1,1 @@
-# Angular-Framework
+# TAMU AngularJS Core Module

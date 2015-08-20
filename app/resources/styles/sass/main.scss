@@ -1,0 +1,158 @@
+html {
+    height: 100%;
+}
+
+body {
+    display: none;
+    height: 100%;
+}
+
+*, :after, :before {
+  box-sizing: border-box;
+}
+
+nav {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+nav:after, nav:before {
+  content: " ";
+  display: table;
+}
+
+nav:after {
+  clear: both;
+}
+
+nav>li {
+  position: relative;
+  display: block;
+}
+
+nav>li>a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.global-nav {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.global-nav, .global-nav .top-bar {
+  background: #3c0000;
+}
+
+.global-nav li {
+  border-right: 1px solid #6a0000;
+  margin-left: 0;
+  display: inline-block;
+}
+
+.global-nav li:last-child {
+  border-right: 0 solid #6a0000;
+}
+
+.global-nav li a {
+  background: none;
+  color: #fff;
+  font-size: 1em;
+  font-family: "Open Sans","Helvetica Neue",Helvetica,Helvetica,Arial,sans-serif;
+  margin-left: -5px;
+}
+
+.global-nav li a:hover {
+  text-decoration: none;
+  background: #500000;
+}
+
+.site-title {
+  background: #500000;
+  border-top: 1px solid #8d8d8d;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: block;
+}
+
+.site-title h1 {
+  color: #fff;
+}
+
+.site {
+  color: #fff;
+  font-size: 1.25em;
+  font-family: "Open Sans","Helvetica Neue",Helvetica,Helvetica,Arial,sans-serif;
+  margin: 0 auto 5px;
+  text-align: center;
+}
+
+.site h2, .site h3 {
+  margin-top: 5px;
+    font-size: 30px;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.inline-list {
+  list-style: none none;
+  text-align: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+.inline-list>li {
+  list-style: none none;
+  display: inline-block;
+  margin-left: 1.375em;
+}
+
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #ccc;
+  background: #3c0000;
+  padding: 20px 0 0;
+  width: 100%;
+}
+
+footer a, footer li, footer p {
+  color: #fff;
+  font-size: .95em;
+}
+
+.tamu-lib a {
+  background: url(http://library.tamu.edu/images/library-logo.png) left center no-repeat;
+  color: #fff;
+  display: block;
+  height: 45px;
+  text-indent: -9999px;
+}
+
+@media screen and (min-width: 768px) {
+  .tamu-lib {
+    margin: 15px 25px 15px 0;
+    width: 247px;
+    float: left;
+  } 
+
+  .site {
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .footer, .header, .marketing {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+}

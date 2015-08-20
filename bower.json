@@ -5,6 +5,8 @@
   "homepage": "https://github.com/TAMULib/Angular-Framework.git",
   "license": "MIT",
   "private": true,
+  "main": [],
+  "ignore": [],
   "dependencies": {
     "angular": "1.4.x",
     "angular-route": "1.4.x",

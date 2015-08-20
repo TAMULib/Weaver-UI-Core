@@ -2,7 +2,7 @@ describe('controller: UserController', function() {
 	
 	var controller, scope, User;
 
-	beforeEach(module('seedApp'));
+	beforeEach(module('core'));
 	
 	beforeEach(module('mock.user'));
 	

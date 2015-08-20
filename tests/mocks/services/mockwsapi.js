@@ -18,12 +18,7 @@ angular.module('mock.wsApi', []).
         		case 'user': {
         			switch(apiReq.method) {
         				case 'credentials': defer.resolve({'content':mockUser1}); break;
-        				case 'all': defer.resolve({'content':mockUserRepo1}); break;
-        				case 'get': defer.resolve({'content':mockUser1}); break;
-        				case 'update_role': {	        		
-							mockUserRepo1['HashMap'][2].role = JSON.parse(apiReq['data']).role;
-							defer.resolve(mockUserRepo1);
-						}; break;
+        				case 'get': defer.resolve({'content':mockUser1}); break;        				
         				default: {
         					
         				}; break;

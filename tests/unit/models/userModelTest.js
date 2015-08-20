@@ -2,7 +2,7 @@ describe('model: User', function() {
 	
 	var User, WsApi, $rootScope, $scope;
 	
-	beforeEach(module('seedApp'));
+	beforeEach(module('core'));
 	
 	beforeEach(module('mock.wsApi'));
 	

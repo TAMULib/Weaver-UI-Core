@@ -1,6 +1,6 @@
 var logger = {
 	'log': function(message) {
-		if(globalConfig.logging.log) {
+		if(appConfig.logging.log) {
 			console.log("");
 			console.log("***** OUT *****");
 	        console.log(new Date());
@@ -8,7 +8,7 @@ var logger = {
 		}
 	},
 	'info': function(message) { 
-		if(globalConfig.logging.info) {
+		if(appConfig.logging.info) {
 			console.log("");
 			console.info("***** INFO *****");
 	        console.log(new Date());
@@ -16,7 +16,7 @@ var logger = {
 		}
 	},
 	'warn': function(message) { 
-		if(globalConfig.logging.warn) {
+		if(appConfig.logging.warn) {
 			console.log("");
 			console.warn("***** WARN *****");
 	        console.log(new Date());
@@ -24,7 +24,7 @@ var logger = {
 		}
 	},
 	'error': function(message) { 
-		if(globalConfig.logging.error) {
+		if(appConfig.logging.error) {
 			console.log("");
 			console.error("***** ERROR *****");
 	        console.log(new Date());
@@ -32,7 +32,7 @@ var logger = {
 		}
 	},
 	'debug': function(message) { 
-		if(globalConfig.logging.debug) {
+		if(appConfig.logging.debug) {
 			console.log("");
 			console.debug("***** DEBUG *****");
 	        console.log(new Date());

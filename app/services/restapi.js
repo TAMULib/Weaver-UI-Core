@@ -1,7 +1,7 @@
 core.service("RestApi",function($http, $window, AuthServiceApi) {
 
-	var webservice = globalConfig.webService;
-	var authservice = globalConfig.authService;
+	var webservice = appConfig.webService;
+	var authservice = appConfig.authService;
 
 	this.get = function(uri) {
 		return $http.get(uri, {headers:{'jwt':sessionStorage.token}}).then(
@@ -40,7 +40,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 	this.post = function(req) {
 
-		var url = globalConfig.webService + "/rest/" + req.controller + "/" + req.method;
+		var url = appConfig.webService + "/rest/" + req.controller + "/" + req.method;
 
 		return $http({
 				method: 'POST',

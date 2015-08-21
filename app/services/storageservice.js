@@ -20,7 +20,7 @@ core.service("StorageService",function($q, AbstractModel) {
 
 	StorageService.set = function(key, value, type) {
 		if(!type) {
-			type = globalConfig.storageType;
+			type = appConfig.storageType;
 		}
 		if(!StorageService.keys[type][key]) {
 			StorageService.keys[type][key] = $q.defer();			
@@ -31,14 +31,14 @@ core.service("StorageService",function($q, AbstractModel) {
 
 	StorageService.get = function(key, type) {
 		if(!type) {
-			type = globalConfig.storageType;
+			type = appConfig.storageType;
 		}
 		return StorageService.storage[type][key];
 	}
 
 	StorageService.listen = function(key, type) {
 		if(!type) {
-			type = globalConfig.storageType;
+			type = appConfig.storageType;
 		}
 		if(!StorageService.keys[type][key]) {
 			StorageService.keys[type][key] = $q.defer();
@@ -49,7 +49,7 @@ core.service("StorageService",function($q, AbstractModel) {
 
 	StorageService.delete = function(key, type) {
 		if(!type) {
-			type = globalConfig.storageType;
+			type = appConfig.storageType;
 		}
 		StorageService.keys[type][key].notify(null);
 		delete StorageService.keys[type][key];

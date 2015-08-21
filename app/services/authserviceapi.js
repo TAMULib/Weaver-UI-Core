@@ -7,7 +7,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
 	AuthServiceApi.getAssumedUser = function(assume, cb) {
 		if (!AuthServiceApi.pendingAssumptions[assume.netid]) {
-			AuthServiceApi.pendingAssumptions[assume.netid] = $http.get(globalConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
+			AuthServiceApi.pendingAssumptions[assume.netid] = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
 				then(function(response) { 
 					if(response.data.assumed) {
 						StorageService.set('token', response.data.assumed.tokenAsString, 'session');
@@ -26,7 +26,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
 	AuthServiceApi.getRefreshToken = function(cb) {
 		if (!AuthServiceApi.pendingRefresh) {
-			AuthServiceApi.pendingRefresh = $http.get(globalConfig.authService+"/refresh", {withCredentials: true}).
+			AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/refresh", {withCredentials: true}).
 				then(function(response) {
 					
 						StorageService.set('token', response.data.tokenAsString, 'session');						
@@ -42,11 +42,11 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 						
 						delete sessionStorage.token;
 
-						if(globalConfig.mockRole) {
-							window.open(globalConfig.authService + "/token?referer="+location.href + "&mock=" + globalConfig.mockRole, "_self");
+						if(appConfig.mockRole) {
+							window.open(appConfig.authService + "/token?referer="+location.href + "&mock=" + appConfig.mockRole, "_self");
 						}
 						else {
-							window.open(globalConfig.authService + "/token?referer="+location.href, "_self");
+							window.open(appConfig.authService + "/token?referer="+location.href, "_self");
 						}
 
 				});

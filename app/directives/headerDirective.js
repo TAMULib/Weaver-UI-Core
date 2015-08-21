@@ -1,4 +1,4 @@
-core.directive('header', function ($controller) {
+core.directive('tamuheader', function ($controller) {
 	return {
 		templateUrl: 'bower_components/core/app/views/header.html',
 		restrict: 'E',

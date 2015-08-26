@@ -5,7 +5,7 @@ core.directive('tamuheader', function ($controller) {
 		replace: false,
 		transclude: true,
 		link: function ($scope, element, attr) {	    	
-			$scope.attr = attr;			
+			$scope.title = attr.title;
 	    }
 	};
 });

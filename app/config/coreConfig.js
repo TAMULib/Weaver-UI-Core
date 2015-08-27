@@ -1,4 +1,4 @@
-r coreConfig = { 
+var coreConfig = { 
 
 	'version': 0.1,
 		

@@ -1,4 +1,4 @@
-core.service("AuthServiceApi",function($http, $timeout) {
+core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
 	var AuthServiceApi = this;
 

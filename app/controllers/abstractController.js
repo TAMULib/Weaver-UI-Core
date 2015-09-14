@@ -1,5 +1,7 @@
 core.controller('AbstractController', function ($scope, StorageService) {
 
+	$scope.storage = StorageService;
+
 	$scope.isAssumed = function() {
 		return StorageService.get("assumed");
 	};

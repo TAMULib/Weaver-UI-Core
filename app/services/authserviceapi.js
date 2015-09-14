@@ -1,4 +1,4 @@
-core.service("AuthServiceApi",function($http, $timeout, StorageService) {
+core.service("AuthServiceApi",function($http, $timeout) {
 
 	var AuthServiceApi = this;
 
@@ -10,7 +10,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 			AuthServiceApi.pendingAssumptions[assume.netid] = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
 				then(function(response) { 
 					if(response.data.assumed) {
-						StorageService.set('token', response.data.assumed.tokenAsString, 'session');
+						sessionStorage.token = response.data.assumed.tokenAsString;
 					}
 
 					// This timeout ensures that pending request is not nulled to early
@@ -29,7 +29,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 			AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/refresh", {withCredentials: true}).
 				then(function(response) {
 					
-						StorageService.set('token', response.data.tokenAsString, 'session');						
+						sessionStorage.token = response.data.tokenAsString;					
 						
 						// This timeout ensures that pending request is not nulled to early
 						$timeout(function() {

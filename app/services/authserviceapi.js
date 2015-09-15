@@ -16,7 +16,8 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 					// This timeout ensures that pending request is not nulled to early
 					$timeout(function() {
 						AuthServiceApi.pendingAssumptions[assume.netid] = null;
-					});
+					}, 250);
+
 					if(cb) cb();
 					return response;   
 			});
@@ -34,7 +35,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 						// This timeout ensures that pending request is not nulled to early
 						$timeout(function() {
 							AuthServiceApi.pendingRefresh = null;
-						});
+						}, 250);
 						
 						if(cb) cb();
 					},

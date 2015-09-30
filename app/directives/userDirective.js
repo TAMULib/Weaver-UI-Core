@@ -35,14 +35,8 @@ core.directive('useraffiliation', function (WsApi) {
 			$scope.ready.then(function() {
 				if($scope.user.affiliation) {
 					$scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
-
-					// TODO - take this out when the get_person_info api is updated
-					if($scope.affiliation == "") {
-						$scope.affiliation = "STUDENT";
-					}
 				}
 				else {
-					// Shouldn't happen! But does sometimes.
 					$scope.affiliation = "UNKNOWN";
 					console.log($scope.user);
 				}

@@ -42,6 +42,10 @@ core.service("User", function(AbstractModel, WsApi) {
 		return User.data;
 	};
 
+	User.getAffiliation = function() {
+		return User.affiliation;
+	};
+
 	User.ready = function() {
 		return User.promise;
 	};

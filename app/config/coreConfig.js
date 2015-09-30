@@ -1,9 +1,7 @@
 var coreConfig = { 
 
 	'version': 0.1,
-		
-	'anonymousToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsYXN0TmFtZSI6IkFub255bW91cyIsImZpcnN0TmFtZSI6IlJvbGUiLCJyb2xlIjoiUk9MRV9BTk9OWU1PVVMiLCJuZXRpZCI6ImFub255bW91cyIsInVpbiI6IjAwMDAwMDAwMCIsImV4cCI6IjQ1OTc5MzkyODEzMDIiLCJlbWFpbCI6IiJ9.6m3w1wYpmjJevP_AORGtSquOUGfZrxlHa6HPYENzNFI',
-
+	
 };
 
 

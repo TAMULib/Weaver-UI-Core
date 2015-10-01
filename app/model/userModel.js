@@ -32,7 +32,7 @@ core.service("User", function(AbstractModel, WsApi) {
 
 		if(User.data) {
 			newUserPromise.then(function(data) {
-				User.set(JSON.parse(data.body).content.Credentials);
+				User.set(JSON.parse(data.body).payload.Credentials);
 			});
 		}
 		else {

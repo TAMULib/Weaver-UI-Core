@@ -32,9 +32,8 @@ core.service("wsservice", function($q) {
 
 			wsservice.client.subscribe(channel, function(data) {
 				
-				var requestId = JSON.parse(data.body).content.RequestId ? JSON.parse(data.body).content.RequestId.id : null;
-				
-				var response = JSON.parse(data.body).response;
+				var requestId = JSON.parse(data.body).meta.id ? JSON.parse(data.body).meta.id : null;				
+				var response = JSON.parse(data.body).meta.type;
 
 				if(wsservice.pendingReq[requestId]) {
 
@@ -43,7 +42,7 @@ core.service("wsservice", function($q) {
 					//logger.info("Resolving Request " + requestId + ": " + wsservice.pendingReq[requestId].request);
 					//logger.log(JSON.parse(data.body));
 					
-					if(response == "refresh") {
+					if(response == "REFRESH") {
 						wsservice.pendingReq[requestId].defer.notify(data);
 					} else {
 						// We should always resolve to handle alternative notifications.

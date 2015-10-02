@@ -18,10 +18,11 @@ core.service("AbstractModel", function () {
 		}
 		futureData.then(
 			function(data) {
+				
 				if(data.body) {
-					angular.extend(self, JSON.parse(data.body).content[modelString]);
-					if(JSON.parse(data.body).content[additionalMessage]) {
-						angular.extend(self, {'message':JSON.parse(data.body).content[additionalMessage]});
+					angular.extend(self, JSON.parse(data.body).payload[modelString]);
+					if(JSON.parse(data.body).payload[additionalMessage]) {
+						angular.extend(self, {'message':JSON.parse(data.body).payload[additionalMessage]});
 					}
 				} else {
 					angular.extend(self, data);
@@ -33,7 +34,7 @@ core.service("AbstractModel", function () {
 			},
 			function(data) {
 				if(data.body) {
-					angular.extend(self, JSON.parse(data.body).content[modelString]);
+					angular.extend(self, JSON.parse(data.body).payload[modelString]);
 				}
 				else {
 					angular.extend(self, {'value':data});

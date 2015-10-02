@@ -25,14 +25,14 @@ core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 		var fetchPromise = wsservice.send(request, headers, {}, channel);
 
 		fetchPromise.then(null, null, function(data) {
-			if(JSON.parse(data.body).content.String == "EXPIRED_JWT") {
+			if(JSON.parse(data.body).meta.type == "REFRESH") {
 				if(sessionStorage.assumedUser) {					
 					AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
-						wsservice.pendingReq[JSON.parse(data.body).content.RequestId.id].resend();
+						wsservice.pendingReq[JSON.parse(data.body).meta.id].resend();
 					});
 				} else {
 					AuthServiceApi.getRefreshToken().then(function() {
-						wsservice.pendingReq[JSON.parse(data.body).content.RequestId.id].resend();
+						wsservice.pendingReq[JSON.parse(data.body).meta.id].resend();
 					});
 				}
 			}

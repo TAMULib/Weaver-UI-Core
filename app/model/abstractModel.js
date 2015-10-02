@@ -19,8 +19,6 @@ core.service("AbstractModel", function () {
 		futureData.then(
 			function(data) {
 				
-				console.log(data);
-
 				if(data.body) {
 					angular.extend(self, JSON.parse(data.body).payload[modelString]);
 					if(JSON.parse(data.body).payload[additionalMessage]) {

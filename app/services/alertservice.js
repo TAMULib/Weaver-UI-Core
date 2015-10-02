@@ -2,11 +2,17 @@ core.service("AlertService", function() {
 
 	var AlertService = this;
 
+	var store = {
+		'all': [],
+		'active': [],
+		'inactive': []
+	}
+
 	var removedIds = [];
 
 	var Alert = function(alertType, alertMessage, channel) {
 
-		this.id = removedIds.length == 0 ? AlertService.store.all.length : removedIds.pop() ;
+		this.id = removedIds.length == 0 ? store.all.length : removedIds.pop() ;
 		this.type = alertType;
 		
 		switch (alertType) {
@@ -32,29 +38,27 @@ core.service("AlertService", function() {
 		return this;
 	};
 
-	AlertService.store = {
-		'all': [],
-		'active': [],
-		'inactive': []
+	AlertService.get = function(type) {
+		if(!type) return store.all;
+		return store[type];
 	}
 
 	AlertService.add = function(meta, channel) {
-		console.log(meta)
 		var newAlert = new Alert(meta.type, meta.message, channel);
-		AlertService.store.all.push(newAlert);
-		AlertService.store.active.push(newAlert);
+		store.all.push(newAlert);
+		store.active.push(newAlert);
 	}
 
 	AlertService.activate = function(id) {
-		var errorToActivate = AlertService.store.all[id];
-		AlertService.store.inactive.splice(AlertService.store.inactive.indexOf(errorToActivate), 1);
-		AlertService.store.active.push(errorToActivate);
+		var errorToActivate = store.all[id];
+		store.inactive.splice(store.inactive.indexOf(errorToActivate), 1);
+		store.active.push(errorToActivate);
 	}
 
 	AlertService.deactivate = function(id) {
-		var errorToDeactivate = AlertService.store.all[id];
-		AlertService.store.active.splice(AlertService.store.active.indexOf(errorToDeactivate), 1);
-		AlertService.store.inactive.push(errorToDeactivate);	
+		var errorToDeactivate = store.all[id];
+		store.active.splice(store.active.indexOf(errorToDeactivate), 1);
+		store.inactive.push(errorToDeactivate);	
 	}
 	
 });

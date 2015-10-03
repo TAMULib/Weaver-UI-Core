@@ -35,6 +35,14 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			
 			$scope.alerts = { };
 			
+			$scope.remove = function(alert) {
+				if(!timers[alert.id]) {
+					timers[alert.id] = $timeout(function() {
+						AlertService.remove(alert);
+					}, duration);
+				}
+			};
+			
 			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
@@ -70,14 +78,6 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 						handle(alert);
 				});
 			}
-			
-			$scope.remove = function(alert) {
-				if(!timers[alert.id]) {
-					timers[alert.id] = $timeout(function() {
-						AlertService.remove(alert);
-					}, duration);
-				}
-			};
 			
 			$rootScope.$on("$routeChangeStart",function(event, next, current){
     			//cancel timers on route change

@@ -47,11 +47,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 
 					if(!fixed) {
 						if(alert.type != "ERROR") {
-							if(!timers[alert.id]) {
-								timers[alert.id] = $timeout(function() {
-									$scope.remove(alert);
-								}, duration);
-							}
+							$scope.remove(alert);
 						}
 					}
 				}
@@ -76,7 +72,11 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			}
 			
 			$scope.remove = function(alert) {
-				AlertService.remove(alert);
+				if(!timers[alert.id]) {
+					timers[alert.id] = $timeout(function() {
+						AlertService.remove(alert);
+					}, duration);
+				}
 			};
 			
 			$rootScope.$on("$routeChangeStart",function(event, next, current){

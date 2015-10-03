@@ -1,4 +1,4 @@
-core.directive('alerts', function (AlertService, $timeout) {
+core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 	return {
 		template: '<ul class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
@@ -29,31 +29,36 @@ core.directive('alerts', function (AlertService, $timeout) {
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 			
-			var timer = {};
+			var timers = {};
 			
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
 			
-			
 			$scope.alerts = { };
 			
-
 			var handle = function(alert) {
-			
-				$scope.alerts[alert.id] = alert;
-				
-				if(!fixed) {
-					if(alert.type != "ERROR") {
-						if(!timer[alert.id]) {
-							timer[alert.id] = $timeout(function() {
-								$scope.remove(alert);
-							}, duration);
+				if(alert.remove) {
+					alert.fade = true;
+					$timeout(function() {
+						delete $scope.alerts[alert.id];
+					}, 250);
+				}
+				else {
+					$scope.alerts[alert.id] = alert;
+
+					if(!fixed) {
+						if(alert.type != "ERROR") {
+							if(!timers[alert.id]) {
+								timers[alert.id] = $timeout(function() {
+									$scope.remove(alert);
+								}, duration);
+							}
 						}
 					}
 				}
 			};
 			
-
 			for(var i in facets) {
+
 				var alerts = AlertService.get(facets[i]);
 				
 				for(var i in alerts.list) {
@@ -71,13 +76,21 @@ core.directive('alerts', function (AlertService, $timeout) {
 			}
 			
 			$scope.remove = function(alert) {
-				alert.fade = true;				
-				$timeout(function() {
-					delete $scope.alerts[alert.id];
-					AlertService.remove(alert);
-				}, 500);
-				
+				AlertService.remove(alert);
 			};
+			
+			$rootScope.$on("$routeChangeStart",function(event, next, current){
+    			//cancel timers on route change
+    			for(var i in timers) {
+    				$timeout.cancel(timers[i]);
+    			}
+    			// clean up alerts on route change
+    			for(var id in $scope.alerts) {
+    				AlertService.remove($scope.alerts[id]);
+    				$scope.alerts[id].fade = true;
+    				delete $scope.alerts[id];
+    			}
+			});
 			
 	    }
 	};

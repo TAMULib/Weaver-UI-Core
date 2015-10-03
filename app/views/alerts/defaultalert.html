@@ -1,4 +1,4 @@
-<div class="alert alert-{{alert.class}}" ng-class="{fade: alert.startFade}" role="alert">
+<div class="alert alert-{{alert.class}}" ng-class="{fade: alert.fade}" role="alert">
 	<button ng-click="remove(alert)"  type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	<strong>{{alert.alertType}}:</strong> {{alert.alertMessage}}
+	<strong>{{alert.type}}:</strong> {{alert.message}}
 </div>

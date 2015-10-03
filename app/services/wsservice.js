@@ -47,15 +47,14 @@ core.service("wsservice", function($q, AlertService) {
 					if(response == "REFRESH") {
 						wsservice.pendingReq[requestId].defer.notify(data);
 					} else {
-
-						AlertService.add(meta, channel);
-
 						// We should always resolve to handle alternative notifications.
 						wsservice.pendingReq[requestId].defer.resolve(data);						
 						delete wsservice.pendingReq[requestId];	
 					}
 					
 				}
+				
+				AlertService.add(meta, channel);
 				
 				defer.notify(data);
 

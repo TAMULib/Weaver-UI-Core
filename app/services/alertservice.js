@@ -2,10 +2,10 @@
  * Alert service in which tracks responses from the web socket API.
  * Stores responses categorized by channel and type. The id is popped 
  * from an array of keys(sequential integers) and recycled upon removal
- * of the alert. Every 30 minutes, 15 minute old alerts are removed.
+ * of the alert. Remove old alerts using an interval.
  *
  */
-core.service("AlertService", function($q, $timeout) {
+core.service("AlertService", function($q, $interval) {
 
 	var AlertService = this;
 	
@@ -105,14 +105,25 @@ core.service("AlertService", function($q, $timeout) {
 		// remove alert from store by type
 		for(var i in store[alert.type].list) {
 			if(store[alert.type].list[i].id = alert.id) {
-				store[alert.type].list.splice(i, 1);
+				alert.remove = true;
+				store[alert.type].defer.notify(alert);
+				// do not remove error alerts
+				if(alert.type != "ERROR") {
+					store[alert.type].list.splice(i, 1);
+				}
 				break;
 			}
 		}
+		
 		// remove alert from store by channel
 		for(var i in store[alert.channel].list) {
 			if(store[alert.channel].list[i].id = alert.id) {
-				store[alert.channel].list.splice(i, 1);
+				alert.remove = true;
+				store[alert.channel].defer.notify(alert);
+				// do not remove error alerts
+				if(alert.type != "ERROR") {
+					store[alert.channel].list.splice(i, 1);
+				}
 				break;
 			}
 		}
@@ -158,20 +169,38 @@ core.service("AlertService", function($q, $timeout) {
 		return false
 	};
 	
-	// flush the expired alerts
-	$timeout(function() {
+	// remove old alerts and recycle keys
+	$interval(function() {
+	
 		var now = new Date().getTime();
+		
+		var recycle = [];
+		
 		for(var t in store) {
 			// do not flush errors
 			if(t != 'ERROR') {			
 				for(var j = store[t].list.length-1; j >= 0; j--) {
-					if(store[t].list[j].time < now - (coreConfig.flush/2)) {
-						keys.push(store[t].list[j].id);
+					
+					var alert = store[t].list[j];
+				
+					if(alert.time < now - (coreConfig.flush/2)) {
+						
+						alert.remove = true;
+						
+						store[t].defer.notify(alert);
 						store[t].list.splice(j, 1);
+						
+						// don't recycle the same id twice
+						if(recycle.indexOf(alert.id) < 0) {
+							recycle.push(alert.id);
+						}
 					}
 				}
 			}
 		}
+		
+		keys = keys.concat(recycle);
+		
 	}, coreConfig.flush);
 							
 });

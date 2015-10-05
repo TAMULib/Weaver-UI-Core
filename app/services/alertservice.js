@@ -111,10 +111,7 @@ core.service("AlertService", function($q, $interval) {
 			if(store[alert.type].list[i].id = alert.id) {
 				alert.remove = true;
 				store[alert.type].defer.notify(alert);
-				// do not remove error alerts
-				if(alert.type != "ERROR") {
-					store[alert.type].list.splice(i, 1);
-				}
+				store[alert.type].list.splice(i, 1);
 				break;
 			}
 		}
@@ -124,10 +121,7 @@ core.service("AlertService", function($q, $interval) {
 			if(store[alert.channel].list[i].id = alert.id) {
 				alert.remove = true;
 				store[alert.channel].defer.notify(alert);
-				// do not remove error alerts
-				if(alert.type != "ERROR") {
-					store[alert.channel].list.splice(i, 1);
-				}
+				store[alert.channel].list.splice(i, 1);
 				break;
 			}
 		}

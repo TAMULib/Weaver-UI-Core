@@ -2,21 +2,21 @@
  * Alert service in which tracks responses from the web socket API.
  * Stores responses categorized by channel and type. The id is popped 
  * from an array of keys(sequential integers) and recycled upon removal
- * of the alert. Remove old alerts using an interval.
+ * of the alert. Old alerts removed using an interval.
  *
  */
 core.service("AlertService", function($q, $interval) {
 
 	var AlertService = this;
 	
-	var alerts = coreConfig.alerts;
-	var classes = coreConfig.classes;
+	var types = coreConfig.alerts.types;
+	var classes = coreConfig.alerts.classes;
 
 	var store = { };
 	
 	// create the promises and lists for the possible types
-	for(var type in alerts) {
-		store[alerts[type]] = {
+	for(var t in types) {
+		store[types[t]] = {
 			defer: $q.defer(),
 			list: [],
 		};
@@ -38,6 +38,8 @@ core.service("AlertService", function($q, $interval) {
 	 *		string mapped response type on the API response
 	 * @param channel
 	 *		string channel on which the response returned
+	 * @return
+	 *		new Alert
 	 */
 	var Alert = function(message, type, channel) {
 		this.id = keys.pop();
@@ -60,9 +62,11 @@ core.service("AlertService", function($q, $interval) {
 	 *
 	 * @param facet
 	 *		either type or a channel 
+	 * @return
+	 *		store object containing promise and current list of alerts
 	 */
 	AlertService.get = function(facet) {
-		if(typeof facet == 'undefined') return store;
+		if(typeof facet == 'undefined') return [];
 		isNew(facet);
 		return store[facet];
 	};
@@ -81,13 +85,13 @@ core.service("AlertService", function($q, $interval) {
 		var alert = new Alert(meta.message, meta.type, channel);
 		
 		// add alert to store by type
-		if(check(meta.type, meta, channel).length == 0) {
+		if(filter(meta.type, meta, channel).length == 0) {
 			store[meta.type].list.push(alert);
 			store[meta.type].defer.notify(alert);
 		}
 		
 		// add alert to store by channel
-		if(check(channel, meta, channel).length == 0) {
+		if(filter(channel, meta, channel).length == 0) {
 			store[channel].list.push(alert);
 			store[channel].defer.notify(alert);
 		}
@@ -141,9 +145,11 @@ core.service("AlertService", function($q, $interval) {
 	 *		API response meta containing message and type
 	 * @param channel
 	 *		string channel on which the response returned
+	 * @return
+	 *		returns array of duplicates with specified values
 	 */
-	var check = function(facet, meta, channel) {	
-		if(isNew(facet)) return [];		
+	var filter = function(facet, meta, channel) {
+		if(isNew(facet)) return store[facet];		
 		return store[facet].list.filter(function(alert) {
 			return alert.type == meta.type &&
 			   	   alert.message == meta.message &&
@@ -157,6 +163,8 @@ core.service("AlertService", function($q, $interval) {
 	 *
 	 * @param facet
 	 *		either type or a channel 
+	 * @return
+	 *		boolean whether the store is new
 	 */
 	var isNew = function(facet) {
 		if(typeof store[facet] == 'undefined') {
@@ -183,7 +191,7 @@ core.service("AlertService", function($q, $interval) {
 					
 					var alert = store[t].list[j];
 				
-					if(alert.time < now - (coreConfig.flush/2)) {
+					if(alert.time < now - (coreConfig.alerts.flush/2)) {
 						
 						alert.remove = true;
 						
@@ -201,6 +209,6 @@ core.service("AlertService", function($q, $interval) {
 		
 		keys = keys.concat(recycle);
 		
-	}, coreConfig.flush);
+	}, coreConfig.alerts.flush);
 							
 });

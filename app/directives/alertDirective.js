@@ -8,7 +8,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 		
 			var fixed = Object.keys(attr).indexOf('fixed') > -1;
 			
-			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.duration;
+			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
 			
 			if(attr.types) {
 				var types = attr.types.split(',');
@@ -65,18 +65,23 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 
 				var alerts = AlertService.get(facets[i]);
 				
-				for(var i in alerts.list) {
-					handle(alerts.list[i]);
-				}
+				if(alerts.defer) {
 
-				alerts.defer.promise.then(function(alert){ 
-						// resolved
-					}, function(alert) { 
-						// rejected
-					}, function(alert) { 
-						// notified
-						handle(alert);
-				});
+					for(var i in alerts.list) {
+						handle(alerts.list[i]);
+					}
+				
+					alerts.defer.promise.then(function(alert){ 
+							// resolved
+						}, function(alert) { 
+							// rejected
+						}, function(alert) { 
+							// notified
+							handle(alert);
+					});
+
+				}
+				
 			}
 			
 			$rootScope.$on("$routeChangeStart",function(event, next, current){
@@ -86,7 +91,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
     			}
     			// clean up alerts on route change
     			for(var id in $scope.alerts) {
-    				AlertService.remove($scope.alerts[id]);
+    				//AlertService.remove($scope.alerts[id]);
     				$scope.alerts[id].fade = true;
     				delete $scope.alerts[id];
     			}

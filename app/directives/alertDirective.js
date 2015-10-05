@@ -10,17 +10,20 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			
 			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
 			
+			var types = [];
+			var channels = [];
+
 			if(attr.types) {
-				var types = attr.types.split(',');
-				for(var i in types) {
-					types[i] = types[i].trim();
+				var splitTypes = attr.types.split(',');
+				for(var i in splitTypes) {
+					types.push(splitTypes[i].trim());
 				}
 			}
 			
 			if(attr.channels) {
-				var channels = attr.channels.split(',');
-				for(var i in channels) {
-					channels[i] = channels[i].trim();
+				var splitChannels = attr.channels.split(',');
+				for(var i in splitChannels) {
+					channels.push(splitChannels[i].trim());
 				}
 			}
 			
@@ -28,12 +31,12 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
-			
+
 			var timers = {};
 			
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
 			
-			$scope.alerts = { };
+			$scope.alerts = {};
 			
 			$scope.remove = function(alert) {
 				if(!timers[alert.id]) {
@@ -51,7 +54,9 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 					}, 250);
 				}
 				else {
-					$scope.alerts[alert.id] = alert;
+					if(types.indexOf(alert.type) > -1) {
+						$scope.alerts[alert.id] = alert;
+					}
 
 					if(!fixed) {
 						if(alert.type != "ERROR") {
@@ -61,7 +66,13 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 				}
 			};
 			
+			var ignoreTypes = false;
+
 			for(var i in facets) {
+
+				if(channels.length > 0) ignoreTypes = true;
+				
+				if(ignoreTypes && types.indexOf(facets[i]) > -1) continue;
 
 				var alerts = AlertService.get(facets[i]);
 				
@@ -83,7 +94,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 				}
 				
 			}
-			
+
 			$rootScope.$on("$routeChangeStart",function(event, next, current){
     			//cancel timers on route change
     			for(var i in timers) {

@@ -16,7 +16,7 @@ var coreConfig = {
 			'UNKNOWN': 'danger',
 			'DEFAULT': 'info'
 		},
-		'duration': 1000,
+		'duration': 15000,
 		'flush': 900000 
 	}
 	

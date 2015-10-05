@@ -19,6 +19,10 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 					types.push(splitTypes[i].trim());
 				}
 			}
+
+			if(types.length == 0) {
+				types.push("ERROR");
+			}
 			
 			if(attr.channels) {
 				var splitChannels = attr.channels.split(',');
@@ -102,7 +106,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
     			}
     			// clean up alerts on route change
     			for(var id in $scope.alerts) {
-    				//AlertService.remove($scope.alerts[id]);
+    				AlertService.remove($scope.alerts[id]);
     				$scope.alerts[id].fade = true;
     				delete $scope.alerts[id];
     			}

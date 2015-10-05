@@ -24,7 +24,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 				}
 			}
 			
-			var facets = ["ERROR"];
+			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);

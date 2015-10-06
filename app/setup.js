@@ -1,6 +1,6 @@
 function setUpApp(bootstrapApp) {
 
-	window.stompClient = Stomp.over(new SockJS(appConfig.webService+"/connect", null, {protocols_whitelist: appConfig.sockJsConnectionType}));
+	window.stompClient = Stomp.over(new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType}));
 
 	var jwt = getJWT();
 

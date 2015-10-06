@@ -111,7 +111,7 @@ core.service("AlertService", function($q, $interval) {
 		var controller = channel.substr(0, channel.lastIndexOf("/"));
 		
 		// add alert to store by controller
-		if(filter(controller, meta, channel).length == 0) {
+		if(filter(controller, meta).length == 0) {
 			store[controller].list.push(alert);
 			store[controller].defer.notify(alert);
 		}
@@ -181,7 +181,7 @@ core.service("AlertService", function($q, $interval) {
 		return store[facet].list.filter(function(alert) {
 			return alert.type == meta.type &&
 			   	   alert.message == meta.message &&
-			       alert.channel == channel;
+			       typeof channel != 'undefined' ? alert.channel == channel : true;
 		});
 	};
 	

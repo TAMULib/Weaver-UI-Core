@@ -126,9 +126,9 @@ core.service("AlertService", function($q, $interval) {
 	 *		Alert 
 	 */
 	AlertService.remove = function(alert) {
-	
+
 		alert.remove = true;
-					
+							
 		// remove alert from store by type
 		for(var i in store[alert.type].list) {
 			if(store[alert.type].list[i].id = alert.id) {
@@ -159,7 +159,7 @@ core.service("AlertService", function($q, $interval) {
 				break;
 			}
 		}
-		
+
 		keys.push(alert.id);
 	};
 	

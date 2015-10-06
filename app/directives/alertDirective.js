@@ -43,11 +43,9 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			$scope.alerts = [];
 
 			$scope.remove = function(alert) {
-				if(!timers[alert.id]) {
-					timers[alert.id] = $timeout(function() {
-						AlertService.remove(alert);
-					}, duration);
-				}
+				$timeout(function() {
+					AlertService.remove(alert);
+				}, duration);
 			};
 			
 			var alertIndex = function(id) {
@@ -61,7 +59,7 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 					alert.fade = true;
 					$timeout(function(){
 						$scope.alerts.splice(alertIndex(alert.id), 1);
-					}, 310);
+					}, 350);
 				}
 				else {
 					if(types.indexOf(alert.type) > -1) {
@@ -76,17 +74,12 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			};
 			
 			for(var i in facets) {
-			
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				
 				var alerts = AlertService.get(facets[i]);
-				
 				if(alerts.defer) {
-
 					for(var i in alerts.list) {
 						handle(alerts.list[i]);
 					}
-				
 					alerts.defer.promise.then(function(alert){ 
 							// resolved
 						}, function(alert) { 
@@ -95,16 +88,10 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 							// notified
 							handle(alert);
 					});
-
 				}
-				
 			}
 
 			$rootScope.$on("$routeChangeStart",function(event, next, current){
-    			//cancel timers on route change
-    			for(var i in timers) {
-    				$timeout.cancel(timers[i]);
-    			}
     			// clean up alerts on route change
     			for(var id in $scope.alerts) {
     				AlertService.remove($scope.alerts[id]);

@@ -93,12 +93,10 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			}
 
-			$rootScope.$on("$routeChangeStart",function(event, next, current){
-    			// clean up alerts on route change
-    			for(var id in $scope.alerts) {
-    				AlertService.remove($scope.alerts[id]);
-    				$scope.alerts[id].fade = true;
-    				delete $scope.alerts[id];
+			$rootScope.$on("$routeChangeStart", function(event, next, current) {				
+    			// remove alerts on route change
+    			for(var i in $scope.alerts) {
+    				AlertService.remove($scope.alerts[i]);
     			}
 			});
 			

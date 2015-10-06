@@ -36,6 +36,9 @@ core.service("wsservice", function($q, AlertService) {
 
 				var requestId = meta.id ? meta.id : null;				
 				var response = meta.type;
+				
+				console.log(meta);
+				console.log(channel);
 
 				if(wsservice.pendingReq[requestId]) {
 
@@ -48,13 +51,12 @@ core.service("wsservice", function($q, AlertService) {
 						wsservice.pendingReq[requestId].defer.notify(data);
 					} else {
 						// We should always resolve to handle alternative notifications.
-						wsservice.pendingReq[requestId].defer.resolve(data);						
+						wsservice.pendingReq[requestId].defer.resolve(data);
+						AlertService.add(meta, channel);
 						delete wsservice.pendingReq[requestId];	
 					}
 					
 				}
-				
-				AlertService.add(meta, channel);
 				
 				defer.notify(data);
 

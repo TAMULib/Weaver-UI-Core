@@ -40,8 +40,8 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 			
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
 			
-			$scope.alerts = {};
-			
+			$scope.alerts = [];
+
 			$scope.remove = function(alert) {
 				if(!timers[alert.id]) {
 					timers[alert.id] = $timeout(function() {
@@ -50,18 +50,23 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 				}
 			};
 			
+			var alertIndex = function(id) {
+				for(var i in $scope.alerts) {
+					if($scope.alerts[i].id == id) return i;
+				}
+			};
+
 			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
-					$timeout(function() {
-						delete $scope.alerts[alert.id];
-					}, 250);
+					$timeout(function(){
+						$scope.alerts.splice(alertIndex(alert.id), 1);
+					}, 310);
 				}
 				else {
 					if(types.indexOf(alert.type) > -1) {
-						$scope.alerts[alert.id] = alert;
+						$scope.alerts[$scope.alerts.length] = alert;
 					}
-
 					if(!fixed) {
 						if(alert.type != "ERROR") {
 							$scope.remove(alert);
@@ -70,14 +75,10 @@ core.directive('alerts', function (AlertService, $rootScope, $timeout) {
 				}
 			};
 			
-			var ignoreTypes = false;
-
 			for(var i in facets) {
-
-				if(channels.length > 0) ignoreTypes = true;
+			
+				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
 				
-				if(ignoreTypes && types.indexOf(facets[i]) > -1) continue;
-
 				var alerts = AlertService.get(facets[i]);
 				
 				if(alerts.defer) {

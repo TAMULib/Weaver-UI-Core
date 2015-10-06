@@ -68,16 +68,20 @@ core.service("wsservice", function($q, AlertService) {
 
 	wsservice.send = function(request, headers, payload, channel) {
 
-		if(!wsservice.subExist(channel)) wsservice.subscribe(channel);
-
-		var reqDefer = $q.defer();
+		if(!wsservice.subExist(channel)) {
+			var endpoint = channel; 
+			var controller = channel.substr(0, channel.lastIndexOf("/"));
+			AlertService.create(endpoint);
+			AlertService.create(controller);
+			wsservice.subscribe(channel);
+		}
 		
 		headers.id = wsservice.pendingReqCounter++;
 
 		wsservice.client.send(request, headers, payload);
 		
 		wsservice.pendingReq[headers.id] = {
-			defer: reqDefer,
+			defer: $q.defer(),
 			resend: function() {
 				headers.jwt = sessionStorage.token;
 				wsservice.client.send(request, headers, payload);

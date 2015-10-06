@@ -1,6 +1,6 @@
 /*
- * Alert service in which tracks responses from the web socket API.
- * Stores responses categorized by channel and type. The id is popped 
+ * Alert service which tracks responses from the web socket API.
+ * Stores responses categorized by type, controller, or endpoint. The id is popped 
  * from an array of keys(sequential integers) and recycled upon removal
  * of the alert. Old alerts removed using an interval.
  *
@@ -55,13 +55,23 @@ core.service("AlertService", function($q, $interval) {
 		}
 		return this;
 	};
+	
+	/*
+	 * Method to create a store with the given facet.
+	 *
+	 * @param facet
+	 *		either type, controller, or endpoint
+	 */
+	AlertService.create = function(facet) {
+		isNew(facet);
+	};
 
 	/*
 	 * Method to get a store from the alert service.
 	 * A store consists of the promise and a list of alerts.
 	 *
 	 * @param facet
-	 *		either type or a channel 
+	 *		either type, controller, or endpoint
 	 * @return
 	 *		store object containing promise and current list of alerts
 	 */
@@ -90,38 +100,62 @@ core.service("AlertService", function($q, $interval) {
 			store[meta.type].defer.notify(alert);
 		}
 		
-		// add alert to store by channel
-		if(filter(channel, meta, channel).length == 0) {
-			store[channel].list.push(alert);
-			store[channel].defer.notify(alert);
+		var endpoint = channel;
+		
+		// add alert to store by endpoint
+		if(filter(endpoint, meta, channel).length == 0) {
+			store[endpoint].list.push(alert);
+			store[endpoint].defer.notify(alert);
 		}
+		
+		var controller = channel.substr(0, channel.lastIndexOf("/"));
+		
+		// add alert to store by controller
+		if(filter(controller, meta, channel).length == 0) {
+			store[controller].list.push(alert);
+			store[controller].defer.notify(alert);
+		}
+		
 	};
 	
 	/*
 	 * Method to remove an alert from the store.
-	 * Removes from both type store and channel store.
+	 * Removes from both type store, controller store, and endpoint store.
 	 *
 	 * @param alert
 	 *		Alert 
 	 */
 	AlertService.remove = function(alert) {
+	
+		alert.remove = true;
 					
 		// remove alert from store by type
 		for(var i in store[alert.type].list) {
 			if(store[alert.type].list[i].id = alert.id) {
-				alert.remove = true;
 				store[alert.type].defer.notify(alert);
 				store[alert.type].list.splice(i, 1);
 				break;
 			}
 		}
 		
-		// remove alert from store by channel
-		for(var i in store[alert.channel].list) {
-			if(store[alert.channel].list[i].id = alert.id) {
-				alert.remove = true;
-				store[alert.channel].defer.notify(alert);
-				store[alert.channel].list.splice(i, 1);
+		var endpoint = alert.channel;
+		
+		// remove alert from store by endpoint
+		for(var i in store[endpoint].list) {
+			if(store[endpoint].list[i].id = alert.id) {
+				store[endpoint].defer.notify(alert);
+				store[endpoint].list.splice(i, 1);
+				break;
+			}
+		}
+		
+		var controller = alert.channel.substr(0, alert.channel.lastIndexOf("/"));
+		
+		// remove alert from store by controller 
+		for(var i in store[controller].list) {
+			if(store[controller].list[i].id = alert.id) {
+				store[controller].defer.notify(alert);
+				store[controller].list.splice(i, 1);
 				break;
 			}
 		}
@@ -134,9 +168,9 @@ core.service("AlertService", function($q, $interval) {
 	 * alert with same type, message, and channel.
 	 *
 	 * @param facet
-	 *		string either type or a channel 
+	 *		string type, controller, or endpoint
 	 * @param meta
-	 *		API response meta containing message and type
+	 *		API response meta containing type and message
 	 * @param channel
 	 *		string channel on which the response returned
 	 * @return
@@ -156,7 +190,7 @@ core.service("AlertService", function($q, $interval) {
 	 * If not, creates store.
 	 *
 	 * @param facet
-	 *		either type or a channel 
+	 *		either type, controller, or endpoint
 	 * @return
 	 *		boolean whether the store is new
 	 */

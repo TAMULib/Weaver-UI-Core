@@ -93,7 +93,7 @@ core.service("AlertService", function($q, $interval) {
 	AlertService.add = function(meta, channel) {
 		
 		var alert = new Alert(meta.message, meta.type, channel);
-		
+
 		// add alert to store by type
 		if(filter(meta.type, meta, channel).length == 0) {
 			store[meta.type].list.push(alert);
@@ -109,13 +109,13 @@ core.service("AlertService", function($q, $interval) {
 		}
 		
 		var controller = channel.substr(0, channel.lastIndexOf("/"));
-		
+
 		// add alert to store by controller
 		if(filter(controller, meta).length == 0) {
 			store[controller].list.push(alert);
 			store[controller].defer.notify(alert);
 		}
-		
+
 	};
 	
 	/*
@@ -177,11 +177,12 @@ core.service("AlertService", function($q, $interval) {
 	 *		returns array of duplicates with specified values
 	 */
 	var filter = function(facet, meta, channel) {
-		if(isNew(facet)) return store[facet];		
+		if(isNew(facet)) return store[facet];
 		return store[facet].list.filter(function(alert) {
+			var channelMatch = typeof channel != 'undefined' ? alert.channel == channel : true;
 			return alert.type == meta.type &&
 			   	   alert.message == meta.message &&
-			       typeof channel != 'undefined' ? alert.channel == channel : true;
+			       channelMatch;
 		});
 	};
 	

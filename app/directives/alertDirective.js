@@ -1,10 +1,12 @@
-core.directive('alerts', function (AlertService, $rootScope, $timeout) {
+core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
 	return {
 		template: '<ul class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
 		replace: false,
 		scope: {},
 		link: function ($scope, element, attr) {
+
+			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 		
 			var fixed = Object.keys(attr).indexOf('fixed') > -1;
 			

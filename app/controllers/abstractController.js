@@ -1,4 +1,4 @@
-core.controller('AbstractController', function ($scope, StorageService) {
+core.controller('AbstractController', function ($scope, StorageService, WsApi) {
 
 	$scope.storage = StorageService;
 
@@ -28,6 +28,17 @@ core.controller('AbstractController', function ($scope, StorageService) {
 
 	$scope.isAdmin = function() {
 		return (sessionStorage.role == "ROLE_ADMIN");
+	};
+
+	$scope.reportError = function(alert) {
+		WsApi.fetch({
+			endpoint: '/private/queue', 
+			controller: 'report', 
+			method: 'error',
+			data: JSON.stringify(alert)
+		}).then(function(data) {
+			angular.element("#reportModal").modal('show');
+		});
 	};
 
 });

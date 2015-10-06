@@ -17,7 +17,7 @@
     "bootstrap": "3.3.4",
     "jquery": "2.1.3",
     "bootstrap-sass-official": "3.3.3",
-    "sockjs": "0.3.4",
+    "sockjs": "*",
     "stomp-websocket": "2.3.4"
   }
 }

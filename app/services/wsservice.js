@@ -37,9 +37,6 @@ core.service("wsservice", function($q, AlertService) {
 				var requestId = meta.id ? meta.id : null;				
 				var response = meta.type;
 				
-				console.log(meta);
-				console.log(channel);
-
 				if(wsservice.pendingReq[requestId]) {
 
 					//logger.info("");

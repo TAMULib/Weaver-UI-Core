@@ -59,17 +59,17 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
-					$timeout(function(){
+					$timeout(function() {							
 						$scope.alerts.splice(alertIndex(alert.id), 1);
 					}, 350);
 				}
 				else {
 					if(types.indexOf(alert.type) > -1) {
-						$scope.alerts[$scope.alerts.length] = alert;
-					}
-					if(!fixed) {
-						if(alert.type != "ERROR") {
-							$scope.remove(alert);
+						$scope.alerts[$scope.alerts.length] = alert;					
+						if(!fixed) {
+							if(alert.type != "ERROR") {							
+								$scope.remove(alert);
+							}
 						}
 					}
 				}

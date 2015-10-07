@@ -1,4 +1,4 @@
-core.service("wsservice", function($q, AlertService) { 
+core.service("wsservice", function($interval, $q, AlertService) { 
 	
 	var wsservice = this;
 	
@@ -36,7 +36,7 @@ core.service("wsservice", function($q, AlertService) {
 
 				var requestId = meta.id ? meta.id : null;				
 				var response = meta.type;
-				
+
 				if(wsservice.pendingReq[requestId]) {
 
 					//logger.info("");
@@ -81,6 +81,7 @@ core.service("wsservice", function($q, AlertService) {
 		
 		wsservice.pendingReq[headers.id] = {
 			defer: $q.defer(),
+			timestamp: new Date().getTime(),
 			resend: function() {
 				headers.jwt = sessionStorage.token;
 				wsservice.client.send(request, headers, payload);
@@ -110,5 +111,17 @@ core.service("wsservice", function($q, AlertService) {
 			if(!sub.persist) wsservice.unsubscribe(key);
 		}
 	};
+
+	$interval(function() {
+
+		var now = new Date().getTime();
+
+		for(var req in wsservice.pendingReq) {
+			if(now - wsservice.pendingReq[req].timestamp > 30000) {
+				AlertService.add({type: "ERROR", message: "My Library web service is taking too long to respond."}, "/app/errors");  
+			} 
+		}
+
+	}, 10000);
 
 });

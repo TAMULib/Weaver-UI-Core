@@ -91,7 +91,9 @@ core.service("AlertService", function($q, $interval) {
 	 *		string channel on which the response returned
 	 */
 	AlertService.add = function(meta, channel) {
-		
+
+		isNew(channel);
+
 		var alert = new Alert(meta.message, meta.type, channel);
 
 		// add alert to store by type
@@ -187,7 +189,7 @@ core.service("AlertService", function($q, $interval) {
 	};
 	
 	/*
-	 * Method to check it the store for the specific facet exists.
+	 * Method to check if the store for the specific facet exists.
 	 * If not, creates store.
 	 *
 	 * @param facet

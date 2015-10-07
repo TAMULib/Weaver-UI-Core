@@ -1,10 +1,12 @@
 function setUpApp(bootstrapApp) {
 
-	window.stompClient = Stomp.over(new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType}));
+	document.getElementsByTagName("base")[0].href = appConfig.base;
+
+	var sockJSConnection = new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType});
+
+	window.stompClient = Stomp.over(sockJSConnection);
 
 	var jwt = getJWT();
-
-	document.getElementsByTagName("base")[0].href = appConfig.base;
 
 	if(!appConfig.stompDebug) {
 		window.stompClient.debug = null; 
@@ -36,7 +38,9 @@ function setUpApp(bootstrapApp) {
 	function connect(headers) {
 		angular.element(document).ready(function() {
 			window.stompClient.connect(headers, function() {	
-		  		bootstrapApp();
+		  		bootstrapApp(true);
+			}, function() {	
+				bootstrapApp(false);
 			});
 		});
 	}

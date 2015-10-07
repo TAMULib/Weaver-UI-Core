@@ -1,4 +1,4 @@
-core.service("wsservice", function($q, AlertService) { 
+core.service("wsservice", function($interval, $q, AlertService) { 
 	
 	var wsservice = this;
 	
@@ -48,13 +48,12 @@ core.service("wsservice", function($q, AlertService) {
 						wsservice.pendingReq[requestId].defer.notify(data);
 					} else {
 						// We should always resolve to handle alternative notifications.
-						wsservice.pendingReq[requestId].defer.resolve(data);						
+						wsservice.pendingReq[requestId].defer.resolve(data);
+						AlertService.add(meta, channel);
 						delete wsservice.pendingReq[requestId];	
 					}
 					
 				}
-				
-				AlertService.add(meta, channel);
 				
 				defer.notify(data);
 
@@ -68,16 +67,21 @@ core.service("wsservice", function($q, AlertService) {
 
 	wsservice.send = function(request, headers, payload, channel) {
 
-		if(!wsservice.subExist(channel)) wsservice.subscribe(channel);
-
-		var reqDefer = $q.defer();
+		if(!wsservice.subExist(channel)) {
+			var endpoint = channel; 
+			var controller = channel.substr(0, channel.lastIndexOf("/"));
+			AlertService.create(endpoint);
+			AlertService.create(controller);
+			wsservice.subscribe(channel);
+		}
 		
 		headers.id = wsservice.pendingReqCounter++;
 
 		wsservice.client.send(request, headers, payload);
 		
 		wsservice.pendingReq[headers.id] = {
-			defer: reqDefer,
+			defer: $q.defer(),
+			timestamp: new Date().getTime(),
 			resend: function() {
 				headers.jwt = sessionStorage.token;
 				wsservice.client.send(request, headers, payload);
@@ -107,5 +111,17 @@ core.service("wsservice", function($q, AlertService) {
 			if(!sub.persist) wsservice.unsubscribe(key);
 		}
 	};
+
+	$interval(function() {
+
+		var now = new Date().getTime();
+
+		for(var req in wsservice.pendingReq) {
+			if(now - wsservice.pendingReq[req].timestamp > 30000) {
+				AlertService.add({type: "ERROR", message: "My Library web service is taking too long to respond."}, "/app/errors");  
+			} 
+		}
+
+	}, 10000);
 
 });

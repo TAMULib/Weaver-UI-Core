@@ -1,4 +1,4 @@
-core.controller('AbstractController', function ($scope, StorageService) {
+core.controller('AbstractController', function ($scope, StorageService, RestApi) {
 
 	$scope.storage = StorageService;
 
@@ -28,6 +28,16 @@ core.controller('AbstractController', function ($scope, StorageService) {
 
 	$scope.isAdmin = function() {
 		return (sessionStorage.role == "ROLE_ADMIN");
+	};
+
+	$scope.reportError = function(alert) {
+		RestApi.post({
+			controller: 'report', 
+			method: 'error',
+			data: alert
+		}).then(function(data) {
+			angular.element("#reportModal").modal('show');
+		});
 	};
 
 });

@@ -1,4 +1,4 @@
-core.controller('AbstractController', function ($scope, StorageService, WsApi) {
+core.controller('AbstractController', function ($scope, StorageService, RestApi) {
 
 	$scope.storage = StorageService;
 
@@ -31,11 +31,10 @@ core.controller('AbstractController', function ($scope, StorageService, WsApi) {
 	};
 
 	$scope.reportError = function(alert) {
-		WsApi.fetch({
-			endpoint: '/private/queue', 
+		RestApi.post({
 			controller: 'report', 
 			method: 'error',
-			data: JSON.stringify(alert)
+			data: alert
 		}).then(function(data) {
 			angular.element("#reportModal").modal('show');
 		});

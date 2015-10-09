@@ -17,14 +17,18 @@ core.service("AbstractModel", function () {
 		}
 		futureData.then(
 			function(data) {
-				var response = JSON.parse(data.body);
-				var payload = response.payload;
-				var meta = response.meta;
-				var key = Object.keys(payload)[0];
 				if(data.body) {
-					angular.extend(self, payload[key]);
+					var response = JSON.parse(data.body);
+					var payload = response.payload;
+					var meta = response.meta;
+					var keys = Object.keys(payload);
 					if(meta.type == "ERROR") {
 						angular.extend(self, {'error':true});
+					}
+					else {
+						for(var i in keys) {
+							angular.extend(self, payload[keys[i]]);
+						}
 					}
 				} else {
 					angular.extend(self, data);
@@ -38,8 +42,15 @@ core.service("AbstractModel", function () {
 					var response = JSON.parse(data.body);
 					var payload = response.payload;
 					var meta = response.meta;
-					var key = Object.keys(payload)[0];
-					angular.extend(self, payload[key]);
+					var keys = Object.keys(payload);
+					if(meta.type == "ERROR") {
+						angular.extend(self, {'error':true});
+					}
+					else {
+						for(var i in keys) {
+							angular.extend(self, payload[keys[i]]);
+						}
+					}
 				}
 				else {
 					angular.extend(self, {'value':data});
@@ -52,14 +63,16 @@ core.service("AbstractModel", function () {
 			var response = JSON.parse(data.body);
 			var payload = response.payload;
 			var meta = response.meta;
-			var key = Object.keys(payload)[0];
-			if(typeof payload[key] != 'undefined') {
-				self.unwrap(self, payload[key]);
-			}
-			else {
-				console.log(key + ' is undefined');
-				console.log(data);
-			}
+			var keys = Object.keys(payload);
+			for(var i in keys) {
+				if(typeof payload[key[i]] != 'undefined') {
+					self.unwrap(self, payload[key[i]]);
+				}
+				else {
+					console.log(key[i] + ' is undefined');
+					console.log(data);
+				}
+			}			
 		});
 	};
 	

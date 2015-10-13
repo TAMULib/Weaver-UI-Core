@@ -36,7 +36,7 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 			method: 'error',
 			data: alert
 		}).then(function() {
-
+			angular.element("#reportModal").modal('show');
 		}, function() {
 			var subject = 'Error Report';
 			var body = 'Error Message\n\nchannel: ' + alert.channel +
@@ -46,8 +46,8 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
     		$window.location.href = "mailto:"+ coreConfig.alerts.email + 
     							    "?subject=" + escape(subject) + 
     								"&body=" + escape(body); 
-		}, function(data) {
-			angular.element("#reportModal").modal('show');
+		}, function() {
+			
 		});
 	};
 

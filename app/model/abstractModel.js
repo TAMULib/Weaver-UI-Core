@@ -65,11 +65,11 @@ core.service("AbstractModel", function () {
 			var meta = response.meta;
 			var keys = Object.keys(payload);
 			for(var i in keys) {
-				if(typeof payload[key[i]] != 'undefined') {
-					self.unwrap(self, payload[key[i]]);
+				if(typeof payload[keys[i]] != 'undefined') {
+					self.unwrap(self, payload[keys[i]]);
 				}
 				else {
-					console.log(key[i] + ' is undefined');
+					console.log(keys[i] + ' is undefined');
 					console.log(data);
 				}
 			}			

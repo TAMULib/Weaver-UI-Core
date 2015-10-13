@@ -39,7 +39,7 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 			angular.element("#reportModal").modal('show');
 		}, function() {
 			var subject = 'Error Report';
-			var body = 'Error Message\n\nchannel: ' + alert.channel +
+			var body = 'Error Report\n\nchannel: ' + alert.channel +
 					   '\ntime: ' + new Date(alert.time) +
 					   '\ntype: ' + alert.type + 
 					   '\nmessage: ' + alert.message;

@@ -15,6 +15,7 @@
 			    	<button class="btn btn-primary" ng-if="isAssuming() == 'false'" type="submit" ng-click="assumeUser(assumedControl)">{{assumedControl.button}}</button>
 					<button class="btn btn-primary" ng-if="isAssumed() == 'true'" type="submit" ng-click="assumeUser(assumedControl)">{{assumedControl.button}}</button>
 			    </span>
+			    
 			    <span class="input-group-addon" ng-if="isAssuming() == 'true' && isAssumed() == 'false'"><img class="modalLoadingWheel" src="resources/images/ajax-loader.gif" /></span>
 		    </div>
 		     <span class="assume-status">{{assumedControl.status}}</span>

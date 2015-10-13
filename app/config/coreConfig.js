@@ -17,7 +17,8 @@ var coreConfig = {
 			'DEFAULT': 'info'
 		},
 		'duration': 15000,
-		'flush': 900000 
+		'flush': 900000,
+		'email': 'wwelling@library.tamu.edu'
 	}
 	
 };

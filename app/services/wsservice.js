@@ -118,7 +118,7 @@ core.service("wsservice", function($interval, $q, AlertService) {
 
 		for(var req in wsservice.pendingReq) {
 			if(now - wsservice.pendingReq[req].timestamp > 30000) {
-				AlertService.add({type: "ERROR", message: "My Library web service is taking too long to respond."}, "/app/errors");  
+				AlertService.add({type: "ERROR", message: "Web service is taking too long to respond."}, "/app/errors");  
 			} 
 		}
 

@@ -1,4 +1,4 @@
-core.controller('AbstractController', function ($scope, StorageService, RestApi) {
+core.controller('AbstractController', function ($scope, $window, StorageService, RestApi) {
 
 	$scope.storage = StorageService;
 
@@ -35,7 +35,18 @@ core.controller('AbstractController', function ($scope, StorageService, RestApi)
 			controller: 'report', 
 			method: 'error',
 			data: alert
-		}).then(function(data) {
+		}).then(function() {
+
+		}, function() {
+			var subject = 'Error Report';
+			var body = 'Error Message\n\nchannel: ' + alert.channel +
+					   '\ntime: ' + new Date(alert.time) +
+					   '\ntype: ' + alert.type + 
+					   '\nmessage: ' + alert.message;
+    		$window.location.href = "mailto:"+ coreConfig.alerts.email + 
+    							    "?subject=" + escape(subject) + 
+    								"&body=" + escape(body); 
+		}, function(data) {
 			angular.element("#reportModal").modal('show');
 		});
 	};

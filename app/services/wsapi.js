@@ -4,7 +4,7 @@ core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 
 	WsApi.listen = function(apiReq) {
 		var request = '/ws/'+apiReq.controller+'/' + apiReq.method;
-		var channel = '/' + apiReq.endpoint + "/" + apiReq.controller;
+		var channel = apiReq.endpoint + "/" + apiReq.controller;
 		
 		if(apiReq.method) {
 			channel +=  "/" + apiReq.method;

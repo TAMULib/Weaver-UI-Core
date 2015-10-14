@@ -37,15 +37,18 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 			data: alert
 		}).then(function() {
 			angular.element("#reportModal").modal('show');
-		}, function() {
-			var subject = 'Error Report';
-			var body = 'Error Report\n\nchannel: ' + alert.channel +
-					   '\ntime: ' + new Date(alert.time) +
-					   '\ntype: ' + alert.type + 
-					   '\nmessage: ' + alert.message;
-    		$window.location.href = "mailto:"+ coreConfig.alerts.email + 
-    							    "?subject=" + escape(subject) + 
-    								"&body=" + escape(body); 
+		}, function(response) {
+			console.log(response);
+			if(response.data.message != "EXPIRED_JWT") {
+				var subject = 'Error Report';
+				var body = 'Error Report\n\nchannel: ' + alert.channel +
+						   '\ntime: ' + new Date(alert.time) +
+						   '\ntype: ' + alert.type + 
+						   '\nmessage: ' + alert.message;
+	    		$window.location.href = "mailto:"+ coreConfig.alerts.email + 
+	    							    "?subject=" + escape(subject) + 
+	    								"&body=" + escape(body); 
+			}
 		}, function() {
 			
 		});

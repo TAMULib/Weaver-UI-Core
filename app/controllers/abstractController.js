@@ -38,8 +38,7 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 		}).then(function() {
 			angular.element("#reportModal").modal('show');
 		}, function(response) {
-			console.log(response);
-			if(response.data.message != "EXPIRED_JWT") {
+			if(response.data == null || response.data.message != "EXPIRED_JWT") {
 				var subject = 'Error Report';
 				var body = 'Error Report\n\nchannel: ' + alert.channel +
 						   '\ntime: ' + new Date(alert.time) +

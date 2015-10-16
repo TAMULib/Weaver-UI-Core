@@ -80,7 +80,7 @@ core.service("AssumedControl", function($q, AbstractModel, AuthServiceApi, Stora
 
 							AssumedControl.set({
 								'netid': user.netid,
-								'button': 'Unassume',
+								'button': 'Unassume User',
 								'status': 'assumed'
 							});
 
@@ -93,7 +93,7 @@ core.service("AssumedControl", function($q, AbstractModel, AuthServiceApi, Stora
 
 							AssumedControl.set({
 								'netid': user.netid,
-								'button': 'Assume',
+								'button': 'Assume User',
 								'status': 'invalid netid'
 							});
 
@@ -106,7 +106,7 @@ core.service("AssumedControl", function($q, AbstractModel, AuthServiceApi, Stora
 
 						AssumedControl.set({
 							'netid': user.netid,
-							'button': 'Assume',
+							'button': 'Assume User',
 							'status': 'invalid netid'
 						});
 

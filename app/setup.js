@@ -1,7 +1,5 @@
 function setUpApp(bootstrapApp) {
 
-	document.getElementsByTagName("base")[0].href = appConfig.base;
-
 	var sockJSConnection = new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType});
 
 	window.stompClient = Stomp.over(sockJSConnection);

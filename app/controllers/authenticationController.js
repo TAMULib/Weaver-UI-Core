@@ -2,7 +2,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
-    $scope.login = function() {
+    $scope.login = function(page) {
         
         delete sessionStorage.token;
         delete sessionStorage.role;
@@ -11,11 +11,20 @@ core.controller('AuthenticationController', function ($controller, $location, $s
 
         User.get();
 
-        if(appConfig.mockRole) {
-            $window.open(appConfig.authService + "/token?referer="+location.origin + location.pathnamee + "&mock=" + appConfig.mockRole, "_self");
+        var path = '';
+
+        if(typeof page != 'undefined') {
+            path = "/" + location.pathname.split("/")[1] + "/" + page;
         }
         else {
-            $window.open(appConfig.authService + "/token?referer="+location.origin + location.pathname, "_self");
+            path = location.pathname;
+        }
+
+        if(appConfig.mockRole) {
+            $window.open(appConfig.authService + "/token?referer="+location.origin + path + "&mock=" + appConfig.mockRole, "_self");
+        }
+        else {
+            $window.open(appConfig.authService + "/token?referer="+location.origin + path, "_self");
         }
 
     };

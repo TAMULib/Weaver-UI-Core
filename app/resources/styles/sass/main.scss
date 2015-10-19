@@ -186,6 +186,33 @@ footer a, footer li, footer p {
   color: #CD7674;
 }
 
+.modal-header-primary {
+  color: #fff;
+  background-color: #4A5C81;
+  border-color: #2e6da4;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.modal-header-warning {
+  color: #fff;
+  background-color: #F8CF66;
+  border-color: #eea236;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.modal-header-danger {
+  color: #fff;
+  background-color: #CD7674;
+  border-color: #813735;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.modal-close {
+  color: #000;
+  font-size: 150%;
+  margin-bottom: 15px;
+}
+
 .modalLoadingWheel {
   margin-right: 15px;
   height: 20px;

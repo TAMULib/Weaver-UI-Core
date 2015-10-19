@@ -186,6 +186,10 @@ footer a, footer li, footer p {
   color: #CD7674;
 }
 
+.modal {
+  display: none;
+}
+
 .modal-header-primary {
   color: #fff;
   background-color: #4A5C81;
@@ -216,6 +220,10 @@ footer a, footer li, footer p {
 .modalLoadingWheel {
   margin-right: 15px;
   height: 20px;
+}
+
+.modal-footer {
+  margin-top: 10px;
 }
 
 .adminModal .input-group {

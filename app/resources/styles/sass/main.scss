@@ -181,7 +181,34 @@ footer a, footer li, footer p {
   position: relative;
 }
 
+.assume-status {
+  float: left;
+  color: #CD7674;
+}
+
 .modalLoadingWheel {
   margin-right: 15px;
   height: 20px;
+}
+
+.adminModal .input-group {
+  display: inline-table;
+  margin-top: 15px;
+}
+
+.adminModal .input-group + span:first-of-type {
+  margin: 5px 0px 0 13px;
+}
+
+.adminModal .btn-primary {
+  background-color: #4A5C81;
+  height: 34px;
+}
+
+.adminModal .btn-primary:hover {
+  background-color: #435475;
+}
+
+.adminModal .btn-warning {
+  background-color: #fbb320;
 }

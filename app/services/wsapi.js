@@ -3,7 +3,7 @@ core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 	var WsApi = this;
 
 	WsApi.listen = function(apiReq) {
-		var request = '/ws/'+apiReq.controller+'/' + apiReq.method;
+		var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
 		var channel = apiReq.endpoint + "/" + apiReq.controller;
 		
 		if(apiReq.method) {
@@ -14,7 +14,7 @@ core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 
 	WsApi.fetch = function(apiReq) {
 
-		var request = '/ws/'+apiReq.controller+'/' + apiReq.method;	  
+		var request = '/ws/' + apiReq.controller + '/' + apiReq.method;	  
 		var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
 
 		var headers = {

@@ -40,7 +40,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 	this.post = function(req) {
 
-		var url = appConfig.webService + "/rest/" + req.controller + "/" + req.method;
+		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
 		return $http({
 				method: 'POST',

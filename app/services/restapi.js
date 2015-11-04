@@ -3,6 +3,27 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 	var webservice = appConfig.webService;
 	var authservice = appConfig.authService;
 
+	this.anonymousGet = function(req) {
+
+		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+
+		return $http({
+				method: 'GET',
+    			url: url,
+   				headers: {
+   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
+   				}
+   			}).then(
+			//success callback	
+			function(response) {
+				return response.data;
+			},
+			//error callback
+			function(response) {
+				console.log(response);
+			});
+	};
+
 	this.get = function(req) {
 
 		var url = appConfig.webService + "/" + req.controller + "/" + req.method;

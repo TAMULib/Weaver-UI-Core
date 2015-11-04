@@ -3,8 +3,18 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 	var webservice = appConfig.webService;
 	var authservice = appConfig.authService;
 
-	this.get = function(uri) {
-		return $http.get(uri, {headers:{'jwt':sessionStorage.token}}).then(
+	this.get = function(req) {
+
+		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+
+		return $http({
+				method: 'GET',
+    			url: url,
+   				headers: {
+   					'jwt': sessionStorage.token, 
+   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
+   				}
+   			}).then(
 			//success callback	
 			function(response) {
 				return response.data;

@@ -1,4 +1,4 @@
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, AuthServiceApi, StorageService, User, WsApi) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
@@ -21,10 +21,10 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         }
 
         if(appConfig.mockRole) {
-            $window.open(appConfig.authService + "/token?referer="+location.origin + path + "&mock=" + appConfig.mockRole, "_self");
+            $window.open(appConfig.authService + "/token?referer="+ location.origin + path + "&mock=" + appConfig.mockRole, "_self");
         }
         else {
-            $window.open(appConfig.authService + "/token?referer="+location.origin + path, "_self");
+            $window.open(appConfig.authService + "/token?referer="+ location.origin + path, "_self");
         }
 
     };
@@ -34,7 +34,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         delete sessionStorage.token;
         sessionStorage.role = "ROLE_ANONYMOUS";
 
-        $(".dropdown").dropdown("toggle");
+        angular.element(".dropdown").dropdown("toggle");
 
         $location.path('/');
 

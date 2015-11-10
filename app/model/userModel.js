@@ -21,22 +21,20 @@ core.service("User", function(AbstractModel, WsApi) {
 	User.get = function() {
 		if(User.anonymous) return "ANONYMOUS";
 		if(User.promise) return User.data;
-		
-		var newUserPromise = WsApi.fetch({
+
+		User.promise = WsApi.fetch({
 				endpoint: '/private/queue', 
 				controller: 'user', 
 				method: 'credentials',
 		});
 
-		User.promise = newUserPromise;
-
 		if(User.data) {
-			newUserPromise.then(function(data) {
+			User.promise.then(function(data) {
 				User.set(JSON.parse(data.body).payload.Credentials);
 			});
 		}
 		else {
-			User.data = new User(newUserPromise);	
+			User.data = new User(User.promise);	
 		}
 
 		return User.data;
@@ -51,12 +49,14 @@ core.service("User", function(AbstractModel, WsApi) {
 	};
 
 	User.refresh = function() {
-		User.promise = null;
-		User.get();
-	};
+       User.promise = null;
+       User.get();
+   	};
 
 	User.login = function() {
+		User.promise = null;
 		User.anonymous = false;
+		return User.get();
 	};
 
 	return User;

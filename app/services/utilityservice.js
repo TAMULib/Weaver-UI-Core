@@ -42,9 +42,10 @@ core.service("Utility",function() {
 							console.log("Can not filter on a position of a number!");
 							return false;
 						}
-
-						if(obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) == position) {
-							return true;
+						else {
+							if(obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) == position) {
+								return true;
+							}
 						}
 					}
 				}
@@ -56,7 +57,7 @@ core.service("Utility",function() {
 							}							
 						}
 						else {
-							if(obj[properties[i]] instanceof Array) {
+							if(obj[properties[i]] instanceof Array && typeof target == 'number') {
 								if(target == 0) {
 									if(obj[properties[i]].length == target) {
 										return true;

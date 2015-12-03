@@ -24,33 +24,35 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 	};
 
 	AuthServiceApi.getRefreshToken = function(cb) {
-		if (!AuthServiceApi.pendingRefresh) {
-			AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/refresh", {withCredentials: true}).
-				then(function(response) {
 
-						StorageService.set('token', response.data.tokenAsString);
-						
-						// This timeout ensures that pending request is not nulled to early
-						$timeout(function() {
-							delete AuthServiceApi.pendingRefresh;
-						});
-						
-						if(cb) cb();
-					},
-					function(response) {
-						
-						delete sessionStorage.token;
+        var url = appConfig.authService+"/refresh";
 
-						if(appConfig.mockRole) {
-							window.open(appConfig.authService + "/token?referer="+location.href + "&mock=" + appConfig.mockRole, "_self");
-						}
-						else {
-							window.open(appConfig.authService + "/token?referer="+location.href, "_self");
-						}
+        if(appConfig.mockRole) url += "?mock=" + appConfig.mockRole;
 
-				});
-		}
-		return AuthServiceApi.pendingRefresh;
-	};	
+        if (!AuthServiceApi.pendingRefresh) {
+            AuthServiceApi.pendingRefresh = $http.get(url, {withCredentials: true}).
+                then(function(response) {
+
+                        StorageService.set('token', response.data.tokenAsString);
+                        
+                        // This timeout ensures that pending request is not nulled to early
+                        $timeout(function() {
+                            delete AuthServiceApi.pendingRefresh;
+                        });
+                        
+                        if(cb) cb();
+                    },
+                    function(response) {
+                        
+                        delete sessionStorage.token;
+
+                        url += appConfig.mockRole ? "&referer="+location.href : "?referer="+location.href;
+
+                        window.open(url, "_self");
+
+                });
+        }
+        return AuthServiceApi.pendingRefresh;
+    };
 
 });

@@ -31,17 +31,37 @@ function setUpApp(bootstrapApp) {
 				window.open(appConfig.authService + "/token?referer="+location.href, "_self");
 			}
 		}
-	} 
+	}
+
+	function attemptConnect(headers, attempt) {
+
+		sockJSConnection = new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType});
+
+		window.stompClient = Stomp.over(sockJSConnection);
+
+		var wait = angular.isUndefined(angular.element(document).scope()) ? 500 : 5000;
+	    
+		window.stompClient.connect(headers, function() {
+			bootstrapApp();
+		}, function() {
+			if(attempt < 3) {
+				setTimeout(function() {
+					attempt++;
+					attemptConnect(headers, attempt);
+				}, wait);
+			}
+			else {
+				bootstrapApp();
+			}
+		});
+
+	};
 
 	function connect(headers) {
 		angular.element(document).ready(function() {
-			window.stompClient.connect(headers, function() {	
-		  		bootstrapApp(true);
-			}, function() {	
-				bootstrapApp(false);
-			});
+			attemptConnect(headers, 0);
 		});
-	}
+	};
 
 	function getJWT() {
 
@@ -75,6 +95,6 @@ function setUpApp(bootstrapApp) {
 		}
 
 		return jwt;
-	}	
+	};
 
 }

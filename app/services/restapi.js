@@ -24,9 +24,9 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			});
 	};
 
-	this.get = function(req) {
+	this.get = function(req, isUrl) {
 
-		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+		var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
 		return $http({
 				method: 'GET',

@@ -1,14 +1,8 @@
 function setUpApp(bootstrapApp) {
 
-	var sockJSConnection = new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType});
-
-	window.stompClient = Stomp.over(sockJSConnection);
+	var sockJSConnection;
 
 	var jwt = getJWT();
-
-	if(!appConfig.stompDebug) {
-		window.stompClient.debug = null; 
-	}
 
 	if(jwt) {
 		if(!sessionStorage.token) {
@@ -20,7 +14,6 @@ function setUpApp(bootstrapApp) {
 	} else {
 		if(appConfig.allowAnonymous) {
 			sessionStorage.role = "ROLE_ANONYMOUS";
-
 			connect({});
 		}
 		else {
@@ -38,6 +31,10 @@ function setUpApp(bootstrapApp) {
 		sockJSConnection = new SockJS(appConfig.webService+"/connect", null, {transports: appConfig.sockJsConnectionType});
 
 		window.stompClient = Stomp.over(sockJSConnection);
+
+		if(!appConfig.stompDebug) {
+			window.stompClient.debug = null; 
+		}
 
 		var wait = angular.isUndefined(angular.element(document).scope()) ? 500 : 5000;
 	    

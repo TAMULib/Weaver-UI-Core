@@ -25,8 +25,6 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
     AuthServiceApi.getRefreshToken = function(cb) {
 
-        console.log('request to refresh token')
-
         var url = appConfig.authService+"/refresh";
 
         if(appConfig.mockRole) {

@@ -8,12 +8,8 @@ core.service("wsservice", function($interval, $q, AlertService) {
 	
 	wsservice.subscriptions = {};
 
-	wsservice.client = window.stompClient;
-	
-	delete window.stompClient;
-
 	wsservice.subscribe = function(channel, persist) {		
-		var id = "sub-"+wsservice.client.counter;		
+		var id = "sub-" + window.stompClient.counter;		
 		var defer;
 		
 		if(!persist) persist = false;
@@ -30,7 +26,7 @@ core.service("wsservice", function($interval, $q, AlertService) {
 				defer: defer
 			};
 
-			wsservice.client.subscribe(channel, function(data) {
+			window.stompClient.subscribe(channel, function(data) {
 				
 				var meta = JSON.parse(data.body).meta
 
@@ -77,14 +73,14 @@ core.service("wsservice", function($interval, $q, AlertService) {
 		
 		headers.id = wsservice.pendingReqCounter++;
 
-		wsservice.client.send(request, headers, payload);
+		window.stompClient.send(request, headers, payload);
 		
 		wsservice.pendingReq[headers.id] = {
 			defer: $q.defer(),
 			timestamp: new Date().getTime(),
 			resend: function() {
 				headers.jwt = sessionStorage.token;
-				wsservice.client.send(request, headers, payload);
+				window.stompClient.send(request, headers, payload);
 			}
 		};
 
@@ -101,7 +97,7 @@ core.service("wsservice", function($interval, $q, AlertService) {
 	};
 	
 	wsservice.unsubscribe = function(sub) {
-		wsservice.client.unsubscribe(sub);
+		window.stompClient.unsubscribe(sub);
 		delete wsservice.subscriptions[sub];
 	};
 
@@ -117,8 +113,8 @@ core.service("wsservice", function($interval, $q, AlertService) {
 		var now = new Date().getTime();
 
 		for(var req in wsservice.pendingReq) {
-			if(now - wsservice.pendingReq[req].timestamp > 30000) {
-				AlertService.add({type: "ERROR", message: "Web service is taking too long to respond."}, "/app/errors");  
+			if(now - wsservice.pendingReq[req].timestamp > 60000) {
+				AlertService.add({type: "WARNING", message: "Web service is taking too long to respond. Please refresh. If this continues to appear you can email helpdesk@library.tamu.edu."}, "/app/warnings");  
 			} 
 		}
 

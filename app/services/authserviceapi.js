@@ -1,35 +1,40 @@
 core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
-	var AuthServiceApi = this;
+    var AuthServiceApi = this;
 
-	AuthServiceApi.getAssumedUser = function(assume, cb) {
-		if (!AuthServiceApi.pendingRefresh) {
-			AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
-				then(function(response) {
+    AuthServiceApi.getAssumedUser = function(assume, cb) {
+        if (!AuthServiceApi.pendingRefresh) {
+            AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
+                then(function(response) {
 
-					if(response.data.assumed) {
-						StorageService.set('token', response.data.assumed.tokenAsString);
-					}
+                    if(response.data.assumed) {
+                        StorageService.set('token', response.data.assumed.tokenAsString);
+                    }
 
-					// This timeout ensures that pending request is not nulled to early
-					$timeout(function() {
-						delete AuthServiceApi.pendingRefresh;
-					});
+                    // This timeout ensures that pending request is not nulled to early
+                    $timeout(function() {
+                        delete AuthServiceApi.pendingRefresh;
+                    });
 
-					if(cb) cb();
-					return response;   
-			});
-		}
-		return AuthServiceApi.pendingRefresh;
-	};
+                    if(cb) cb();
+                    return response;   
+            });
+        }
+        return AuthServiceApi.pendingRefresh;
+    };
 
-	AuthServiceApi.getRefreshToken = function(cb) {
+    AuthServiceApi.getRefreshToken = function(cb) {
+
+        console.log('request to refresh token')
 
         var url = appConfig.authService+"/refresh";
 
-        if(appConfig.mockRole) url += "?mock=" + appConfig.mockRole;
+        if(appConfig.mockRole) {
+            url += "?mock=" + appConfig.mockRole;
+        }
 
         if (!AuthServiceApi.pendingRefresh) {
+
             AuthServiceApi.pendingRefresh = $http.get(url, {withCredentials: true}).
                 then(function(response) {
 
@@ -43,13 +48,15 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
                         if(cb) cb();
                     },
                     function(response) {
-                        
+
                         delete sessionStorage.token;
 
-                        url += appConfig.mockRole ? "&referer="+location.href : "?referer="+location.href;
-
-                        window.open(url, "_self");
-
+                        if(appConfig.mockRole) {
+                            window.open(appConfig.authService+"/token&referer="+location.href + "&mock=" + appConfig.mockRole, "_self");
+                        }
+                        else {
+                           window.open(appConfig.authService+"/token&referer="+location.href, "_self");
+                        }
                 });
         }
         return AuthServiceApi.pendingRefresh;

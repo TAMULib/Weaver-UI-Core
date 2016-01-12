@@ -6,15 +6,19 @@ core.service("AccessControllService", function($location, StorageService) {
 
 	AccessControllService.checkRoute = function(evt, next, current) {
 
+		if(typeof(current) != "undefined" && typeof(current.$$route) != "undefined") {
+			AccessControllService.lastRoutePath = current.$$route.originalPath;
+			 if (AccessControllService.lastRoutePath.indexOf('/') === 0){
+	            AccessControllService.lastRoutePath = AccessControllService.lastRoutePath.replace('/','');
+	        }
+		}	
+
+		if(!next.$$route) return;
+
 		var allowedUsers = next.$$route.access;
 		var role = StorageService.get("role");
 
 		var restrict = allowedUsers ? allowedUsers.indexOf(role) == -1 : false;
-
-		console.log(current);
-
-		if(typeof(current) != "undefined")
-			AccessControllService.lastRoutePath = current.$$route.orinialPath;
 
 		if(restrict) {
 			evt.preventDefault();

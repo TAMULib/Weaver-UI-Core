@@ -22,7 +22,7 @@ core.service("AccessControllService", function($location, StorageService) {
 
 		if(restrict) {
 			evt.preventDefault();
-			$location.path("/403");
+			$location.path("/error/403");
 		}
 		
 	};

@@ -1,0 +1,55 @@
+<h1><code ng:non-bindable="">RestApi</code>
+<div><span class="hint">service in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-service-page core-service-restapi-page"><p>The RestApi Service facilitates all restful communication
+with a Spring implementation of the TAMU Webservice Core. 
+This is service is the http counterpart to the websocket 
+functionality of WsApi.</p>
+</div></div>
+<h2 id="dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ng.$http">$http</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ng.$window">$window</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/core.service:AuthServiceApi">AuthServiceApi</a></code>
+</li>
+</ul>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_anonymousget">anonymousGet(req)</h3>
+<div class="anonymousget"><div class="core-service-page core-service-restapi-anonymousget-page"><p>Initiates a get request on behalf of a user whose role is &#39;ROLE_ANONYMOUSE&#39;.</p>
+</div><h5 id="methods_anonymousget_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>req</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-service-page core-service-restapi-anonymousget-page"><p>a request object</p>
+</div></td></tr></tbody></table><h5 id="methods_anonymousget_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promise">Promise</a></td><td><div class="core-service-page core-service-restapi-anonymousget-page"><p>returns a promise</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_get">get(req, isUrl)</h3>
+<div class="get"><div class="core-service-page core-service-restapi-get-page"><p>Initiates a get request to the configured web service on behalf of an authenticated user.</p>
+</div><h5 id="methods_get_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>req</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-service-page core-service-restapi-get-page"><p>a request object</p>
+</div></td></tr><tr><td>isUrl <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-boolean">boolean</a></td><td><div class="core-service-page core-service-restapi-get-page"><p>a boolean</p>
+</div></td></tr></tbody></table><h5 id="methods_get_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promise">Promise</a></td><td><div class="core-service-page core-service-restapi-get-page"><p>returns a promise</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_post">post(req)</h3>
+<div class="post"><div class="core-service-page core-service-restapi-post-page"><p>Initiates a post request to the configured web service on behalf of an authenticated user.</p>
+</div><h5 id="methods_post_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>req</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-service-page core-service-restapi-post-page"><p>a request object</p>
+</div></td></tr></tbody></table><h5 id="methods_post_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promise">Promise</a></td><td><div class="core-service-page core-service-restapi-post-page"><p>returns a promise</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_authservice">authService</h3>
+<div class="authservice"><div class="core-service-page core-service-restapi-authservice-page"><p>A private reference to the application&#39;s configuration
+for authService.</p>
+</div></div>
+</li>
+<li><h3 id="properties_webservice">webservice</h3>
+<div class="webservice"><div class="core-service-page core-service-restapi-webservice-page"><p>A private reference to the application&#39;s configuration
+for webService.</p>
+</div></div>
+</li>
+</ul>
+</div>
+</div>

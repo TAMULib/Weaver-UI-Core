@@ -18,6 +18,12 @@ core.controller('LoginController', function ($controller, $location, $scope, Res
 				console.log("User does not exist!");
 			}
 			else {
+
+				$scope.account = {
+			    	email: '',
+			    	password: ''
+			    };
+    
 				StorageService.set("token", data.payload.JWT.tokenAsString);
 
 				delete sessionStorage.role;

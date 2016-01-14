@@ -1,5 +1,6 @@
 html {
     height: 100%;
+    font-size: $baseFontSize;
 }
 
 body {
@@ -9,6 +10,10 @@ body {
 
 *, :after, :before {
   box-sizing: border-box;
+}
+
+a {
+  color: $linkColor;
 }
 
 nav {
@@ -43,7 +48,7 @@ nav>li>a {
 }
 
 .global-nav, .global-nav .top-bar {
-  background: #3c0000;
+  background: $secondary;
 }
 
 .global-nav li {
@@ -66,11 +71,11 @@ nav>li>a {
 
 .global-nav li a:hover {
   text-decoration: none;
-  background: #500000;
+  background: $primary;
 }
 
 .site-title {
-  background: #500000;
+  background: $primary;
   border-top: 1px solid #8d8d8d;
   margin-right: auto;
   margin-left: auto;

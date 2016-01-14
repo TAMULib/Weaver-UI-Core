@@ -1,4 +1,4 @@
-core.controller('LoginController', function ($controller, $location, $scope, RestApi, StorageService, User) {
+core.controller('LoginController', function ($controller, $location, $scope, $timeout, AlertService, RestApi, StorageService, User) {
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
@@ -7,6 +7,9 @@ core.controller('LoginController', function ($controller, $location, $scope, Res
     	password: ''
     };
 
+    AlertService.create('auth/login');
+    AlertService.create('auth');
+
 	$scope.login = function() {
 		RestApi.anonymousGet({
 			controller: 'auth',
@@ -14,8 +17,11 @@ core.controller('LoginController', function ($controller, $location, $scope, Res
 			data: $scope.account
 		}).then(function(data) {
 
-			if(typeof data.payload.JWT == 'undefined') {
-				console.log("User does not exist!");
+			if(data.meta.type == 'ERROR') {
+				console.log(data)
+			 	$timeout(function() {
+					AlertService.add(data.meta, 'auth/login');
+				});
 			}
 			else {
 
@@ -33,6 +39,8 @@ core.controller('LoginController', function ($controller, $location, $scope, Res
 				User.ready().then(function() {
 					StorageService.set("role", user.role);
 				});
+
+				angular.element('#loginModal').modal('hide');
 			}
 		});
 	};

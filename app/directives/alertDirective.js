@@ -15,6 +15,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			var types = [];
 			var channels = [];
 
+			var excludes = [];
+
 			if(attr.types) {
 				var splitTypes = attr.types.split(',');
 				for(var i in splitTypes) {
@@ -30,6 +32,13 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				var splitChannels = attr.channels.split(',');
 				for(var i in splitChannels) {
 					channels.push(splitChannels[i].trim());
+				}
+			}
+
+			if(attr.excludes) {
+				var excludesChannels = attr.excludes.split(',');
+				for(var i in excludesChannels) {
+					excludes.push(excludesChannels[i].trim());
 				}
 			}
 			
@@ -64,7 +73,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}, 350);
 				}
 				else {
-					if(types.indexOf(alert.type) > -1) {
+					if(types.indexOf(alert.type) > -1 && excludes.indexOf(alert.channel) == -1) {
 						$scope.alerts[$scope.alerts.length] = alert;					
 						if(!fixed) {
 							if(alert.type != "ERROR") {							

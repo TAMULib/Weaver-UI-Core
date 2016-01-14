@@ -18,7 +18,6 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
 		}).then(function(data) {
 
 			if(data.meta.type == 'ERROR') {
-				console.log(data)
 			 	$timeout(function() {
 					AlertService.add(data.meta, 'auth/login');
 				});
@@ -41,6 +40,12 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
 				});
 
 				angular.element('#loginModal').modal('hide');
+
+				var alerts = AlertService.get('auth/login');
+				for(var i in alerts.list) {
+					AlertService.remove(alerts.list[i]);
+				}
+				
 			}
 		});
 	};

@@ -132,33 +132,40 @@ core.service("AlertService", function($q, $interval) {
 		alert.remove = true;
 							
 		// remove alert from store by type
-		for(var i in store[alert.type].list) {
-			if(store[alert.type].list[i].id = alert.id) {
-				store[alert.type].defer.notify(alert);
-				store[alert.type].list.splice(i, 1);
-				break;
+		if(typeof store[alert.type] != 'undefined') {
+			for(var i in store[alert.type].list) {
+				if(store[alert.type].list[i].id = alert.id) {
+					store[alert.type].defer.notify(alert);
+					store[alert.type].list.splice(i, 1);
+					break;
+				}
 			}
 		}
+		
 		
 		var endpoint = alert.channel;
 		
 		// remove alert from store by endpoint
-		for(var i in store[endpoint].list) {
-			if(store[endpoint].list[i].id = alert.id) {
-				store[endpoint].defer.notify(alert);
-				store[endpoint].list.splice(i, 1);
-				break;
+		if(typeof store[endpoint] != 'undefined') {
+			for(var i in store[endpoint].list) {
+				if(store[endpoint].list[i].id = alert.id) {
+					store[endpoint].defer.notify(alert);
+					store[endpoint].list.splice(i, 1);
+					break;
+				}
 			}
 		}
-		
+
 		var controller = alert.channel.substr(0, alert.channel.lastIndexOf("/"));
 		
 		// remove alert from store by controller 
-		for(var i in store[controller].list) {
-			if(store[controller].list[i].id = alert.id) {
-				store[controller].defer.notify(alert);
-				store[controller].list.splice(i, 1);
-				break;
+		if(typeof store[controller] != 'undefined') {
+			for(var i in store[controller].list) {
+				if(store[controller].list[i].id = alert.id) {
+					store[controller].defer.notify(alert);
+					store[controller].list.splice(i, 1);
+					break;
+				}
 			}
 		}
 

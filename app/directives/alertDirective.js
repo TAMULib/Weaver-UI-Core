@@ -1,6 +1,6 @@
 core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
 	return {
-		template: '<ul class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
+		template: '<ul ng-if="alerts.length > 0" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
 		replace: false,
 		scope: {},

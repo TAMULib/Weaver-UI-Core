@@ -8,9 +8,14 @@
  * @requires core.service:User
  *
  * @example
- * The following must be added to authentication controller for it to extend AbstractController
+ * The following must be added to authentication controller for it to extend AbstractController.Extends {@link core.controller:AbstractController 'AbstractController'}
  *  <pre>
  *      angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+ *  </pre>
+ *
+ * @example
+ *  <pre>
+ *      <element ng-controller="AuthenticationController"></element>
  *  </pre> 
  *
  * @description

@@ -10,7 +10,7 @@
  * The following must be added to a controller for it to extending this AbstractController
  *	<pre>
  *		angular.extend(this, $controller('AbstractController', {$scope: $scope}));
- *	</pre> 
+ *	</pre>
  *
  * @description
  *	This abstract controller should be inherited by all controllers using

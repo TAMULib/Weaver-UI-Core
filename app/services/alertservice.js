@@ -19,6 +19,7 @@ core.service("AlertService", function($q, $interval) {
 		store[types[t]] = {
 			defer: $q.defer(),
 			list: [],
+			exclusive: false
 		};
 	}
 
@@ -75,9 +76,9 @@ core.service("AlertService", function($q, $interval) {
 	 * @return
 	 *		store object containing promise and current list of alerts
 	 */
-	AlertService.get = function(facet) {
+	AlertService.get = function(facet, exclusive) {
 		if(typeof facet == 'undefined') return [];
-		isNew(facet);
+		isNew(facet, exclusive);
 		return store[facet];
 	};
 
@@ -91,6 +92,12 @@ core.service("AlertService", function($q, $interval) {
 	 *		string channel on which the response returned
 	 */
 	AlertService.add = function(meta, channel) {
+
+		console.log(meta)
+
+		console.log(channel)
+
+		console.log(store)
 
 		isNew(channel);
 
@@ -204,11 +211,12 @@ core.service("AlertService", function($q, $interval) {
 	 * @return
 	 *		boolean whether the store is new
 	 */
-	var isNew = function(facet) {
+	var isNew = function(facet, exclusive) {
 		if(typeof store[facet] == 'undefined') {
 			store[facet] = {
 				defer: $q.defer(),
 				list: [],
+				exclusive: exclusive
 			};
 			return true;
 		}

@@ -7,15 +7,13 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		link: function ($scope, element, attr) {
 
 			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
-		
+
 			var fixed = Object.keys(attr).indexOf('fixed') > -1;
 			
 			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
 			
 			var types = [];
 			var channels = [];
-
-			var excludes = [];
 
 			if(attr.types) {
 				var splitTypes = attr.types.split(',');
@@ -35,18 +33,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			}
 
-			if(attr.excludes) {
-				var excludesChannels = attr.excludes.split(',');
-				for(var i in excludesChannels) {
-					excludes.push(excludesChannels[i].trim());
-				}
-			}
-			
 			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 
+
+			var exclusive = typeof attr.exclusive != 'undefined';
+			
 			var timers = {};
 			
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
@@ -65,7 +59,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			};
 
-			var handle = function(alert) {
+			var handle = function(alert, greedy) {
 				if(alert.remove) {
 					alert.fade = true;
 					$timeout(function() {							
@@ -73,7 +67,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}, 350);
 				}
 				else {
-					if(types.indexOf(alert.type) > -1 && excludes.indexOf(alert.channel) == -1) {
+					if(types.indexOf(alert.type) > -1 && greedy == exclusive) {
 						$scope.alerts[$scope.alerts.length] = alert;					
 						if(!fixed) {
 							if(alert.type != "ERROR") {							
@@ -86,10 +80,11 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				var alerts = AlertService.get(facets[i]);
+				var alerts = AlertService.get(facets[i], exclusive);
+
 				if(alerts.defer) {
-					for(var i in alerts.list) {
-						handle(alerts.list[i]);
+					for(var j in alerts.list) {
+						handle(alerts.list[j], alerts.exclusive);
 					}
 					alerts.defer.promise.then(function(alert){ 
 							// resolved
@@ -97,7 +92,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 							// rejected
 						}, function(alert) { 
 							// notified
-							handle(alert);
+							handle(alert, alerts.exclusive);
 					});
 				}
 			}

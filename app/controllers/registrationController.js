@@ -16,6 +16,10 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 			method: 'register?email=' + email
 		}).then(function(data) {
 			$scope.registration.email = '';
+
+			$timeout(function() {
+				AlertService.add(data.meta, 'auth/register');
+			});
 		});
 	};
 
@@ -24,6 +28,7 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	}
 
 	$scope.register = function() {
+		
 		RestApi.anonymousGet({
 			'controller': 'auth',
 			'method': 'register',

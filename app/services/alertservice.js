@@ -64,7 +64,7 @@ core.service("AlertService", function($q, $interval) {
 	 *		either type, controller, or endpoint
 	 */
 	AlertService.create = function(facet) {
-		isNew(facet);
+		isNew(facet, false);
 	};
 
 	/*
@@ -97,18 +97,13 @@ core.service("AlertService", function($q, $interval) {
 
 		var alert = new Alert(meta.message, meta.type, channel);
 
-		// add alert to store by type
-		if(filter(meta.type, meta, channel).length == 0) {
-			store[meta.type].list.push(alert);
-			store[meta.type].defer.notify(alert);
-		}
-		
 		var endpoint = channel;
 		
 		// add alert to store by endpoint
 		if(filter(endpoint, meta, channel).length == 0) {
 			store[endpoint].list.push(alert);
 			store[endpoint].defer.notify(alert);
+			if(store[endpoint].exclusive) return;
 		}
 		
 		var controller = channel.substr(0, channel.lastIndexOf("/"));
@@ -117,6 +112,13 @@ core.service("AlertService", function($q, $interval) {
 		if(filter(controller, meta).length == 0) {
 			store[controller].list.push(alert);
 			store[controller].defer.notify(alert);
+			if(store[controller].exclusive) return;
+		}
+
+		// add alert to store by type
+		if(filter(meta.type, meta, channel).length == 0) {
+			store[meta.type].list.push(alert);
+			store[meta.type].defer.notify(alert);
 		}
 
 	};

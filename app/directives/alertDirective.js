@@ -38,7 +38,6 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 
-
 			var exclusive = typeof attr.exclusive != 'undefined';
 			
 			var timers = {};
@@ -59,7 +58,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			};
 
-			var handle = function(alert, greedy) {
+			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
 					$timeout(function() {							
@@ -67,7 +66,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}, 350);
 				}
 				else {
-					if(types.indexOf(alert.type) > -1 && greedy == exclusive) {
+					if(types.indexOf(alert.type) > -1) {
 						$scope.alerts[$scope.alerts.length] = alert;					
 						if(!fixed) {
 							if(alert.type != "ERROR") {							
@@ -77,14 +76,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}
 				}
 			};
-			
+
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
 				var alerts = AlertService.get(facets[i], exclusive);
 
 				if(alerts.defer) {
 					for(var j in alerts.list) {
-						handle(alerts.list[j], alerts.exclusive);
+						handle(alerts.list[j]);
 					}
 					alerts.defer.promise.then(function(alert){ 
 							// resolved
@@ -92,7 +91,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 							// rejected
 						}, function(alert) { 
 							// notified
-							handle(alert, alerts.exclusive);
+							handle(alert);
 					});
 				}
 			}

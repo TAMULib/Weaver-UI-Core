@@ -1,13 +1,13 @@
 core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
 	return {
-		template: '<ul class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
+		template: '<ul ng-if="alerts.length > 0" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
 		replace: false,
 		scope: {},
 		link: function ($scope, element, attr) {
 
 			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
-		
+
 			var fixed = Object.keys(attr).indexOf('fixed') > -1;
 			
 			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
@@ -32,12 +32,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					channels.push(splitChannels[i].trim());
 				}
 			}
-			
+
 			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 
+			var exclusive = typeof attr.exclusive != 'undefined';
+			
 			var timers = {};
 			
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
@@ -59,7 +61,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
-					$timeout(function() {							
+					$timeout(function() {
 						$scope.alerts.splice(alertIndex(alert.id), 1);
 					}, 350);
 				}
@@ -74,13 +76,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}
 				}
 			};
-			
+
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				var alerts = AlertService.get(facets[i]);
+				var alerts = AlertService.get(facets[i], exclusive);
+
 				if(alerts.defer) {
-					for(var i in alerts.list) {
-						handle(alerts.list[i]);
+					for(var j in alerts.list) {
+						handle(alerts.list[j]);
 					}
 					alerts.defer.promise.then(function(alert){ 
 							// resolved

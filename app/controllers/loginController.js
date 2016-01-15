@@ -41,10 +41,7 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
 
 				angular.element('#loginModal').modal('hide');
 
-				var alerts = AlertService.get('auth/login');
-				for(var i in alerts.list) {
-					AlertService.remove(alerts.list[i]);
-				}
+				AlertService.removeAll('auth/login');
 				
 			}
 		});

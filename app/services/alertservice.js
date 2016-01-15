@@ -122,6 +122,15 @@ core.service("AlertService", function($q, $interval) {
 		}
 
 	};
+
+	AlertService.removeAll = function(facet) {
+		console.log(store[facet].list)
+		if(typeof store[facet] != 'undefined') {
+			for(var i = store[facet].list.length - 1; i >= 0; i--) {
+				AlertService.remove(store[facet].list[i]);
+			}
+		}
+	};
 	
 	/*
 	 * Method to remove an alert from the store.

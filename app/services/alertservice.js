@@ -93,12 +93,6 @@ core.service("AlertService", function($q, $interval) {
 	 */
 	AlertService.add = function(meta, channel) {
 
-		console.log(meta)
-
-		console.log(channel)
-
-		console.log(store)
-
 		isNew(channel);
 
 		var alert = new Alert(meta.message, meta.type, channel);

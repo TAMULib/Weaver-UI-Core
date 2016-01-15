@@ -62,7 +62,6 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				if(alert.remove) {
 					alert.fade = true;
 					$timeout(function() {
-						console.log(alert)
 						$scope.alerts.splice(alertIndex(alert.id), 1);
 					}, 350);
 				}

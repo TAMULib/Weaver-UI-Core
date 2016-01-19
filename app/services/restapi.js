@@ -46,7 +46,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 	 * @returns {Promise} returns a promise
 	 * 
 	 * @description
-	 *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUSE'.
+	 *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
 	 */
 	this.anonymousGet = function(req) {
 

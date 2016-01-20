@@ -23,8 +23,8 @@ core.directive('tamuheader', function ($controller) {
 
 			/**
 			 * @ngdoc property
-			 * @name core.directives:tamufooter#$scope.attr
-			 * @propertyOf core.directives:tamufooter
+			 * @name core.directive:tamuheader#$scope.attr
+			 * @propertyOf core.directive:tamuheader
 			 *
 			 * @description
 			 * 	A $scope variable 'title' to store the 'title property of the 'attr' object

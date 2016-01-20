@@ -5,7 +5,7 @@
  * @requires $scope
  * @constructor
  * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- * @returns {service} AssumedControl returns AssumedControl object
+ * @returns {service} AssumedControl returns AssumedControl
  * 
  * @example
  * The following must be added to a model for it to extending this AbstractModel

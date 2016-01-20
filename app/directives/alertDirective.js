@@ -27,8 +27,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 		    /**
 		     * @ngdoc property
-		     * @name fixed
-		     * @propertyOf core.directive:alerts#fixed
+		     * @name core.directive:alerts#fixed
+		     * @propertyOf core.directive:alerts
 		     *
 		     * @description
 		     * A variable to store the boolean result if the element 'fixed' is present in the attr object
@@ -37,8 +37,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 			/**
 		     * @ngdoc property
-		     * @name duration
-		     * @propertyOf core.directive:alerts#duration
+		     * @name core.directive:alerts#duration
+		     * @propertyOf core.directive:alerts
 		     *
 		     * @description
 		     * A variable to store the duration value either from the 'attr' object or the coreConfig alerts 'duration'
@@ -68,8 +68,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			/**
 		     * @ngdoc property
-		     * @name facets
-		     * @propertyOf core.directive:alerts#facets
+		     * @name core.directive:alerts#facets
+		     * @propertyOf core.directive:alerts
 		     *
 		     * @description
 		     * An array variable to store the 'types' and 'channel' attributes from the 'attr' object
@@ -83,8 +83,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			/**
 			 * @ngdoc property
-			 * @name core.directives:alerts#$scope.view
-			 * @propertyOf core.directives:alerts
+			 * @name core.directive:alerts#$scope.view
+			 * @propertyOf core.directive:alerts
 			 *
 			 * @description
 			 * 	A variable to store the 'attr' object 'view' property if present else it points to the 'defaultalert' view
@@ -93,8 +93,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			/**
 			 * @ngdoc property
-			 * @name core.directives:alerts#$scope.alerts
-			 * @propertyOf core.directives:alerts
+			 * @name core.directive:alerts#$scope.alerts
+			 * @propertyOf core.directive:alerts
 			 *
 			 * @description
 			 * 	An array variable to store the alert messages
@@ -103,8 +103,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:alerts#$scope.remove
-			 * @methodOf core.directives:alerts
+			 * @name core.directive:alerts#$scope.remove
+			 * @methodOf core.directive:alerts
 			 * @param {Alert} alert an alert object
 			 * @returns {void} returns void
 			 * 
@@ -119,8 +119,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 			/**
 			 * @ngdoc function
-			 * @name core.directives:alerts#alertIndex
-			 * @methodOf core.directives:alerts
+			 * @name core.directive:alerts#alertIndex
+			 * @methodOf core.directive:alerts
 			 * @param {Alert} id an alert object
 			 * @returns {void} returns void
 			 * 
@@ -135,8 +135,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			/**
 			 * @ngdoc function
-			 * @name core.directives:alerts#handle
-			 * @methodOf core.directives:alerts
+			 * @name core.directive:alerts#handle
+			 * @methodOf core.directive:alerts
 			 * @param {Alert} id an alert object
 			 * @returns {void} returns void
 			 * 

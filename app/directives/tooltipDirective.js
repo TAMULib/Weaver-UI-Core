@@ -36,8 +36,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.tip
-		     * @propertyOf core.directives:tooltip#$scope.tip
+		     * @name core.directive:tooltip#$scope.tip
+		     * @propertyOf core.directive:tooltip
 		     *
 		     * @description
 		     * The $scope.tip variable stores the text message of the tooltip from the 'attr' objects tooltip property.
@@ -46,8 +46,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.tipVisible
-		     * @propertyOf core.directives:tooltip#$scope.tipVisible
+		     * @name core.directive:tooltip#$scope.tipVisible
+		     * @propertyOf core.directive:tooltip
 		     *
 		     * @description
 		     * The $scope.tipVisible variable stores the boolean value depending on whether the $scope.tip variable is displayed or not.
@@ -56,8 +56,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.hidden
-		     * @propertyOf core.directives:tooltip#$scope.hidden
+		     * @name core.directive:tooltip#$scope.hidden
+		     * @propertyOf core.directive:tooltip
 		     *
 		     * @description
 		     * The $scope.hidden variable stores the boolean value 'true' if the tooltip message is displayed and 'false' otherwise.
@@ -66,8 +66,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.showTimer
-		     * @propertyOf core.directive:tooltip#$scope.showTimer
+		     * @name core.directive:tooltip#$scope.showTimer
+		     * @propertyOf core.directive:tooltip
 		     *
 		     * @description
 		     * The $scope.showTimer object uses the $timeout service to execute a function to toggle the boolean values 
@@ -77,8 +77,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.tipStyles
-		     * @propertyOf core.directive:tooltip#$scope.tipStyles
+		     * @name core.directive:tooltip#$scope.tipStyles
+		     * @propertyOf core.directive:tooltip
 		     *
 		     * @description
 		     * The $scope.tipStyles object stores the x and y cordinate values for the 'mousemove' event inorder to display the 
@@ -88,8 +88,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:tooltip#$scope.showTip
-			 * @methodOf core.directives:tooltip
+			 * @name core.directive:tooltip#$scope.showTip
+			 * @methodOf core.directive:tooltip
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -105,8 +105,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:tooltip#$scope.hideTip
-			 * @methodOf core.directives:tooltip
+			 * @name core.directive:tooltip#$scope.hideTip
+			 * @methodOf core.directive:tooltip
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -126,8 +126,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:tooltip#$scope.toggleVisible
-			 * @methodOf core.directives:tooltip
+			 * @name core.directive:tooltip#$scope.toggleVisible
+			 * @methodOf core.directive:tooltip
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -148,8 +148,8 @@ core.directive('tooltip', function ($timeout, $compile) {
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:tooltip#$scope.positionTip
-			 * @methodOf core.directives:tooltip
+			 * @name core.directive:tooltip#$scope.positionTip
+			 * @methodOf core.directive:tooltip
 			 * @param {object} $event an object
 			 * @returns {void} returns void
 			 * 

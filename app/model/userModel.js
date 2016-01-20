@@ -1,21 +1,23 @@
 /**
  *
  * @ngdoc service
- * @name  core.service:AbstractModel
+ * @name  core.service:User
  * @requires AbstractModel
  * @requires WsApi
  * @constructor
  * @param {object} futureData The models data, from the webservice, to be extended onto the model itself.
- * @returns {service} User returns User object
+ * @returns {service} User returns the User service
  * 
  * @example
  * <pre>
- *		myApp.controller('MyController', function ($controller, $scope, User) { }
+ *		myApp.controller('MyController', function (User) { 
+ *			$scope.user = User.get();
+ *		}
  * </pre>
  * 	
  * @description
  *	This User service must be injected into a controller class that require dependency on User model. This model provides
- *  the user credentials to a controller service.
+ *  the user credentials to a controller.
  *  Extends {@link core.model:AbstractModel 'AbstractModel'}
  * 
  */

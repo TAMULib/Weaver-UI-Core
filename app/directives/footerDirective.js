@@ -23,8 +23,8 @@ core.directive('tamufooter', function ($controller) {
 		link: function ($scope, element, attr) {
 			/**
 			 * @ngdoc property
-			 * @name core.directives:tamufooter#$scope.attr
-			 * @propertyOf core.directives:tamufooter
+			 * @name core.directive:tamufooter#$scope.attr
+			 * @propertyOf core.directive:tamufooter
 			 *
 			 * @description
 			 * 	A $scope variable to store the 'attr' object properties

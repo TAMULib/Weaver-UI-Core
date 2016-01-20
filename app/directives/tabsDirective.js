@@ -116,8 +116,8 @@ core.directive("tabview", function(TabService) {
 
 			/**
 		     * @ngdoc property
-		     * @name $scope.path
-		     * @propertyOf core.directive:tabview#$scope.path
+		     * @name core.directive:tabview#$scope.path
+		     * @propertyOf core.directive:tabview
 		     *
 		     * @description
 		     * The $scope.path variable stores the html view of the active tab using the 'TabService'.
@@ -130,7 +130,7 @@ core.directive("tabview", function(TabService) {
 
 /**
  * @ngdoc service
- * @name  core.directive:TabService
+ * @name  core.service:TabService
  * @requires $q
  *
  * @description

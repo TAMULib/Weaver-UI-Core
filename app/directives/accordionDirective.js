@@ -1,7 +1,7 @@
 /**
  * @ngdoc directive
  * @name core.directive:accordion
- * @requires AccordionService
+ * @requires core.service:AccordionService
  * @example
  * The following must be added to your application to use the accordion directive followed by the panes within it
  *	<pre>
@@ -40,7 +40,7 @@ core.directive("accordion", function(AccordionService) {
 
 /**
  * @ngdoc directive
- * @name core.directive:accordion
+ * @name core.directive:pane
  * @restrict 'E'
  * @requires $location
  * @requires $timeout
@@ -77,8 +77,8 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 			
 			/**
 			 * @ngdoc property
-			 * @name core.directives:pane#$scope.query
-			 * @propertyOf core.directives:pane
+			 * @name core.directive:pane#$scope.query
+			 * @propertyOf core.directive:pane
 			 *
 			 * @description
 			 * 	A $scope variable to store the 'query string' tag of pane directive. 
@@ -95,8 +95,8 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:pane#$scope.toggleExpanded
-			 * @methodOf core.directives:pane
+			 * @name core.directive:pane#$scope.toggleExpanded
+			 * @methodOf core.directive:pane
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -109,8 +109,8 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:pane#$scope.open
-			 * @methodOf core.directives:pane
+			 * @name core.directive:pane#$scope.open
+			 * @methodOf core.directive:pane
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -131,8 +131,8 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:pane#$scope.close
-			 * @methodOf core.directives:pane
+			 * @name core.directive:pane#$scope.close
+			 * @methodOf core.directive:pane
 			 * @returns {void} returns void
 			 * 
 			 * @description
@@ -145,8 +145,8 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 
 			/**
 			 * @ngdoc method
-			 * @name core.directives:pane#$scope.close
-			 * @methodOf core.directives:pane
+			 * @name core.directive:pane#$scope.close
+			 * @methodOf core.directive:pane
 			 * @returns {Promise} returns promise
 			 * 
 			 * @description
@@ -165,7 +165,7 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 
 /**
  * @ngdoc service
- * @name  core.directives:AccordionService
+ * @name  core.service:AccordionService
  * @returns {AccordionService} returns AccordionService object
  *
  * @description
@@ -177,17 +177,60 @@ core.service("AccordionService", function() {
 
 	var AccordionService = this;
 
+	/**
+	 * @ngdoc property
+	 * @name core.service:AccordionService#openPanes
+	 * @propertyOf core.service:AccordionService
+	 *
+	 * @description
+	 * 	A private object to store open panes. The key should be the id of the open pane, and the value its close method.
+	 */	  
 	var openPanes = {};
 	
+	/**
+	 * @ngdoc method
+	 * @name core.service:AccordionService#AccordionService.add
+	 * @methodOf core.service:AccordionService
+	 * @param {integer} id The id of the open accrodion pane.
+	 * @param {function} close The close method of the open pane.
+	 * @returns {void} returns void
+	 * 
+	 * @description
+	 * This method adds an Accordion's close method to the openPanes store, using the id as a key.
+	 * 
+	 */
 	AccordionService.add = function(id, close) {
 		openPanes[id] = close;
 		console.log(openPanes);
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name core.service:AccordionService#AccordionService.remove
+	 * @methodOf core.service:AccordionService
+	 * @param {function} close The close method of the open pane.
+	 * @returns {void} returns void
+	 * 
+	 * @description
+	 * This method removes an Accordion's close method to the openPanes store, using the id as a key.
+	 * 
+	 */
 	AccordionService.remove = function(id) {
 		if(openPanes[id]) delete openPanes[id];
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name core.service:AccordionService#AccordionService.closeAll
+	 * @methodOf core.service:AccordionService
+	 * @param {integer=} id An open Accordion pane's id.
+	 * @returns {void} returns void
+	 * 
+	 * @description
+	 * 	This loops over the openPanes store and calls the close method on each member. If an id is passed into it
+	 * 	then that pane will remain open.
+	 * 
+	 */
 	AccordionService.closeAll = function(id) {
 		for(var i in openPanes) {
 			if(id != i)  {

@@ -46,7 +46,7 @@ NG_DOCS={
       "type": "directive",
       "moduleName": "core",
       "shortDescription": "This accordion directive sets the tag &quot;single-expand&quot;=true which ensures that only one pane( one view) can be clicked open ",
-      "keywords": "accordion api application clicked core directive ensures open pane panes service sets single-expand tag time true view"
+      "keywords": "$scope accordion accordionservice allow api application atrribute clicked close closeall core directive element ensures indicated left method open pane panes property returns service set sets single-expand singleexpand tag time true view void"
     },
     {
       "section": "api",

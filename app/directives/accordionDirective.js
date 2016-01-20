@@ -25,6 +25,16 @@ core.directive("accordion", function(AccordionService) {
 		},
 		controller: function($scope)  {
 
+			/**
+			 * @ngdoc method
+			 * @name core.directive:pane#$scope.closeAll
+			 * @methodOf core.directive:accordion
+			 * @param {integer=} id An open Accordion pane's id which you which should be left open.
+			 * @returns {void} returns void
+			 * 
+			 * @description
+			 * 	A method uses the AccordionService to close all open panes. 
+			 */
 			this.closeAll = function(id) {
 				if($scope.singleExpand == "true") AccordionService.closeAll(id);
 			}
@@ -32,6 +42,16 @@ core.directive("accordion", function(AccordionService) {
 		},
 		link: function($scope, element, attr) {
 			
+			/**
+			 * @ngdoc property
+			 * @name core.directive:pane#$scope.singleExpand
+			 * @propertyOf core.directive:accordion
+			 *
+			 * @description
+			 * 	A $scope set from the accordion's element atrribute of the same name. This indicated that the
+			 * 	accordion will only allow one pane open at a time.
+			 * 	 
+			 **/
 			$scope.singleExpand = typeof attr.singleExpand != "undefined" ? attr.singleExpand.toLowerCase() == "true" : false;	
 			
 		}
@@ -208,7 +228,7 @@ core.service("AccordionService", function() {
 	 * @ngdoc method
 	 * @name core.service:AccordionService#AccordionService.remove
 	 * @methodOf core.service:AccordionService
-	 * @param {function} close The close method of the open pane.
+	 * @param {integer} id An open Accordion pane's id.
 	 * @returns {void} returns void
 	 * 
 	 * @description

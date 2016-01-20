@@ -27,6 +27,7 @@ core.service("AssumedControl", function($q, AbstractModel, AuthServiceApi, Stora
 	var initiliazed = false;
 	var set = false;
 	var locked = false;
+	
 	/**
 	 * @constructor
  	 * @param {object} data The models data, from the webservice, to be extended onto the model itself.

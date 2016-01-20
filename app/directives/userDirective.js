@@ -2,7 +2,7 @@
  * @ngdoc directive
  * @name  core.directive:username
  * @restrict 'E'
- * @scope
+ * @scope:true
  *
  * @example
  * <pre>
@@ -26,7 +26,7 @@ core.directive('username', function () {
  * @ngdoc directive
  * @name  core.directive:useremail
  * @restrict 'E'
- * @scope
+ * @scope:true
  *
  * @example
  * <pre>
@@ -50,7 +50,7 @@ core.directive('useremail', function () {
  * @ngdoc directive
  * @name  core.directive:useruin
  * @restrict 'E'
- * @scope
+ * @scope:true
  *
  * @example
  * <pre>
@@ -74,7 +74,7 @@ core.directive('useruin', function () {
  * @ngdoc directive
  * @name  core.directive:useraffiliation
  * @restrict 'E'
- * @scope
+ * @scope:true
  *
  * @example
  * <pre>
@@ -98,7 +98,6 @@ core.directive('useraffiliation', function (WsApi) {
 				}
 				else {
 					$scope.affiliation = "UNKNOWN";
-					console.log($scope.user);
 				}
 			});
 	    }

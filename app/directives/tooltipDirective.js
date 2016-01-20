@@ -24,7 +24,14 @@ core.directive('tooltip', function ($timeout, $compile) {
 		restrict: 'A',
 		scope:true,
 		link: function($scope, elem, attr) {
-			
+			/**
+		     * @ngdoc property
+		     * @name core.directive:tooltip#tipTemplate
+		     * @propertyOf core.directive:tooltip
+		     *
+		     * @description
+		     * This variable provides a template for the tooltip message.
+		     */ 
 			var tipTemplate = 	'<div class="tooltip-wrapper">'+
 									'<div ng-style="tipStyles" class="tip" ng-class="{\'tip-visible\': tipVisible, \'hidden\': hidden}">'+
 										'<div class="tip-point"></div>' +

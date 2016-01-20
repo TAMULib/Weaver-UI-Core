@@ -21,6 +21,7 @@ core.directive('tamufooter', function ($controller) {
 		replace: false,
 		transclude: true,
 		link: function ($scope, element, attr) {
+			
 			/**
 			 * @ngdoc property
 			 * @name core.directive:tamufooter#$scope.attr

@@ -1,7 +1,9 @@
 /**
  * @ngdoc directive
- * @name core.directive:accordion
+ * @name core.directive:accordion 
+ * @restrict 'E'
  * @requires core.service:AccordionService
+ *
  * @example
  * The following must be added to your application to use the accordion directive followed by the panes within it
  *	<pre>

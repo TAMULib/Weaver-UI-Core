@@ -2,7 +2,7 @@
 * @ngdoc directive
 * @name  core.directive:alerts
 * @restrict 'E'
-* @requires AlertService
+* @requires core.service:AlertService
 * @requires $controller
 * @requires $rootScope
 * @requires $timeout
@@ -13,7 +13,7 @@
 * </pre>
 * 
 * @description 
-* The alerts element directive is used to provide alert messages based on the alert types in your application. Extends {@link core.controller:AbstractController 'AbstractController'}
+* The alerts element directive provides alert messages based on the alert types in your application. Extends {@link core.controller:AbstractController 'AbstractController'}
 * 
 */
 core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
@@ -25,6 +25,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		link: function ($scope, element, attr) {
 
 			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+
 		    /**
 		     * @ngdoc property
 		     * @name core.directive:alerts#fixed
@@ -45,7 +46,24 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     */
 			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
 			
+			/**
+		     * @ngdoc property
+		     * @name core.directive:alerts#types
+		     * @propertyOf core.directive:alerts
+		     *
+		     * @description
+		     * This 'types' array variabble stores the type of alert messages from the 'attr' object 'types' property.
+		     */
 			var types = [];
+
+			/**
+		     * @ngdoc property
+		     * @name core.directive:alerts#channels
+		     * @propertyOf core.directive:alerts
+		     *
+		     * @description
+		     * This 'channel' array variabble stores the type of alert messages from the 'attr' object 'channels' property.
+		     */
 			var channels = [];
 
 			if(attr.types) {
@@ -109,7 +127,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			 * @returns {void} returns void
 			 * 
 			 * @description
-			 * 	A method utilizing 'AlertService' to remove the 'alert' object.
+			 * 	This method uses the $timeout service to invoke the 'AlertService' to remove 'alert' 'after the 'duration' provided.
 			 */
 			$scope.remove = function(alert) {
 				$timeout(function() {
@@ -118,14 +136,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			};
 			
 			/**
-			 * @ngdoc function
+			 * @ngdoc method
 			 * @name core.directive:alerts#alertIndex
 			 * @methodOf core.directive:alerts
 			 * @param {Alert} id an alert object
 			 * @returns {void} returns void
 			 * 
 			 * @description
-			 * 	A method to return 'alert' object based on the 'id' passed on to $scope.alerts object
+			 * 	A method to return specific 'alert' based on the 'id' passed on the $scope.alerts object
 			 */	
 			var alertIndex = function(id) {
 				for(var i in $scope.alerts) {
@@ -134,10 +152,10 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			};
 
 			/**
-			 * @ngdoc function
+			 * @ngdoc method
 			 * @name core.directive:alerts#handle
 			 * @methodOf core.directive:alerts
-			 * @param {Alert} id an alert object
+			 * @param {Alert} alert an Alert object
 			 * @returns {void} returns void
 			 * 
 			 * @description

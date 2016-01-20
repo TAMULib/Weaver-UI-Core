@@ -25,18 +25,58 @@ core.directive("tabs", function() {
 			target: "@target"
 		},
 		controller: function($scope, $location, $routeParams, TabService) {
+
+			/**
+			 * @ngdoc method
+			 * @name core.directive:tabs#activeTab
+			 * @methodOf core.directive:tabs
+			 * @param {string=} tab A string variable to be assigned to $routeParams.tab.
+			 * @returns {void} returns void
+			 * 
+			 * @description
+			 *  This method uses $routeParams service to return the route parameters for string 'tab' provided.
+			 */
 			this.activeTab = function(tab) {				
 				return $routeParams.tab == tab;
 			}
 
+            /**
+			 * @ngdoc method
+			 * @name core.directive:tabs#setActive
+			 * @methodOf core.directive:tabs
+			 * @param {string=} tab A string variable to be assigned to $routeParams.tab.
+			 * @param {string=} html A string variable used by 'TabService' to setTab
+			 * @returns {void} returns void
+			 * 
+			 * @description
+			 *  This method uses $location service to update the url based on the string 'tab' paased and TabService to set
+			 *  tab based on seetingView and html passed on to it.
+			 */
 			this.setActive = function(tab, html) {
 				$location.url("/admin/settings/"+tab);
 				TabService.setTab($scope.target, html);
 			}
 
+			/**
+			 * @ngdoc property
+			 * @name core.directive:tabs#target
+			 * @propertyOf core.directive:tabs
+			 *
+			 * @description
+			 * 	A variable to store the settingsView target from the $scope.target variable.
+			 **/
 			this.target = $scope.target;
 		},
-		link: function ($scope, element, attr) {	    	
+		link: function ($scope, element, attr) {
+
+			/**
+			 * @ngdoc property
+			 * @name core.directive:tabs#$scope.target
+			 * @propertyOf core.directive:tabs
+			 *
+			 * @description
+			 * 	This variable stores the tabs element directive 'attr.target' value on to the scope of link function.
+			 **/	    	
 			$scope.target = attr.target;
 	    }
 	};
@@ -47,7 +87,7 @@ core.directive("tabs", function() {
 * @name  core.directive:tab
 * @restrict 'E'
 * @scope:true
-* @requires TabService
+* @requires core.service:TabService
 *
 * @example
 * <pre>
@@ -74,6 +114,14 @@ core.directive("tab", function(TabService) {
 			angular.extend($scope, parent);
 			angular.extend($scope, attr);
 
+			/**
+			 * @ngdoc property
+			 * @name core.directive:tab#$scope.tab
+			 * @propertyOf core.directive:tab
+			 *
+			 * @description
+			 * 	This variable stores the string value of tab on the scope of link function.
+			 **/
 			$scope.tab = $scope.path;
 
 			if($scope.activeTab($scope.tab)) {
@@ -89,7 +137,7 @@ core.directive("tab", function(TabService) {
 * @name  core.directive:tabview
 * @restrict 'E'
 * @scope:true
-* @requires TabService
+* @requires core.service:TabService
 *
 * @example
 * <pre>
@@ -141,12 +189,43 @@ core.directive("tabview", function(TabService) {
 core.service("TabService", function($q) {
 
 	var TabService = this;
+	/**
+	 * @ngdoc property
+	 * @name core.service:TabService#tabs
+	 * @propertyOf core.service:TabService
+	 *
+	 * @description
+	 * 	A private object to store the target view and the html location to be rendered.
+	 */
 	var tabs = {};
 
+	/**
+	 * @ngdoc method
+	 * @name core.service:TabService#TabService.getTab
+	 * @methodOf core.service:TabService
+	 * @param {string} target an html view.
+	 * @returns {string} returns string
+	 * 
+	 * @description
+	 * This method returns the html view based on the target value passed.
+	 * 
+	 */
 	TabService.getTab = function(target){
 		return tabs[target];
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name core.service:TabService#TabService.setTab
+	 * @methodOf core.service:TabService
+	 * @param {string} target an html view.
+	 * @param {string} html html file .
+	 * @returns {void} returns void
+	 * 
+	 * @description
+	 * This method sets html view for tabs[target] based on the target value passed.
+	 * 
+	 */
 	TabService.setTab = function(target, html){
 		tabs[target] = html;
 	};	

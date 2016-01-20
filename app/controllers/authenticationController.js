@@ -20,6 +20,7 @@
 core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+    
     /**
      * @ngdoc method
      * @name core.controller:AuthenticationController#$scope.login

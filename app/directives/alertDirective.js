@@ -18,7 +18,7 @@
 */
 core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
 	return {
-		template: '<ul class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
+		template: '<ul ng-if="alerts.length > 0" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
 		replace: false,
 		scope: {},
@@ -84,6 +84,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			}
 
+<<<<<<< HEAD
 			/**
 		     * @ngdoc property
 		     * @name core.directive:alerts#facets
@@ -92,11 +93,15 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     * @description
 		     * An array variable to store the 'types' and 'channel' attributes from the 'attr' object
 		     */			
+=======
+>>>>>>> di-challenge-staging
 			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 
+			var exclusive = typeof attr.exclusive != 'undefined';
+			
 			var timers = {};
 
 			/**
@@ -164,7 +169,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			var handle = function(alert) {
 				if(alert.remove) {
 					alert.fade = true;
-					$timeout(function() {							
+					$timeout(function() {
 						$scope.alerts.splice(alertIndex(alert.id), 1);
 					}, 350);
 				}
@@ -179,13 +184,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 					}
 				}
 			};
-			
+
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				var alerts = AlertService.get(facets[i]);
+				var alerts = AlertService.get(facets[i], exclusive);
+
 				if(alerts.defer) {
-					for(var i in alerts.list) {
-						handle(alerts.list[i]);
+					for(var j in alerts.list) {
+						handle(alerts.list[j]);
 					}
 					alerts.defer.promise.then(function(alert){ 
 							// resolved

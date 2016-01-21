@@ -27,7 +27,7 @@ core.directive('tamuheader', function ($controller) {
 			 * @propertyOf core.directive:tamuheader
 			 *
 			 * @description
-			 * 	A $scope variable 'title' to store the 'title property of the 'attr' object
+			 * 	A $scope variable 'title' to store the 'title' property of the 'attr' object
 			 */	        	
 			$scope.title = attr.title;
 	    }

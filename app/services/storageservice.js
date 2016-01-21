@@ -1,3 +1,13 @@
+/**
+ * @ngdoc service
+ * @name  core.service:StorageService
+ * @requires ng.$q
+ * @requires core.service:AbstractModel
+ *
+ * @description
+ * 	An angular service wraper for local and session storage.
+ * 
+ */
 core.service("StorageService",function($q, AbstractModel) { 
 	
 	var StorageService = this;
@@ -8,16 +18,50 @@ core.service("StorageService",function($q, AbstractModel) {
 		self.unwrap(self, futureData);
 	};
 	
+	/**
+	 * @ngdoc property
+	 * @name  core.service:StorageService#StorageService.storage
+	 * @propertyOf core.service:StorageService
+	 *
+	 * @description
+	 *  An object store for both local and session storage.
+	 * 
+	 */
 	StorageService.storage = {
 		'session': window['sessionStorage'],
 		'local': window['localStorage']
 	} 
 
+	/**
+	 * @ngdoc property
+	 * @name  core.service:StorageService#StorageService.keys
+	 * @propertyOf core.service:StorageService
+	 *
+	 * @description
+	 *  The in memory store of session and local storage key/value pares.
+	 * 
+	 */
 	StorageService.keys = {
 		'session': {},
 		'local': {}
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:StorageService#StorageService.set
+	 * @methodOf core.service:StorageService
+	 * @param {string} key 
+	 *  The key which you would like to persist in browser storage.
+	 * @param {string} value 
+	 *  The value to persist in browser storage
+	 * @param {string=} type
+	 *  An optional override to the default browser storage, which
+	 *  will be local or session.
+	 *
+	 * @description
+	 *  A setter for browser storage.
+	 * 
+	 */
 	StorageService.set = function(key, value, type) {
 		if(!type) {
 			type = appConfig.storageType;
@@ -29,6 +73,20 @@ core.service("StorageService",function($q, AbstractModel) {
 		StorageService.keys[type][key].notify(StorageService.storage[type][key]);
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:StorageService#StorageService.get
+	 * @methodOf core.service:StorageService
+	 * @param {string} key 
+	 *  The key for the value you wish to return from browser storage.
+	 * @param {string=} type
+	 *  An optional override to the default browser storage, which
+	 *  will be local or session.
+	 *  
+	 * @description
+	 *  A getter for values browser storage.
+	 * 
+	 */
 	StorageService.get = function(key, type) {
 		if(!type) {
 			type = appConfig.storageType;
@@ -36,6 +94,23 @@ core.service("StorageService",function($q, AbstractModel) {
 		return StorageService.storage[type][key];
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:StorageService#StorageService.listen
+	 * @methodOf core.service:StorageService
+	 * @param {string} key 
+	 *  The key for the value you wish to listen for.
+	 * @param {string=} type
+	 *  An optional override to the default browser storage, which
+	 *  will be local or session.
+	 * @returns {Promise} returns a promise notified on the change 
+	 *  of the indicated browser storage value.
+	 *  
+	 * @description
+	 *  A listener which provides a promise for the updating
+	 *  of the designated browser storage value.
+	 * 
+	 */
 	StorageService.listen = function(key, type) {
 		if(!type) {
 			type = appConfig.storageType;
@@ -47,6 +122,20 @@ core.service("StorageService",function($q, AbstractModel) {
 		return data;
 	}
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:StorageService#StorageService.delete
+	 * @methodOf core.service:StorageService
+	 * @param {string} key 
+	 *  The key for the value you wish to delete.
+	 * @param {string=} type
+	 *  An optional override to the default browser storage, which
+	 *  will be local or session.
+	 *  
+	 * @description
+	 *  Deletes a value from browser storage.
+	 * 
+	 */
 	StorageService.delete = function(key, type) {
 		if(!type) {
 			type = appConfig.storageType;

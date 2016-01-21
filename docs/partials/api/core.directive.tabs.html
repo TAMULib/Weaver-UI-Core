@@ -11,6 +11,34 @@ url path as per the tab provided. The $routeParams retrieves the route informati
 <div class="usage">as element:<pre class="prettyprint linenums">&lt;tabs&gt;
 &lt;/tabs&gt;</pre>
 </div>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_activetab">activeTab(tab)</h3>
+<div class="activetab"><div class="core-directive-page core-directive-tabs-activetab-page"><p>This method uses $routeParams service to return the route parameters for string &#39;tab&#39; provided.</p>
+</div><h5 id="methods_activetab_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>tab <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-directive-page core-directive-tabs-activetab-page"><p>A string variable to be assigned to $routeParams.tab.</p>
+</div></td></tr></tbody></table><h5 id="methods_activetab_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tabs-activetab-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_setactive">setActive(tab, html)</h3>
+<div class="setactive"><div class="core-directive-page core-directive-tabs-setactive-page"><p>This method uses $location service to update the url based on the string &#39;tab&#39; paased and TabService to set
+tab based on seetingView and html passed on to it.</p>
+</div><h5 id="methods_setactive_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>tab <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-directive-page core-directive-tabs-setactive-page"><p>A string variable to be assigned to $routeParams.tab.</p>
+</div></td></tr><tr><td>html <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-directive-page core-directive-tabs-setactive-page"><p>A string variable used by &#39;TabService&#39; to setTab</p>
+</div></td></tr></tbody></table><h5 id="methods_setactive_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tabs-setactive-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_$scopetarget">$scope.target</h3>
+<div class="$scopetarget"><div class="core-directive-page core-directive-tabs-scope-target-page"><p>This variable stores the tabs element directive &#39;attr.target&#39; value on to the scope of link function.</p>
+</div></div>
+</li>
+<li><h3 id="properties_target">target</h3>
+<div class="target"><div class="core-directive-page core-directive-tabs-target-page"><p>A variable to store the settingsView target from the $scope.target variable.</p>
+</div></div>
+</li>
+</ul>
+</div>
 <h2 id="example">Example</h2>
 <div class="example"><div class="core-directive-page core-directive-tabs-page"><pre class="prettyprint linenums">
 &lt;tabs target="settingsView"&gt;

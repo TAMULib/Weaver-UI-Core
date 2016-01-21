@@ -26,9 +26,11 @@ core.service("User", function(AbstractModel, WsApi) {
 	var self;
 
 	/**
-	 * @constructor
- 	 * @param {object} futureData The models data, from the webservice, to be extended onto the model itself.
- 	 * @returns {service} User returns User object
+	 * @ngdoc method
+	 * @name  core.service:User#User
+	 * @methodOf core.service:User
+ 	 * @param {object} futureData 
+ 	 *  The models data, from the webservice, to be extended onto the model itself.
  	 * 
  	 * @description
 	 * 	The constructor for the User Service.

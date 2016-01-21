@@ -1,7 +1,29 @@
+/**
+ * @ngdoc service
+ * @name  core.service:AuthServiceApi
+ * @requires ng.$http
+ * @requires ng.$timeout
+ * @requires core.service:StorageService
+ *
+ * @description
+ *  The service which handles all communication with the Authorization webservice.
+ * 
+ */
 core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
     var AuthServiceApi = this;
 
+    /**
+     * @ngdoc method
+     * @name core.service:AuthServiceApi#getAssumedUser
+     * @methodOf core.service:AuthServiceApi
+     * @param {object} assume
+     *  Object containing information about the assumed user.
+     *
+     * @description 
+     *  A request to the Auth webservice for an assumed user.
+     * 
+     */
     AuthServiceApi.getAssumedUser = function(assume, cb) {
         if (!AuthServiceApi.pendingRefresh) {
             AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
@@ -23,6 +45,17 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
         return AuthServiceApi.pendingRefresh;
     };
 
+    /**
+     * @ngdoc method
+     * @name core.service:AuthServiceApi#getRefreshToken
+     * @methodOf core.service:AuthServiceApi
+     * @param {function} cb
+     *  A callback
+     *
+     * @description 
+     *  A request for a refresh token.
+     * 
+     */
     AuthServiceApi.getRefreshToken = function(cb) {
 
         var url = appConfig.authService+"/refresh";

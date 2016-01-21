@@ -3,9 +3,9 @@
 * @name  core.directive:alerts
 * @restrict 'E'
 * @requires core.service:AlertService
-* @requires $controller
-* @requires $rootScope
-* @requires $timeout
+* @requires ng.$controller
+* @requires ng.$rootScope
+* @requires ng.$timeout
 *
 * @example
 * <pre>

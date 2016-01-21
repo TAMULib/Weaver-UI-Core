@@ -29,7 +29,7 @@ core.directive("accordion", function(AccordionService) {
 
 			/**
 			 * @ngdoc method
-			 * @name core.directive:pane#$scope.closeAll
+			 * @name core.directive:accordion#$scope.closeAll
 			 * @methodOf core.directive:accordion
 			 * @param {integer=} id An open Accordion pane's id which you which should be left open.
 			 * @returns {void} returns void
@@ -46,7 +46,7 @@ core.directive("accordion", function(AccordionService) {
 			
 			/**
 			 * @ngdoc property
-			 * @name core.directive:pane#$scope.singleExpand
+			 * @name core.directive:accordion#$scope.singleExpand
 			 * @propertyOf core.directive:accordion
 			 *
 			 * @description
@@ -64,10 +64,10 @@ core.directive("accordion", function(AccordionService) {
  * @ngdoc directive
  * @name core.directive:pane
  * @restrict 'E'
- * @requires $location
- * @requires $timeout
- * @requires $anchorScroll
- * @requires AccordionService
+ * @requires ng.$location
+ * @requires ng.$timeout
+ * @requires ng.$anchorScroll
+ * @requires core.service:AccordionService
  * @example
  * The following must be added to your application to use the accordion directive followed by the panes within it
  *	<pre>
@@ -188,7 +188,7 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 /**
  * @ngdoc service
  * @name  core.service:AccordionService
- * @returns {AccordionService} returns AccordionService object
+ * @returns {core.service:AccordionService} returns AccordionService object
  *
  * @description
  * 	The AccordionService can add remove panes from the 'openPanes' list using the 'paneID' passed as an argument.

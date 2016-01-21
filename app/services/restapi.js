@@ -1,8 +1,8 @@
 /**
  * @ngdoc service
  * @name  core.service:RestApi
- * @requires $http
- * @requires $window
+ * @requires ng.$http
+ * @requires ng.$window
  * @requires core.service:AuthServiceApi
  *
  * @description
@@ -42,11 +42,13 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 	 * @ngdoc method
 	 * @name core.service:RestApi#anonymousGet
 	 * @methodOf core.service:RestApi
-	 * @param {object} req a request object
+	 * 
+	 * @param {object} req 
+	 * 	a request object
 	 * @returns {Promise} returns a promise
 	 * 
 	 * @description
-	 *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUSE'.
+	 *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
 	 */
 	this.anonymousGet = function(req) {
 

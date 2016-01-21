@@ -1,7 +1,33 @@
+/**
+ * @ngdoc service
+ * @name  core.service:WsApi
+ * @requires ng.$q
+ * @requires ng.$http
+ * @requires core.service:wsservice
+ * @requires core.service:AuthServiceApi
+ *
+ * @description
+ *  A service wrapper for the webservices api.
+ * 
+ */
 core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 
 	var WsApi = this;
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:WsApi#WsApi.listen
+	 * @methodOf core.service:WsApi
+	 * @param {object} apiReq
+	 *  An apireq which containes the channel, controller and method
+	 *  which should be listened to.
+	 * @returns {Promsie} A promise from a websocket subscription subscription
+	 *  
+	 * @description 
+	 *  This method gives a promise which is notified upon 
+	 *  websocket communication on the desired channel
+	 * 
+	 */
 	WsApi.listen = function(apiReq) {
 		var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
 		var channel = apiReq.endpoint + "/" + apiReq.controller;
@@ -12,6 +38,20 @@ core.service("WsApi", function($q, $http, wsservice, AuthServiceApi) {
 		return wsservice.subscribe(channel);
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:WsApi#WsApi.fetch
+	 * @methodOf core.service:WsApi
+	 * @param {object} apiReq
+	 *  An apireq which containes the channel, controller and method
+	 *  which should be listened to.
+	 * @returns {Promsie} A promise from the wsservice send method
+	 *  
+	 * @description 
+	 *  This method gives a promise which is resolved by id upon 
+	 *  websocket communication on the desired channel
+	 * 
+	 */
 	WsApi.fetch = function(apiReq) {
 
 		var request = '/ws/' + apiReq.controller + '/' + apiReq.method;	  

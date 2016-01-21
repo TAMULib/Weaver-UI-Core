@@ -6,13 +6,6 @@
  * @requires $scope
  * @requires $window
  * @requires core.service:User
- *
- * @example
- * The following must be added to authentication controller for it to extend AbstractController.Extends {@link core.controller:AbstractController 'AbstractController'}
- *  <pre>
- *      angular.extend(this, $controller('AbstractController', {$scope: $scope}));
- *  </pre>
- *
  * @example
  *  <pre>
  *      <element ng-controller="AuthenticationController"></element>
@@ -21,11 +14,13 @@
  * @description
  *  This authentication controller contains login and logout methods. These methods based on user credentials 
  *  will modify the user role and provide the necessary token to navigate to pages which require access based on roles.
+ *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
 core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+    
     /**
      * @ngdoc method
      * @name core.controller:AuthenticationController#$scope.login

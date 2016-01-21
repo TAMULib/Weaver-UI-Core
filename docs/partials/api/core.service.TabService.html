@@ -1,0 +1,37 @@
+<h1><code ng:non-bindable="">TabService</code>
+<div><span class="hint">service in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-service-page core-service-tabservice-page"><p>The TabService assists the tabs directive, tab directive and the tabview directive to set and retrieve the active tab and to render the specific html view based on the settingsView target.<br>This uses the $q service to asynchronously execute the setTab and getTab methods and return the specific values
+once the processing is completed.</p>
+</div></div>
+<h2 id="dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ng.$q">$q</a></code>
+</li>
+</ul>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_tabservicegettab">TabService.getTab(target)</h3>
+<div class="tabservicegettab"><div class="core-service-page core-service-tabservice-tabservice-gettab-page"><p>This method returns the html view based on the target value passed.</p>
+</div><h5 id="methods_tabservicegettab_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>target</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-tabservice-tabservice-gettab-page"><p>an html view.</p>
+</div></td></tr></tbody></table><h5 id="methods_tabservicegettab_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-tabservice-tabservice-gettab-page"><p>returns string</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_tabservicesettab">TabService.setTab(target, html)</h3>
+<div class="tabservicesettab"><div class="core-service-page core-service-tabservice-tabservice-settab-page"><p>This method sets html view for tabs[target] based on the target value passed.</p>
+</div><h5 id="methods_tabservicesettab_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>target</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-tabservice-tabservice-settab-page"><p>an html view.</p>
+</div></td></tr><tr><td>html</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-tabservice-tabservice-settab-page"><p>html file .</p>
+</div></td></tr></tbody></table><h5 id="methods_tabservicesettab_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-service-page core-service-tabservice-tabservice-settab-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_tabs">tabs</h3>
+<div class="tabs"><div class="core-service-page core-service-tabservice-tabs-page"><p>A private object to store the target view and the html location to be rendered.</p>
+</div></div>
+</li>
+</ul>
+</div>
+</div>

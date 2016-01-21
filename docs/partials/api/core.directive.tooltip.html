@@ -1,0 +1,86 @@
+<h1><code ng:non-bindable="">tooltip</code>
+<div><span class="hint">directive in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-directive-page core-directive-tooltip-page"><p>The tooltip element directive uses $timeout and $compile services. It has showTip hideTip 
+This directive uses $compile services that compiles &#39;tipTemplate&#39; variable into a template and produces a template function,
+which can then be linked to &#39;$scope&#39; and the template. This is then appended to the html body</p>
+</div></div>
+<h2 id="dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ng.$timeout">$timeout</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ng.$compile">$compile</a></code>
+</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<div class="usage">as attribute<pre class="prettyprint linenums">&lt;ANY tooltip&gt;
+   ...
+&lt;/ANY&gt;</pre>
+</div>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_$scopehidetip">$scope.hideTip()</h3>
+<div class="$scopehidetip"><div class="core-directive-page core-directive-tooltip-scope-hidetip-page"><p>This method will use the $timeout service to cancel the tooltip message display,will set the boolean
+value of $scope.tipVisible to false and executes a function to set the boolean value of $scope.hidden boolean 
+variable to true.</p>
+</div><h5 id="methods_$scopehidetip_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tooltip-scope-hidetip-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_$scopepositiontip">$scope.positionTip($event)</h3>
+<div class="$scopepositiontip"><div class="core-directive-page core-directive-tooltip-scope-positiontip-page"><p>This method stores X and Y cordinates of the mouse move event and is stored on to $scope.tipStyles[&quot;top&quot;] 
+and $scope.tipStyles[&quot;left&quot;] variables respectively to aid display of the tooltip  message in that position.</p>
+</div><h5 id="methods_$scopepositiontip_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>$event</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-directive-page core-directive-tooltip-scope-positiontip-page"><p>an object</p>
+</div></td></tr></tbody></table><h5 id="methods_$scopepositiontip_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tooltip-scope-positiontip-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_$scopeshowtip">$scope.showTip()</h3>
+<div class="$scopeshowtip"><div class="core-directive-page core-directive-tooltip-scope-showtip-page"><p>This method will set the $scope.hidden boolean value to false and will use the $timeout service to display
+the tooltip message for the duration of 500msec.</p>
+</div><h5 id="methods_$scopeshowtip_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tooltip-scope-showtip-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_$scopetogglevisible">$scope.toggleVisible()</h3>
+<div class="$scopetogglevisible"><div class="core-directive-page core-directive-tooltip-scope-togglevisible-page"><p>This method will use $timeout to cancel the tooltip message display and toggle the boolean values for 
+*scope.tipVisible and $scope.hidden variables.</p>
+</div><h5 id="methods_$scopetogglevisible_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-tooltip-scope-togglevisible-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_$scopehidden">$scope.hidden</h3>
+<div class="$scopehidden"><div class="core-directive-page core-directive-tooltip-scope-hidden-page"><p>The $scope.hidden variable stores the boolean value &#39;true&#39; if the tooltip message is displayed and &#39;false&#39; otherwise.</p>
+</div></div>
+</li>
+<li><h3 id="properties_$scopeshowtimer">$scope.showTimer</h3>
+<div class="$scopeshowtimer"><div class="core-directive-page core-directive-tooltip-scope-showtimer-page"><p>The $scope.showTimer object uses the $timeout service to execute a function to toggle the boolean values 
+of $scope.tipVisible and $scope.hidden variables depending on the duration provided in the function.</p>
+</div></div>
+</li>
+<li><h3 id="properties_$scopetip">$scope.tip</h3>
+<div class="$scopetip"><div class="core-directive-page core-directive-tooltip-scope-tip-page"><p>The $scope.tip variable stores the text message of the tooltip from the &#39;attr&#39; objects tooltip property.</p>
+</div></div>
+</li>
+<li><h3 id="properties_$scopetipstyles">$scope.tipStyles</h3>
+<div class="$scopetipstyles"><div class="core-directive-page core-directive-tooltip-scope-tipstyles-page"><p>The $scope.tipStyles object stores the x and y cordinate values for the &#39;mousemove&#39; event inorder to display the 
+tooltip text message.</p>
+</div></div>
+</li>
+<li><h3 id="properties_$scopetipvisible">$scope.tipVisible</h3>
+<div class="$scopetipvisible"><div class="core-directive-page core-directive-tooltip-scope-tipvisible-page"><p>The $scope.tipVisible variable stores the boolean value depending on whether the $scope.tip variable is displayed or not.</p>
+</div></div>
+</li>
+<li><h3 id="properties_tiptemplate">tipTemplate</h3>
+<div class="tiptemplate"><div class="core-directive-page core-directive-tooltip-tiptemplate-page"><p>This variable provides a template for the tooltip message.</p>
+</div></div>
+</li>
+</ul>
+</div>
+<h2 id="example">Example</h2>
+<div class="example"><div class="core-directive-page core-directive-tooltip-page"><pre class="prettyprint linenums">
+&lt;tooltip title="The tooltip message"&gt;
+&lt;/tooltip&gt;
+</pre>
+</div></div>
+</div>

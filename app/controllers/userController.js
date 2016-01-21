@@ -10,11 +10,6 @@
  *	<pre>
  *		<element ng-controller="UserController"></element>
  *	</pre>
- * @example
- * The following must be added to authentication controller for it to extend AbstractController.Extends {@link core.controller:AbstractController 'AbstractController'}
- *  <pre>
- *      angular.extend(this, $controller('AbstractController', {$scope: $scope}));
- *  </pre>
  *
  * @description 
  *	This controller sets the user's role in session storage. Extends {@link core.controller:AbstractController 'AbstractController'}

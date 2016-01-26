@@ -279,10 +279,10 @@ footer a, footer li, footer p {
   width: 0px;
   overflow: hidden;
   background: rgb(31, 58, 71);
-  background: -moz-linear-gradient linear-gradient(to right, rgba(31, 58, 71, 0.95), rgba(80, 114, 129, 0.95));
-  background: -webkit-linear-gradient(to right, rgba(31, 58, 71, 0.95), rgba(80, 114, 129, 0.95));
-  background: -ms-linear-gradient(to right, rgba(31, 58, 71, 0.95), rgba(80, 114, 129, 0.95));
-  background: linear-gradient(to right, rgba(31, 58, 71, 0.95), rgba(80, 114, 129, 0.95));
+  background: -moz-linear-gradient linear-gradient(to right, rgba(60, 0, 0, 0.95), rgba(80, 0, 0, 0.95));
+  background: -webkit-linear-gradient(to right, rgba(60, 0, 0, 0.95), rgba(80, 0, 0, 0.95));
+  background: -ms-linear-gradient(to right, rgba(60, 0, 0, 0.95), rgba(80, 0, 0, 0.95));
+  background: linear-gradient(to right, rgba(60, 0, 0, 0.95), rgba(80, 0, 0, 0.95));
   border-top-left-radius:3px;
   -webkit-transition: width 0.5s ease-out;
   transition: width 0.5s ease-out;

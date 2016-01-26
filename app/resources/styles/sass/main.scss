@@ -1,6 +1,5 @@
 html {
     height: 100%;
-    font-size: $baseFontSize;
 }
 
 body {
@@ -10,10 +9,6 @@ body {
 
 *, :after, :before {
   box-sizing: border-box;
-}
-
-a {
-  color: $linkColor;
 }
 
 nav {
@@ -47,10 +42,6 @@ nav>li>a {
   text-align: center;
 }
 
-.global-nav, .global-nav .top-bar {
-  background: $secondary;
-}
-
 .global-nav li {
   border-right: 1px solid #6a0000;
   margin-left: 0;
@@ -71,11 +62,9 @@ nav>li>a {
 
 .global-nav li a:hover {
   text-decoration: none;
-  background: $primary;
 }
 
 .site-title {
-  background: $primary;
   border-top: 1px solid #8d8d8d;
   margin-right: auto;
   margin-left: auto;
@@ -135,7 +124,6 @@ nav>li>a {
   padding-top: 19px;
   color: #777;
   border-top: 1px solid #ccc;
-  background: $secondary;
   padding: 20px 0 0;
   width: 100%;
 }

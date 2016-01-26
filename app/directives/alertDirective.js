@@ -84,7 +84,6 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 			}
 
-<<<<<<< HEAD
 			/**
 		     * @ngdoc property
 		     * @name core.directive:alerts#facets
@@ -93,13 +92,19 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     * @description
 		     * An array variable to store the 'types' and 'channel' attributes from the 'attr' object
 		     */			
-=======
->>>>>>> di-challenge-staging
 			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
 
+			/**
+		     * @ngdoc property
+		     * @name core.directive:alerts#exclusive
+		     * @propertyOf core.directive:alerts
+		     *
+		     * @description
+		     * A boolean which determines if this alert will be the only one to recieve messages on the specified channel
+		     */	
 			var exclusive = typeof attr.exclusive != 'undefined';
 			
 			var timers = {};

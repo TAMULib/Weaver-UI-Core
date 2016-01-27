@@ -1,0 +1,23 @@
+html {
+    font-size: $baseFontSize;
+}
+
+.global-nav, .global-nav .top-bar {
+  background: $secondary;
+}
+
+.global-nav li a:hover {
+  background: $primary;
+}
+
+.site-title {
+  background: $primary;
+}
+
+.footer {
+  background: $secondary;
+}
+
+a {
+  color: $linkColor;
+}

@@ -1,3 +1,11 @@
+/**
+ * @ngdoc object
+ * @name  coreConfig
+ * 
+ * @description
+ *	A configuration object that is included in {@link core 'core'} as a constant
+ * 
+ */
 var coreConfig = { 
 
 	'version': 0.1,

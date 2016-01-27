@@ -1,17 +1,31 @@
+/**
+ * @ngdoc service
+ * @name  core.service:Utility
+ *
+ * @description 
+ *  A utility service for custom implementations of common tasks.
+ * 
+ */
 core.service("Utility",function() {
 
 	var Utility = this;
 
-	/*
-	 *	Filter
-	 *	
-	 *	@param objList		the list of objects to be filtered
-	 *	@param properties	the properties of the object to filter against
-	 *	@param target		the target facet to filter for
-	 *	@param position		optional argument in which to filter at a specific position in the property
+	/**
+	 * @ngdoc method
+	 * @name core.service:Utility#Utility.filter
+	 * @methodOf core.service:Utility
+	 * @param {array} objList		
+	 *  the list of objects to be filtered
+	 * @param {array} properties	
+	 *  the properties of the object to filter against
+	 * @param {string} target		
+	 *  the target facet to filter for
+	 * @param {number=} position		
+	 *  optional argument in which to filter at a specific position in the property
+	 * @returns {array} returns filtered list of objects
 	 *
-	 *	@returns filtered list of objects
-	 *
+	 * @description 
+	 * A filter utility.
 	 */
 	Utility.filter = function(objList, properties, target, position) {
 
@@ -104,16 +118,24 @@ core.service("Utility",function() {
 
 	};
 
-	/*
-	 *	Binary Search
-	 *	
-	 *	@param objList		the list of objects to be searched
-	 *	@param property		the property of the object to searching against
-	 *	@param ordered		whether the list if ordered by the specified property
-	 *	@param target		the target searching for
-	 *	@param position		optional argument in which to search at a specific position in the property
+	/**
+	 *	@ngdoc method
+	 *	@name  core.service:Utility#Utility.search
+	 *	@methodOf core.service:Utility
+	 *	@param {array} objList		
+	 *	 the list of objects to be searched
+	 *	@param {string} property		
+	 *	 the property of the object to searching against
+	 *	@param {boolean} ordered		
+	 *	 whether the list if ordered by the specified property
+	 *	@param {string} target		
+	 *	 the target searching for
+	 *  @param {number=} position		
+	 *	 optional argument in which to search at a specific position in the property
+	 *	@returns {object} returns the target object
 	 *
-	 *	@returns the target object
+	 * @description
+	 *  A binary search utility
 	 *
 	 */
 	Utility.search = function(objList, property, ordered, target, position) {
@@ -177,13 +199,21 @@ core.service("Utility",function() {
 
 	};
 
-	/*
-	 *	Quck Sort
-	 *
-	 *	@param objList		the list of objects to be sorted
-	 *	@param property		the property of the object to sort against
-	 *	@param position		optional argument in which to sort at a specific position in the property
-	 *
+	/**
+	 *	@ngdoc method
+	 *	@name  core.service:Utility#Utility.quickSort
+	 *	@methodOf core.service:Utility
+	 *  @param {array} objList		
+	 *	 the list of objects to be sorted
+	 *	@param {string} property		
+	 *	 the property of the object to sort against
+	 *	@param {number=} position		
+	 *	 optional argument in which to sort at a specific position in the property
+	 *	@returns {array} returns the sorted list of objects.
+	 * 
+	 * @description
+	 *  A quicksort utility.
+	 * 
 	 */
 	Utility.quickSort = function(objList, property, isNumber, position) {
 

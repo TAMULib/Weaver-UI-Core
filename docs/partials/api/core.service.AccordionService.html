@@ -1,0 +1,40 @@
+<h1><code ng:non-bindable="">AccordionService</code>
+<div><span class="hint">service in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-service-page core-service-accordionservice-page"><p>The AccordionService can add remove panes from the &#39;openPanes&#39; list using the &#39;paneID&#39; passed as an argument.
+The &#39;closeAll&#39; method closes all the panes in the &#39;openPanes&#39; list.</p>
+</div></div>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_accordionserviceadd">AccordionService.add(id, close)</h3>
+<div class="accordionserviceadd"><div class="core-service-page core-service-accordionservice-accordionservice-add-page"><p>This method adds an Accordion&#39;s close method to the openPanes store, using the id as a key.</p>
+</div><h5 id="methods_accordionserviceadd_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>id</td><td><a href="" class="label type-hint type-hint-integer">integer</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-add-page"><p>The id of the open accrodion pane.</p>
+</div></td></tr><tr><td>close</td><td><a href="" class="label type-hint type-hint-function">function</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-add-page"><p>The close method of the open pane.</p>
+</div></td></tr></tbody></table><h5 id="methods_accordionserviceadd_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-add-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_accordionservicecloseall">AccordionService.closeAll(id)</h3>
+<div class="accordionservicecloseall"><div class="core-service-page core-service-accordionservice-accordionservice-closeall-page"><p>This loops over the openPanes store and calls the close method on each member. If an id is passed into it
+then that pane will remain open.</p>
+</div><h5 id="methods_accordionservicecloseall_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>id <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-integer">integer</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-closeall-page"><p>An open Accordion pane&#39;s id.</p>
+</div></td></tr></tbody></table><h5 id="methods_accordionservicecloseall_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-closeall-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_accordionserviceremove">AccordionService.remove(id)</h3>
+<div class="accordionserviceremove"><div class="core-service-page core-service-accordionservice-accordionservice-remove-page"><p>This method removes an Accordion&#39;s close method to the openPanes store, using the id as a key.</p>
+</div><h5 id="methods_accordionserviceremove_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>id</td><td><a href="" class="label type-hint type-hint-integer">integer</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-remove-page"><p>An open Accordion pane&#39;s id.</p>
+</div></td></tr></tbody></table><h5 id="methods_accordionserviceremove_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-service-page core-service-accordionservice-accordionservice-remove-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_openpanes">openPanes</h3>
+<div class="openpanes"><div class="core-service-page core-service-accordionservice-openpanes-page"><p>A private object to store open panes. The key should be the id of the open pane, and the value its close method.</p>
+</div></div>
+</li>
+</ul>
+</div>
+</div>

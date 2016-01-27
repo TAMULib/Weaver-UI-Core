@@ -20,7 +20,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			},
 			//error callback
 			function(response) {
-				console.log(response);
+				return response.data;
 			});
 	};
 

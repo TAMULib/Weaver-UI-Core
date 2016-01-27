@@ -8,14 +8,15 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
-			var fixed = Object.keys(attr).indexOf('fixed') > -1;
+			var fixed = typeof attr.fixed != 'undefined';
+						
+			var exclusive = typeof attr.exclusive != 'undefined';
 			
-			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
+			var duration = typeof attr.seconds != 'undefined' ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
 			
 			var types = [];
-			var channels = [];
-
-			if(attr.types) {
+			
+			if(typeof attr.types != 'undefined') {
 				var splitTypes = attr.types.split(',');
 				for(var i in splitTypes) {
 					types.push(splitTypes[i].trim());
@@ -26,19 +27,21 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				types.push("ERROR");
 			}
 			
-			if(attr.channels) {
+			var channels = [];
+			
+			if(typeof attr.channels != 'undefined') {
 				var splitChannels = attr.channels.split(',');
 				for(var i in splitChannels) {
-					channels.push(splitChannels[i].trim());
+					var channel = splitChannels[i].trim();
+					channels.push(channel);
+					AlertService.create(channel, exclusive);
 				}
 			}
-
+			
 			var facets = [];
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
-
-			var exclusive = typeof attr.exclusive != 'undefined';
 			
 			var timers = {};
 			
@@ -67,33 +70,31 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				}
 				else {
 					if(types.indexOf(alert.type) > -1) {
-						$scope.alerts[$scope.alerts.length] = alert;					
+						$scope.alerts[$scope.alerts.length] = alert;
 						if(!fixed) {
-							if(alert.type != "ERROR") {							
+							if(alert.type != "ERROR") {
 								$scope.remove(alert);
 							}
 						}
 					}
 				}
 			};
-
+			
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				var alerts = AlertService.get(facets[i], exclusive);
-
-				if(alerts.defer) {
-					for(var j in alerts.list) {
-						handle(alerts.list[j]);
-					}
-					alerts.defer.promise.then(function(alert){ 
-							// resolved
-						}, function(alert) { 
-							// rejected
-						}, function(alert) { 
-							// notified
-							handle(alert);
-					});
+				var alerts = AlertService.get(facets[i]);				
+				
+				for(var j in alerts.list) {
+					handle(alerts.list[j]);
 				}
+				alerts.defer.promise.then(function(alert){ 
+						// resolved
+					}, function(alert) { 
+						// rejected
+					}, function(alert) { 
+						// notified						
+						handle(alert);							
+				});			
 			}
 
 			$rootScope.$on("$routeChangeStart", function(event, next, current) {				

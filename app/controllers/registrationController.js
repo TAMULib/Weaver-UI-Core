@@ -6,9 +6,6 @@ core.controller('RegistrationController', function ($controller, $location, $sco
     	email: '',
     	token: ''
     };
-
-	AlertService.create('auth/register');
-    AlertService.create('auth');
 	
 	$scope.verifyEmail = function(email) {
 		RestApi.anonymousGet({
@@ -16,7 +13,6 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 			method: 'register?email=' + email
 		}).then(function(data) {
 			$scope.registration.email = '';
-
 			$timeout(function() {
 				AlertService.add(data.meta, 'auth/register');
 			});

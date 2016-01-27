@@ -7,9 +7,6 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
     	password: ''
     };
 
-    AlertService.create('auth/login');
-    AlertService.create('auth');
-
 	$scope.login = function() {
 		RestApi.anonymousGet({
 			controller: 'auth',

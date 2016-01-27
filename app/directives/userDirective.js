@@ -92,14 +92,16 @@ core.directive('useraffiliation', function (WsApi) {
 		scope:true,
 		controller: 'UserController',
 		link: function ($scope, element, attr) {	
-			$scope.ready.then(function() {
-				if($scope.user.affiliation) {
-					$scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
-				}
-				else {
-					$scope.affiliation = "UNKNOWN";
-				}
-			});
+			if($scope.ready) {
+				$scope.ready.then(function() {
+					if($scope.user.affiliation) {
+						$scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
+					}
+					else {
+						$scope.affiliation = "UNKNOWN";
+					}
+				});
+			}
 	    }
 	};
 });

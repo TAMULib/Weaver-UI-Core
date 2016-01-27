@@ -386,3 +386,42 @@ footer a, footer li, footer p {
 .tip.tip-visible .tip-message {
   z-index: 102 !important;
 }
+
+/* Tabs Drective */
+
+.tabs {
+  width: 100%;
+}
+
+.tabs hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(112, 112, 111, 0.4), rgba(50, 50, 50, 0));
+  margin-top: 0px;
+}
+
+.tab {
+  display: inline-block;
+  padding: 8px;
+  font-weight: 400;
+  font-size: .9em;
+  color: #666666;
+  cursor: pointer;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.tab:hover {
+  background: #EFEFEF;
+}
+
+.tab.active:hover {
+  background: #FFFFFF;
+}
+
+.tab.active {
+  border: solid thin  #DDDDDD;
+  border-bottom: none;
+  box-shadow: 3px -2px 8px -6px #43606E, 0px 2px 0px 0px #FFFFFF;
+  cursor: default; 
+}

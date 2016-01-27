@@ -53,7 +53,9 @@ core.directive("tabs", function() {
 			 *  tab based on seetingView and html passed on to it.
 			 */
 			this.setActive = function(tab, html) {
-				$location.url("/admin/settings/"+tab);
+				var newPath = $location.$$path.replace($routeParams.tab, "");
+				$location.url(newPath+tab);
+				
 				TabService.setTab($scope.target, html);
 			}
 

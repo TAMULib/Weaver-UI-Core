@@ -162,7 +162,6 @@ core.directive("pane", function($location, $timeout, $anchorScroll, AccordionSer
 			 */
 			$scope.close = function() {
 				$scope.expanded = false;
-				console.log(paneID + " is closed");
 			}
 
 			/**
@@ -223,7 +222,6 @@ core.service("AccordionService", function() {
 	 */
 	AccordionService.add = function(id, close) {
 		openPanes[id] = close;
-		console.log(openPanes);
 	};
 
 	/**
@@ -256,7 +254,6 @@ core.service("AccordionService", function() {
 	AccordionService.closeAll = function(id) {
 		for(var i in openPanes) {
 			if(id != i)  {
-				console.log("closing " + id);
 				openPanes[i]();
 			}
 		}

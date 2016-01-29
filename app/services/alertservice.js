@@ -1,5 +1,4 @@
 /**
- * 
  * @ngdoc service
  * @name  core.service:AlertService
  * @requires ng.$q
@@ -76,7 +75,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 * @propertyOf core.service:AlertService
 	 *
 	 * @description 
-	 *  An array to exclusive channels.
+	 *  An array of exclusive channels.
 	 * 
 	 */
 	var exclusive = [];
@@ -87,7 +86,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 * @propertyOf core.service:AlertService
 	 *
 	 * @description 
-	 *  An array to store keys.
+	 *  An array of available keys.
 	 * 
 	 */
 	var keys = [];
@@ -128,7 +127,6 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	};
 	
 	/**
-	 * 
 	 * @ngdoc method
 	 * @name  core.service:AlertService#AlertService.create
 	 * @methodOf core.service:AlertService
@@ -156,7 +154,6 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	};
 
 	/**
-	 *
 	 * @ngdoc method
 	 * @name  core.service:AlertService#AlertService.get
 	 * @methodOf core.service:AlertService
@@ -175,16 +172,57 @@ core.service("AlertService", function($q, $interval, $timeout) {
 		return store[facet];
 	};
 	
-	var firstPass = true;
+	/**
+     * @ngdoc property
+     * @name core.directive:alerts#firstPass
+     * @propertyOf core.directive:alerts
+     *
+     * @description
+     * A variable to allow time to initialize before adding to type stores.
+     */
+	var initializing = true;
 
+	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#add
+	 * @methodOf core.service:AlertService
+	 * @param {string} facet
+	 *  An facet of a type, channel, or endpoint.
+	 * @param {object} meta
+	 *  An API response meta containing message and type.
+	 * @param {string} channel
+	 *  The channel on which the response returned.
+	 *
+	 * @description 
+	 *  Method to check store for facet and either add if not already in store
+	 *  or add to the queue 
+	 * 
+	 */
+	var add = function(facet, meta, channel) {
+		
+		var alert = new Alert(meta.message, meta.type, channel);
+		
+		if(typeof store[facet] != 'undefined') {
+			// add alert to store by facet
+			if(isNotStored(facet, meta, channel)) {
+				store[facet].list.push(alert);
+				store[facet].defer.notify(alert);
+			}
+		}
+		else {
+			// queue alert
+			enqueue(facet, meta, channel);
+		}
+	};
+	
 	/**
 	 * @ngdoc method
 	 * @name  core.service:AlertService#AlertService.add
 	 * @methodOf core.service:AlertService
 	 * @param {object} meta
-	 *  An API response meta containing message and type
+	 *  An API response meta containing message and type.
 	 * @param {string} channel
-	 *  The channel on which the response returned
+	 *  The channel on which the response returned.
 	 *
 	 * @description 
 	 *  Method to add an alert to the appropriate stores.
@@ -193,79 +231,71 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 */
 	AlertService.add = function(meta, channel) {
 		
-		var alert = new Alert(meta.message, meta.type, channel);
-
 		var endpoint = channel;
 		
-		if(typeof store[endpoint] != 'undefined') {
-			// add alert to store by endpoint
-			if(isNotStored(endpoint, meta, channel)) {
-				store[endpoint].list.push(alert);
-				store[endpoint].defer.notify(alert);
-			}
-		}
-		else {
-			// queue alert
-			enqueue(endpoint, meta, channel);
-		}
+		// add alert to store by endpoint
+		add(endpoint, meta, channel);
 		
 		// return if endpoint is exclusive
 		if(exclusive.indexOf(endpoint) > -1) {
 			return;
 		}
 		
-		
 		var controller = channel.substr(0, channel.lastIndexOf("/"));
 		
-		if(typeof store[controller] != 'undefined') {
-			// add alert to store by controller
-			if(isNotStored(controller, meta)) {
-				store[controller].list.push(alert);
-				store[controller].defer.notify(alert);
-			}
-		}
-		else {
-			// queue alert
-			enqueue(controller, meta, channel);
-		}
-		
+		// add alert to store by controller
+		add(controller, meta, channel);
 		
 		// return if controller is exclusive
 		if(exclusive.indexOf(controller) > -1) {
 			return;
 		}
 		
-		if(firstPass) {
+		// allow time for any exclusive channels to be created 
+		// before adding to stores by type
+		if(initializing) {
 			$timeout(function() {
-				firstPass = false;
+				initializing = false;
 				AlertService.add(meta, channel);
 			}, 2500);			
 			return;
 		}
 
-		if(typeof store[meta.type] != 'undefined') {
-			// add alert to store by type
-			if(isNotStored(meta.type, meta, channel)) {
-				console.log(alert)
-				store[meta.type].list.push(alert);
-				store[meta.type].defer.notify(alert);
-			}
-		}
-		else {
-			// queue alert
-			enqueue(meta.type, meta, channel);
-		}
-		
-
+		// add alert to store by type
+		add(meta.type, meta, channel);
 	};
 	
 	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#remove
+	 * @methodOf core.service:AlertService
+	 * @param {string} facet
+	 *  An facet of a type, channel, or endpoint
+	 * @param {object} alert
+	 *  The Alert to be removed.
+	 *  
+	 * @description 
+	 *  Method to remove alert from all store by facet.
 	 * 
+	 */
+	var remove = function(facet, alert) {
+		if(typeof store[facet] != 'undefined') {
+			for(var i in store[facet].list) {
+				if(store[facet].list[i].id = alert.id) {
+					store[facet].defer.notify(alert);
+					store[facet].list.splice(i, 1);
+					break;
+				}
+			}
+		}
+	};
+	
+	/**
 	 * @ngdoc method
 	 * @name  core.service:AlertService#AlertService.remove
 	 * @methodOf core.service:AlertService
 	 * @param {object} alert
-	 *  The Alert to bew removed;
+	 *  The Alert to be removed.
 	 *
 	 * @description 
 	 *  Method to remove an alert from the store.
@@ -277,42 +307,18 @@ core.service("AlertService", function($q, $interval, $timeout) {
 		alert.remove = true;
 							
 		// remove alert from store by type
-		if(typeof store[alert.type] != 'undefined') {
-			for(var i in store[alert.type].list) {
-				if(store[alert.type].list[i].id = alert.id) {
-					store[alert.type].defer.notify(alert);
-					store[alert.type].list.splice(i, 1);
-					break;
-				}
-			}
-		}
+		remove(alert.type, alert);
 		
 		
 		var endpoint = alert.channel;
 		
 		// remove alert from store by endpoint
-		if(typeof store[endpoint] != 'undefined') {
-			for(var i in store[endpoint].list) {
-				if(store[endpoint].list[i].id = alert.id) {
-					store[endpoint].defer.notify(alert);
-					store[endpoint].list.splice(i, 1);
-					break;
-				}
-			}
-		}
+		remove(endpoint, alert);
 
 		var controller = alert.channel.substr(0, alert.channel.lastIndexOf("/"));
 		
 		// remove alert from store by controller 
-		if(typeof store[controller] != 'undefined') {
-			for(var i in store[controller].list) {
-				if(store[controller].list[i].id = alert.id) {
-					store[controller].defer.notify(alert);
-					store[controller].list.splice(i, 1);
-					break;
-				}
-			}
-		}
+		remove(controller, alert);
 
 		keys.push(alert.id);
 	};

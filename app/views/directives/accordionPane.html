@@ -1,16 +1,7 @@
 <div id="{{::query}}" class="panel panel-default">
 	<div ng-click="toggleExpanded()" class="panel-heading" ng-class="{'expanded': expanded}">
 		<div class="panel-selection">
-			<div id="floatingCirclesG">
-				<div class="f_circleG" id="frotateG_01"></div>
-				<div class="f_circleG" id="frotateG_02"></div>
-				<div class="f_circleG" id="frotateG_03"></div>
-				<div class="f_circleG" id="frotateG_04"></div>
-				<div class="f_circleG" id="frotateG_05"></div>
-				<div class="f_circleG" id="frotateG_06"></div>
-				<div class="f_circleG" id="frotateG_07"></div>
-				<div class="f_circleG" id="frotateG_08"></div>
-			</div>
+			
 		</div>
 		<span ng-transclude></span>
 		<span class="glyphicon glyphicon-menu-down pull-right" ng-show="!expanded"></span>
@@ -19,4 +10,15 @@
 	<div class="panel-body" ng-class="{'expanded': expanded}">
 		<div ng-include="html" class="panel-content-wrapper" onload="loaded()"></div>
 	</div>
+</div>
+
+<div id="circularG">
+	<div id="circularG_1" class="circularG"></div>
+	<div id="circularG_2" class="circularG"></div>
+	<div id="circularG_3" class="circularG"></div>
+	<div id="circularG_4" class="circularG"></div>
+	<div id="circularG_5" class="circularG"></div>
+	<div id="circularG_6" class="circularG"></div>
+	<div id="circularG_7" class="circularG"></div>
+	<div id="circularG_8" class="circularG"></div>
 </div>

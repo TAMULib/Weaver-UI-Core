@@ -12,7 +12,7 @@
  * 	of the alert. Old alerts removed using an interval.
  *
  */
-core.service("AlertService", function($q, $interval) {
+core.service("AlertService", function($q, $interval, $timeout) {
 
 	var AlertService = this;
 	
@@ -51,15 +51,45 @@ core.service("AlertService", function($q, $interval) {
 	 */
 	var store = { };
 	
-	// create the promises and lists for the possible types
-	for(var t in types) {
-		store[types[t]] = {
+	// create stores for the types
+	for(var i in types) {
+		store[types[i]] = {
 			defer: $q.defer(),
-			list: [],
-			exclusive: false
+			list: []
 		};
 	}
-
+	
+	/**
+	 * @ngdoc property
+	 * @name  core.service:AlertService#queue
+	 * @propertyOf core.service:AlertService
+	 *
+	 * @description 
+	 *  An object to store queues.
+	 * 
+	 */
+	var queue = { };
+	
+	/**
+	 * @ngdoc property
+	 * @name  core.service:AlertService#exclusive
+	 * @propertyOf core.service:AlertService
+	 *
+	 * @description 
+	 *  An array to exclusive channels.
+	 * 
+	 */
+	var exclusive = [];
+	
+	/**
+	 * @ngdoc property
+	 * @name  core.service:AlertService#keys
+	 * @propertyOf core.service:AlertService
+	 *
+	 * @description 
+	 *  An array to store keys.
+	 * 
+	 */
 	var keys = [];
 
 	// create the initial keys
@@ -109,8 +139,20 @@ core.service("AlertService", function($q, $interval) {
 	 *  Method to create a store with the given facet.
 	 *	 
 	 */
-	AlertService.create = function(facet) {
-		isNew(facet, false);
+	AlertService.create = function(facet, exclusion) {
+		store[facet] = {
+			defer: $q.defer(),
+			list: []
+		};
+		if(exclusion) {
+			exclusive.push(facet);
+		}
+		if(typeof queue[facet] != 'undefined') {
+			for(var i in queue[facet]) {
+				AlertService.add(queue[facet][i].meta, queue[facet][i].channel);
+			}
+			delete queue[facet];
+		}
 	};
 
 	/**
@@ -128,11 +170,12 @@ core.service("AlertService", function($q, $interval) {
 	 *  A store consists of the promise and a list of alerts.
 	 *  
 	 */
-	AlertService.get = function(facet, exclusive) {
+	AlertService.get = function(facet) {
 		if(typeof facet == 'undefined') return [];
-		isNew(facet, exclusive);
 		return store[facet];
 	};
+	
+	var firstPass = true;
 
 	/**
 	 * @ngdoc method
@@ -149,44 +192,71 @@ core.service("AlertService", function($q, $interval) {
 	 * 
 	 */
 	AlertService.add = function(meta, channel) {
-
-		isNew(channel);
-
+		
 		var alert = new Alert(meta.message, meta.type, channel);
 
 		var endpoint = channel;
 		
-		// add alert to store by endpoint
-		if(filter(endpoint, meta, channel).length == 0) {
-			store[endpoint].list.push(alert);
-			store[endpoint].defer.notify(alert);
-			if(store[endpoint].exclusive) return;
-		}
-		
-		var controller = channel.substr(0, channel.lastIndexOf("/"));
-
-		// add alert to store by controller
-		if(filter(controller, meta).length == 0) {
-			store[controller].list.push(alert);
-			store[controller].defer.notify(alert);
-			if(store[controller].exclusive) return;
-		}
-
-		// add alert to store by type
-		if(filter(meta.type, meta, channel).length == 0) {
-			store[meta.type].list.push(alert);
-			store[meta.type].defer.notify(alert);
-		}
-
-	};
-
-	AlertService.removeAll = function(facet) {
-		console.log(store[facet].list)
-		if(typeof store[facet] != 'undefined') {
-			for(var i = store[facet].list.length - 1; i >= 0; i--) {
-				AlertService.remove(store[facet].list[i]);
+		if(typeof store[endpoint] != 'undefined') {
+			// add alert to store by endpoint
+			if(isNotStored(endpoint, meta, channel)) {
+				store[endpoint].list.push(alert);
+				store[endpoint].defer.notify(alert);
 			}
 		}
+		else {
+			// queue alert
+			enqueue(endpoint, meta, channel);
+		}
+		
+		// return if endpoint is exclusive
+		if(exclusive.indexOf(endpoint) > -1) {
+			return;
+		}
+		
+		
+		var controller = channel.substr(0, channel.lastIndexOf("/"));
+		
+		if(typeof store[controller] != 'undefined') {
+			// add alert to store by controller
+			if(isNotStored(controller, meta)) {
+				store[controller].list.push(alert);
+				store[controller].defer.notify(alert);
+			}
+		}
+		else {
+			// queue alert
+			enqueue(controller, meta, channel);
+		}
+		
+		
+		// return if controller is exclusive
+		if(exclusive.indexOf(controller) > -1) {
+			return;
+		}
+		
+		if(firstPass) {
+			$timeout(function() {
+				firstPass = false;
+				AlertService.add(meta, channel);
+			}, 2500);			
+			return;
+		}
+
+		if(typeof store[meta.type] != 'undefined') {
+			// add alert to store by type
+			if(isNotStored(meta.type, meta, channel)) {
+				console.log(alert)
+				store[meta.type].list.push(alert);
+				store[meta.type].defer.notify(alert);
+			}
+		}
+		else {
+			// queue alert
+			enqueue(meta.type, meta, channel);
+		}
+		
+
 	};
 	
 	/**
@@ -249,7 +319,7 @@ core.service("AlertService", function($q, $interval) {
 	
 	/**
 	 * @ngdoc method
-	 * @name  core.service:AlertService#filter
+	 * @name  core.service:AlertService#enqueue
 	 * @methodOf core.service:AlertService
 	 * @param {string} facet
 	 *  type, controller, or endpoint
@@ -260,47 +330,75 @@ core.service("AlertService", function($q, $interval) {
 	 * @return {array} returns array of duplicates with specified values
 	 *
 	 * @description
-	 *  Method to check to see if store already contains
+	 *  Enqueue alert if not already queued.
+	 * 
+	 */
+	var enqueue = function(facet, meta, channel) {		
+		if(isNotQueued(facet, meta, channel)) {
+			queue[facet].push({
+				'meta': meta,
+				'channel': channel
+			})
+		}
+	};
+	
+	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#isNotQueued
+	 * @methodOf core.service:AlertService
+	 * @param {string} facet
+	 *  type, controller, or endpoint
+	 * @param {object} meta
+	 *  API response meta containing type and message
+	 * @param {string} channel
+	 *  on which the response returned
+	 * @return {array} returns array of duplicates with specified values
+	 *
+	 * @description
+	 *  Method to check to see if queue does not contain
 	 *  alert with same type, message, and channel.
 	 * 
 	 */
-	var filter = function(facet, meta, channel) {
-		if(isNew(facet)) return store[facet];
-		return store[facet].list.filter(function(alert) {
+	var isNotQueued = function(facet, meta, channel) {
+		if(typeof queue[facet] == 'undefined') {
+			queue[facet] = [];
+			return true;
+		}
+		var queued = queue[facet].filter(function(alert) {
+			return alert.meta.type == meta.type &&
+			   	   alert.meta.message == meta.message &&
+			   	   alert.channel == channel;
+		});
+		return queued.length == 0;
+	}
+	
+	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#isNotStored
+	 * @methodOf core.service:AlertService
+	 * @param {string} facet
+	 *  type, controller, or endpoint
+	 * @param {object} meta
+	 *  API response meta containing type and message
+	 * @param {string} channel
+	 *  on which the response returned
+	 * @return {array} returns array of duplicates with specified values
+	 *
+	 * @description
+	 *  Method to check to see if store does not contain
+	 *  alert with same type, message, and channel.
+	 * 
+	 */
+	var isNotStored = function(facet, meta, channel) {
+		var list = store[facet].list.filter(function(alert) {
 			var channelMatch = typeof channel != 'undefined' ? alert.channel == channel : true;
 			return alert.type == meta.type &&
 			   	   alert.message == meta.message &&
 			       channelMatch;
 		});
+		return list.length == 0;
 	};
-	
-	/**
-	 * 
-	 * @ngdoc method
-	 * @name core.service:AlertService#isNew
-	 * @methodOf core.service:AlertService
-	 * @param {object} facet
-	 *  either type, controller, or endpoint
-	 * @return {boolean}
-	 *  whether the store is new
-	 *	
-	 * @description 
-	 *  Method to check if the store for the specific facet exists.
-	 *  If not, creates store.
-	 *  
-	 */
-	var isNew = function(facet, exclusive) {
-		if(typeof store[facet] == 'undefined') {
-			store[facet] = {
-				defer: $q.defer(),
-				list: [],
-				exclusive: exclusive
-			};
-			return true;
-		}
-		return false
-	};
-	
+		
 	// remove old alerts and recycle keys
 	$interval(function() {
 	

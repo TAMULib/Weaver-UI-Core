@@ -15,6 +15,7 @@ var coreConfig = {
 			'SUCCESS',
 			'WARNING',
 			'ERROR',
+			'INFO',
 			'UNKNOWN'
 		],
 		'classes': {

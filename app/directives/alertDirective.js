@@ -34,7 +34,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     * @description
 		     * A variable to store the boolean result if the element 'fixed' is present in the attr object
 		     */
-			var fixed = Object.keys(attr).indexOf('fixed') > -1;
+			var fixed = typeof attr.fixed != 'undefined';
 			
 			/**
 		     * @ngdoc property
@@ -45,6 +45,16 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     * A variable to store the duration value either from the 'attr' object or the coreConfig alerts 'duration'
 		     */
 			var duration = attr.seconds ? parseInt(attr.seconds) * 1000: coreConfig.alerts.duration;
+			
+			/**
+		     * @ngdoc property
+		     * @name core.directive:alerts#exclusive
+		     * @propertyOf core.directive:alerts
+		     *
+		     * @description
+		     * A boolean which determines if this alert will be the only one to recieve messages on the specified channel
+		     */	
+			var exclusive = typeof attr.exclusive != 'undefined';
 			
 			/**
 		     * @ngdoc property
@@ -65,6 +75,15 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 		     * This 'channel' array variabble stores the type of alert messages from the 'attr' object 'channels' property.
 		     */
 			var channels = [];
+			
+			if(attr.channels) {
+				var splitChannels = attr.channels.split(',');
+				for(var i in splitChannels) {
+					var channel = splitChannels[i].trim();
+					channels.push(channel);
+					AlertService.create(channel, exclusive);
+				}
+			}
 
 			if(attr.types) {
 				var splitTypes = attr.types.split(',');
@@ -77,13 +96,6 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				types.push("ERROR");
 			}
 			
-			if(attr.channels) {
-				var splitChannels = attr.channels.split(',');
-				for(var i in splitChannels) {
-					channels.push(splitChannels[i].trim());
-				}
-			}
-
 			/**
 		     * @ngdoc property
 		     * @name core.directive:alerts#facets
@@ -96,17 +108,15 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 			facets = facets.concat(types ? types : []);
 			facets = facets.concat(channels ? channels : []);
-
+			
 			/**
 		     * @ngdoc property
-		     * @name core.directive:alerts#exclusive
+		     * @name core.directive:alerts#timers
 		     * @propertyOf core.directive:alerts
 		     *
 		     * @description
-		     * A boolean which determines if this alert will be the only one to recieve messages on the specified channel
-		     */	
-			var exclusive = typeof attr.exclusive != 'undefined';
-			
+		     * An object variable to store current timers
+		     */		
 			var timers = {};
 
 			/**
@@ -157,7 +167,9 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			 */	
 			var alertIndex = function(id) {
 				for(var i in $scope.alerts) {
-					if($scope.alerts[i].id == id) return i;
+					if($scope.alerts[i].id == id) {
+						return i;
+					}
 				}
 			};
 
@@ -192,8 +204,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
 			for(var i in facets) {
 				if(channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-				var alerts = AlertService.get(facets[i], exclusive);
-
+				var alerts = AlertService.get(facets[i]);
+				if(typeof alerts == 'undefined') break;
 				if(alerts.defer) {
 					for(var j in alerts.list) {
 						handle(alerts.list[j]);
@@ -218,4 +230,5 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 	    }
 	};
+	
 });

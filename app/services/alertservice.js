@@ -257,7 +257,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 			$timeout(function() {
 				initializing = false;
 				AlertService.add(meta, channel);
-			}, 2500);			
+			});			
 			return;
 		}
 
@@ -321,6 +321,25 @@ core.service("AlertService", function($q, $interval, $timeout) {
 		remove(controller, alert);
 
 		keys.push(alert.id);
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#AlertService.removeAll
+	 * @methodOf core.service:AlertService
+	 * @param {string} facet
+	 *  The channel from which to remove all alerts.
+	 *
+	 * @description 
+	 *  Method to remove all alert from a channel.
+	 * 
+	 */
+	AlertService.removeAll = function(facet) {
+		if(typeof store[facet] != 'undefined') {
+			for(var i = store[facet].list.length - 1; i >= 0; i--) {
+				AlertService.remove(store[facet].list[i]);
+			}
+		}
 	};
 	
 	/**

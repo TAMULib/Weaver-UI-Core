@@ -18,7 +18,7 @@
 */
 core.directive('alerts', function (AlertService, $controller, $rootScope, $timeout) {
 	return {
-		template: '<ul ng-if="alerts.length > 0" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
+		template: '<ul ng-if="hasAlerts()" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
 		restrict: 'E',
 		replace: false,
 		scope: {},
@@ -137,7 +137,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			 * @description
 			 * 	An array variable to store the alert messages
 			 */
-			$scope.alerts = [];
+			$scope.alerts = {};
 
 			/**
 			 * @ngdoc method
@@ -157,20 +157,15 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 			
 			/**
 			 * @ngdoc method
-			 * @name core.directive:alerts#alertIndex
+			 * @name core.directive:alerts#hasAlerts
 			 * @methodOf core.directive:alerts
-			 * @param {Alert} id an alert object
-			 * @returns {void} returns void
+			 * @returns {boolean} returns whether directive has any alerts
 			 * 
 			 * @description
-			 * 	A method to return specific 'alert' based on the 'id' passed on the $scope.alerts object
+			 * 	A method to return true if the number of alerts are greater than 0
 			 */	
-			var alertIndex = function(id) {
-				for(var i in $scope.alerts) {
-					if($scope.alerts[i].id == id) {
-						return i;
-					}
-				}
+			$scope.hasAlerts = function() {
+				return Object.keys($scope.alerts).length > 0;
 			};
 
 			/**
@@ -187,12 +182,12 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 				if(alert.remove) {
 					alert.fade = true;
 					$timeout(function() {
-						$scope.alerts.splice(alertIndex(alert.id), 1);
+						delete $scope.alerts[alert.id];
 					}, 350);
 				}
 				else {
 					if(types.indexOf(alert.type) > -1) {
-						$scope.alerts[$scope.alerts.length] = alert;					
+						$scope.alerts[alert.id] = alert;
 						if(!fixed) {
 							if(alert.type != "ERROR") {							
 								$scope.remove(alert);

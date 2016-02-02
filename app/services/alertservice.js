@@ -48,7 +48,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 *  An object to store alerts.
 	 * 
 	 */
-	var store = { };
+	var store = {};
 	
 	// create stores for the types
 	for(var i in types) {
@@ -67,7 +67,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 *  An object to store queues.
 	 * 
 	 */
-	var queue = { };
+	var queue = {};
 	
 	/**
 	 * @ngdoc property
@@ -138,6 +138,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	 *	 
 	 */
 	AlertService.create = function(facet, exclusion) {
+		if(typeof store[facet] != 'undefined') return;
 		store[facet] = {
 			defer: $q.defer(),
 			list: []
@@ -281,7 +282,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 	var remove = function(facet, alert) {
 		if(typeof store[facet] != 'undefined') {
 			for(var i in store[facet].list) {
-				if(store[facet].list[i].id = alert.id) {
+				if(store[facet].list[i].id == alert.id) {
 					store[facet].defer.notify(alert);
 					store[facet].list.splice(i, 1);
 					break;

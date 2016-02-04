@@ -35,14 +35,18 @@ describe('controller: UserController', function() {
 	
 	describe('Does the User have expected credentials', function() {
 		it('User should have expected credentials', function() {
-			expect(scope.user).toEqual(mockUser1);
+			var userOnScope = angular.toJson(scope.user);
+			var mockUser = angular.toJson(mockUser1);
+			expect(userOnScope).toEqual(mockUser);
 		});
 	});
 	
 	describe('Should be able to set a User', function() {
 		it('should have set the User', function() {			
 			User.set(mockUser2)			
-			expect(scope.user).toEqual(mockUser2);
+			var userOnScope = angular.toJson(scope.user);
+			var mockUser = angular.toJson(mockUser2);
+			expect(userOnScope).toEqual(mockUser);
 		});
 	});
 	

@@ -111,6 +111,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					if(sessionStorage.assumedUser) {
 					
 						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
+							restObj.headers.jwt = sessionStorage.token;
 							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
@@ -119,6 +120,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					} else {
 						
 						return AuthServiceApi.getRefreshToken().then(function() {
+							restObj.headers.jwt = sessionStorage.token;
 							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
@@ -167,12 +169,12 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 			//error callback
 			function(response) {
-				console.log(response);
 				if(response.data.message == "EXPIRED_JWT") {
 					
 					if(sessionStorage.assumedUser) {
 					
 						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
+							restObj.headers.jwt = sessionStorage.token;
 							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
@@ -181,6 +183,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					} else {
 						
 						return AuthServiceApi.getRefreshToken().then(function() {
+							restObj.headers.jwt = sessionStorage.token;
 							return $http(restObj).then(function(response) {
 								return response.data;	
 							});

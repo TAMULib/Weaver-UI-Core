@@ -54,11 +54,13 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
+		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+
 		return $http({
 				method: 'GET',
     			url: url,
    				headers: {
-   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
+   					'data': data
    				}
    			}).then(
 			//success callback	
@@ -86,14 +88,18 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 		var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
-		return $http({
-				method: 'GET',
-    			url: url,
-   				headers: {
-   					'jwt': sessionStorage.token, 
-   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
-   				}
-   			}).then(
+		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+
+		var restObj = {
+			method: 'GET',
+			url: url,
+			headers: {
+				'jwt': sessionStorage.token, 
+				'data': data
+			}
+		};
+
+		return $http(restObj).then(
 			//success callback	
 			function(response) {
 				return response.data;
@@ -105,7 +111,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					if(sessionStorage.assumedUser) {
 					
 						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
-							return $http.get(uri, {headers:{'jwt':sessionStorage.token}}).then(function(response) {
+							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
 						});
@@ -113,7 +119,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					} else {
 						
 						return AuthServiceApi.getRefreshToken().then(function() {
-							return $http.get(uri, {headers:{'jwt':sessionStorage.token}}).then(function(response) {
+							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
 						});
@@ -140,15 +146,19 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-		return $http({
-				method: 'POST',
-    			url: url,
-   				data: req.file,
-   				headers: {
-   					'jwt': sessionStorage.token, 
-   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
-   				}
-   			}).then(
+		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+
+		var restObj = {
+			method: 'POST',
+			url: url,
+			data: req.file,
+			headers: {
+				'jwt': sessionStorage.token, 
+				'data': data
+			}
+		};
+
+		return $http(restObj).then(
 
 			//success callback	
 			function(response) {
@@ -163,15 +173,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					if(sessionStorage.assumedUser) {
 					
 						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
-							return $http({
-										method: 'POST',
-						    			url: url,
-						   				data: req.file,
-						   				headers: {
-						   					'jwt': sessionStorage.token, 
-						   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
-						   				}
-						   			}).then(function(response) {
+							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
 						});
@@ -179,15 +181,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 					} else {
 						
 						return AuthServiceApi.getRefreshToken().then(function() {
-							return $http({
-										method: 'POST',
-						    			url: url,
-						   				data: req.file,
-						   				headers: {
-						   					'jwt': sessionStorage.token, 
-						   					'data': (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}'
-						   				}
-						   			}).then(function(response) {
+							return $http(restObj).then(function(response) {
 								return response.data;	
 							});
 						});

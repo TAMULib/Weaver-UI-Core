@@ -144,6 +144,7 @@ core.service("AlertService", function($q, $interval, $timeout) {
 			list: []
 		};
 		if(exclusion) {
+			AlertService.clearTypeStores();
 			exclusive.push(facet);
 		}
 		if(typeof queue[facet] != 'undefined') {
@@ -253,13 +254,14 @@ core.service("AlertService", function($q, $interval, $timeout) {
 				return;
 			}
 		}
+
 		// allow time for any exclusive channels to be created 
 		// before adding to stores by type
 		if(initializing) {
 			$timeout(function() {
 				initializing = false;
 				AlertService.add(meta, channel);
-			});			
+			});
 			return;
 		}
 
@@ -341,6 +343,22 @@ core.service("AlertService", function($q, $interval, $timeout) {
 			for(var i = store[facet].list.length - 1; i >= 0; i--) {
 				AlertService.remove(store[facet].list[i]);
 			}
+		}
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name  core.service:AlertService#AlertService.clearTypeStores
+	 * @methodOf core.service:AlertService
+	 *
+	 * @description 
+	 *  Method to remove all alert in the type stores.
+	 * 
+	 */
+	AlertService.clearTypeStores = function() {
+		var types = coreConfig.alerts.types;
+		for(var i in types) {
+			AlertService.removeAll(types[i]);
 		}
 	};
 	

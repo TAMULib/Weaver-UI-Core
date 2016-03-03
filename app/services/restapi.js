@@ -156,7 +156,8 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			data: req.file,
 			headers: {
 				'jwt': sessionStorage.token, 
-				'data': data
+				'data': data,
+				'X-Requested-With': undefined
 			}
 		};
 

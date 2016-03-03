@@ -66,7 +66,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
 
         if (!AuthServiceApi.pendingRefresh) {
 
-            AuthServiceApi.pendingRefresh = $http.get(url, {withCredentials: true}).
+            AuthServiceApi.pendingRefresh = $http.get(url, {withCredentials: true, headers: {'X-Requested-With': undefined}}).
                 then(function(response) {
 
                         StorageService.set('token', response.data.tokenAsString);

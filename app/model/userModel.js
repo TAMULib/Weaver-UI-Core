@@ -21,7 +21,7 @@
  * 	in its contructor.
  * 
  */
-core.service("User", function($q, $timeout, AbstractModel, StorageService, UserSettings, RestApi, WsApi) {
+core.service("User", function($q, $timeout, AbstractModel, StorageService, RestApi, WsApi) {
 
 	var self;
 
@@ -65,7 +65,7 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, UserS
 	User.data = null;
 
 	User.promise = null;
-	
+		
 	/**
 	 * @ngdoc method
 	 * @name core.service:User#User.set
@@ -158,7 +158,7 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, UserS
        User.promise = null;
        return User.get();
    	};
-
+   	
 	/**
 	 * @ngdoc method
 	 * @name core.service:User#User.login
@@ -226,7 +226,6 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, UserS
 				User.ready().then(function() {
 					StorageService.set("role", user.role);
 					deferred.resolve(data);
-					UserSettings.refresh();
 				});
 			}
 

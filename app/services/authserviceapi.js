@@ -59,11 +59,16 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
     AuthServiceApi.getRefreshToken = function(cb) {
 
         var url = appConfig.authService+"/refresh";
-
-        if(appConfig.mockRole) {
-            url += "?mock=" + appConfig.mockRole;
+        
+        if(typeof sessionStorage.token != null) {
+        	url += "?token=" + sessionStorage.token;
         }
-
+        else {
+        	if(appConfig.mockRole) {
+                url += "?mock=" + appConfig.mockRole;
+            }
+        }
+        
         if (!AuthServiceApi.pendingRefresh) {
 
             AuthServiceApi.pendingRefresh = $http.get(url, {withCredentials: true}).

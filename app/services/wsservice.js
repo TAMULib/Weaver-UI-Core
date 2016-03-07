@@ -147,6 +147,7 @@ core.service("wsservice", function($interval, $q, AlertService) {
 		wsservice.pendingReq[headers.id] = {
 			defer: $q.defer(),
 			timestamp: new Date().getTime(),
+			request: request,
 			resend: function() {
 				headers.jwt = sessionStorage.token;
 				window.stompClient.send(request, headers, payload);
@@ -219,6 +220,7 @@ core.service("wsservice", function($interval, $q, AlertService) {
 
 		for(var req in wsservice.pendingReq) {
 			if(now - wsservice.pendingReq[req].timestamp > 60000) {
+				console.log(wsservice.pendingReq);
 				AlertService.add({type: "WARNING", message: "Web service is taking too long to respond. Please refresh. If this continues to appear you can email helpdesk@library.tamu.edu."}, "/app/warnings");  
 			} 
 		}

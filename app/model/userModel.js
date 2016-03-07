@@ -65,6 +65,8 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, RestA
 	User.data = null;
 
 	User.promise = null;
+
+	User.authDefer = $q.defer();
 		
 	/**
 	 * @ngdoc method
@@ -173,6 +175,21 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, RestA
 		return User.refresh();
 	};
 
+	/**
+	 * @ngdoc method
+	 * @name core.service:User#User.logout
+	 * @methodOf core.service:User
+	 * 
+	 * @description
+	 * 	logout
+	 */
+	User.logout = function() {
+		User.anonymous = true;
+		User.promise = null;
+		User.data = null;
+		User.authDefer = $q.defer();
+	};
+
 	User.verifyEmail = function(email) {
 		var deferred = $q.defer();
 
@@ -205,7 +222,7 @@ core.service("User", function($q, $timeout, AbstractModel, StorageService, RestA
 	};
 
 	User.authenticate = function(account) {		
-		var deferred = $q.defer();
+		var deferred = User.authDefer;
 
 		RestApi.anonymousGet({
 			controller: 'auth',

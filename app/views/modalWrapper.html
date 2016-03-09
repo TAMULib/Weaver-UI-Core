@@ -2,7 +2,7 @@
 <span ng-click="click()" class="{{attr.modalBtnClasses}}" data-toggle="modal" data-target="#{{attr.modalId}}" ng-transclude></span> 
 
 <!-- Modal -->
-<div id="{{attr.modalId}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="{{attr.modalId}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="{{attr.modalKeyboard}}" data-backdrop="{{attr.modalBackdrop}}">
   	<div class="modal-dialog">
     	<div class="modal-content">
       	<span ng-include src="attr.modalView"></span>

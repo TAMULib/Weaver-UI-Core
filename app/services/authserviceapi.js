@@ -26,7 +26,7 @@ core.service("AuthServiceApi",function($http, $timeout, StorageService) {
      */
     AuthServiceApi.getAssumedUser = function(assume, cb) {
         if (!AuthServiceApi.pendingRefresh) {
-            AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true}).
+            AuthServiceApi.pendingRefresh = $http.get(appConfig.authService+"/admin?netid="+assume.netid,{withCredentials: true, headers: {'X-Requested-With': undefined}}).
                 then(function(response) {
 
                     if(response.data.assumed) {

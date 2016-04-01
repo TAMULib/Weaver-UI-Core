@@ -36,10 +36,6 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         delete sessionStorage.token;
         delete sessionStorage.role;
 
-        User.login();
-
-        User.get();
-
         var path = '';
 
         if(typeof page != 'undefined') {
@@ -72,6 +68,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
 
         delete sessionStorage.token;
         sessionStorage.role = "ROLE_ANONYMOUS";
+
+        User.logout();
 
         angular.element(".dropdown").dropdown("toggle");
 

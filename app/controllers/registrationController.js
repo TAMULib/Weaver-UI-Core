@@ -1,22 +1,23 @@
-core.controller('RegistrationController', function ($controller, $location, $scope, $timeout, AlertService, RestApi) {
+core.controller('RegistrationController', function ($controller, $location, $scope, $timeout, AlertService, User) {
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
-    $scope.registration = {
-    	email: '',
-    	token: ''
+    var reset = function() {
+    	$scope.registration = {
+	    	email: '',
+	    	token: ''
+	    };
     };
+    
+    reset();
 	
 	$scope.verifyEmail = function(email) {
-		RestApi.anonymousGet({
-			controller: 'auth',
-			method: 'register?email=' + email
-		}).then(function(data) {
-			$scope.registration.email = '';
+		User.verifyEmail(email).then(function(data) {
+			reset();
 			$timeout(function() {
 				AlertService.add(data.meta, 'auth/register');
 			});
-		});
+		});		
 	};
 
 	if(typeof $location.search().token != 'undefined') {
@@ -24,24 +25,14 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	}
 
 	$scope.register = function() {
-		
-		RestApi.anonymousGet({
-			'controller': 'auth',
-			'method': 'register',
-			'data': $scope.registration
-		}).then(function(data) {
-
-			$scope.registration = {
-		    	email: '',
-		    	token: ''
-		    };
+		User.register($scope.registration).then(function(data) {
+			reset();
 
 		    $location.path("/");
 
 		    $timeout(function() {
 				AlertService.add(data.meta, 'auth/register');
 			});
-						
 		});
 	};
 

@@ -210,6 +210,32 @@ footer a, footer li, footer p {
   margin-bottom: 15px;
 }
 
+.modal-wide .modal-dialog {
+  margin-top: 30px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+@media (min-width: 768px) {
+  .modal-wide .modal-dialog {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .modal-wide .modal-dialog {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .modal-wide .modal-dialog {
+     width: 1170px;
+  }
+}
+
 .modalLoadingWheel {
   height: 20px;
 }

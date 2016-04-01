@@ -95,7 +95,8 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			url: url,
 			headers: {
 				'jwt': sessionStorage.token, 
-				'data': data
+				'data': data,
+				'X-Requested-With': undefined
 			}
 		};
 
@@ -106,7 +107,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			},
 			//error callback
 			function(response) {
-				if(response.data.message == "EXPIRED_JWT") {
+				if(response.data.code == "EXPIRED_JWT") {
 					
 					if(sessionStorage.assumedUser) {
 					
@@ -170,7 +171,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 			//error callback
 			function(response) {
-				if(response.data.message == "EXPIRED_JWT") {
+				if(response.data.code == "EXPIRED_JWT") {
 					
 					if(sessionStorage.assumedUser) {
 					

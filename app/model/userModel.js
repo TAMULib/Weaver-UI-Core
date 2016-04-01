@@ -21,7 +21,7 @@
  * 	in its contructor.
  * 
  */
-core.service("User", function(AbstractModel, WsApi) {
+core.service("User", function($q, $timeout, AbstractModel, StorageService, RestApi, WsApi) {
 
 	var self;
 
@@ -38,8 +38,19 @@ core.service("User", function(AbstractModel, WsApi) {
 	var User = function(futureData) {
 		self = this;
 		angular.extend(self, AbstractModel);		
-		self.unwrap(self, futureData, "Credentials");		
+		self.unwrap(self, futureData);		
 	};
+
+	var anonymousUser = new User({
+		affiliation: null,
+		email: null,
+		exp: null,
+		firstName: null,
+		lastName: null,
+		netid: null,
+		role: "ROLE_ANONYMOUS",
+		uin: null
+	});
 
 	/**
 	 * @ngdoc property
@@ -54,7 +65,9 @@ core.service("User", function(AbstractModel, WsApi) {
 	User.data = null;
 
 	User.promise = null;
-	
+
+	User.authDefer = $q.defer();
+		
 	/**
 	 * @ngdoc method
 	 * @name core.service:User#User.set
@@ -66,7 +79,7 @@ core.service("User", function(AbstractModel, WsApi) {
 	 * 	A method to set the data  as 'Credentials' on User object. 
 	 */
 	User.set = function(data) {
-		self.unwrap(self, data, "Credentials");
+		self.unwrap(self, data);
 	};
 
 	/**
@@ -80,14 +93,21 @@ core.service("User", function(AbstractModel, WsApi) {
 	 * 	This method will check for the User 'role' and return user credentials else it would return 'ANONYMOUS' 
 	 */
 	User.get = function() {
-		if(User.anonymous) return "ANONYMOUS";
 		if(User.promise) return User.data;
-
-		User.promise = WsApi.fetch({
+		if(User.anonymous) {
+			var deferred = $q.defer();
+			User.promise = deferred.promise;
+			$timeout(function() {
+				deferred.resolve(anonymousUser);
+			});
+		}
+		else {
+			User.promise = WsApi.fetch({
 				endpoint: '/private/queue', 
 				controller: 'user', 
-				method: 'credentials',
-		});
+				method: 'credentials'
+			});
+		}		
 
 		if(User.data) {
 			User.promise.then(function(data) {
@@ -138,9 +158,9 @@ core.service("User", function(AbstractModel, WsApi) {
 	 */
 	User.refresh = function() {
        User.promise = null;
-       User.get();
+       return User.get();
    	};
-
+   	
 	/**
 	 * @ngdoc method
 	 * @name core.service:User#User.login
@@ -148,12 +168,87 @@ core.service("User", function(AbstractModel, WsApi) {
 	 * @returns {User} returns User
 	 * 
 	 * @description
-	 * 	This method will set the User.promise property to null, User.anonymous value to false and will return the User Credentials 
+	 * 	This method will set the User.anonymous value to false and will return the User Credentials from User.refresh
 	 */
-	User.login = function() {
-		User.promise = null;
+	User.login = function() {		
 		User.anonymous = false;
-		return User.get();
+		return User.refresh();
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name core.service:User#User.logout
+	 * @methodOf core.service:User
+	 * 
+	 * @description
+	 * 	logout
+	 */
+	User.logout = function() {
+		User.anonymous = true;
+		User.promise = null;
+		User.data = null;
+		User.authDefer = $q.defer();
+	};
+
+	User.verifyEmail = function(email) {
+		var deferred = $q.defer();
+
+		RestApi.anonymousGet({
+			controller: 'auth',
+			method: 'register?email=' + email
+		}).then(function(data) {
+
+			deferred.resolve(data);
+
+		});
+
+		return deferred.promise;
+	};
+
+	User.register = function(registration) {
+		var deferred = $q.defer();
+
+		RestApi.anonymousGet({
+			'controller': 'auth',
+			'method': 'register',
+			'data': registration
+		}).then(function(data) {
+			
+			deferred.resolve(data);
+						
+		});
+
+		return deferred.promise;
+	};
+
+	User.authenticate = function(account) {		
+		var deferred = User.authDefer;
+
+		RestApi.anonymousGet({
+			controller: 'auth',
+			method: 'login',
+			data: account
+		}).then(function(data) {
+
+			if(typeof data.payload.JWT == 'undefined') {
+				console.log("User does not exist!");
+			}
+			else {
+				StorageService.set("token", data.payload.JWT.tokenAsString);
+
+				delete sessionStorage.role;
+
+				var user = User.login();
+
+				User.ready().then(function() {
+					StorageService.set("role", user.role);
+					deferred.resolve(data);
+				});
+			}
+
+		});
+
+		return deferred.promise;
 	};
 
 	return User;

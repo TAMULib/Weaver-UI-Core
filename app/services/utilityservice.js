@@ -132,13 +132,15 @@ core.service("Utility",function() {
 	 *	 the target searching for
 	 *  @param {number=} position		
 	 *	 optional argument in which to search at a specific position in the property
+	 *	@param {boolean} exact
+	 *	 optional argument to only return an exact match
 	 *	@returns {object} returns the target object
 	 *
 	 * @description
 	 *  A binary search utility
 	 *
 	 */
-	Utility.search = function(objList, property, ordered, target, position) {
+	Utility.search = function(objList, property, ordered, target, position, exact) {
 		
 		var isNumber = (typeof target == 'number');
 		
@@ -178,6 +180,10 @@ core.service("Utility",function() {
 					break;
 	            }
             }
+            else if(exact) {
+            	if(match === target)
+            		break;
+            }
             else {
             	if(match.indexOf(target) > -1) {
 					break;
@@ -198,6 +204,26 @@ core.service("Utility",function() {
 		return objList[index];
 
 	};
+
+	/**
+	 *	@ngdoc method
+	 *	@name core.service:Utility#Utility.exactSearch
+	 *	@methodOf core.service:Utility
+	 *	@param {array} objList
+	 *	 the list of objects to be searched
+	 *	@param {string} property
+	 *	 the propery of the object to search against
+	 *	@param {string} target
+	 *	 the target searching for
+	 *	@returns the target object
+	 *
+	 *	@description
+	 *	 An exact search utility.
+	 *
+	 */
+	Utility.exactSearch = function(objList, property, target) {
+		return Utility.search(objList, property, false, target, undefined, true);
+	}
 
 	/**
 	 *	@ngdoc method

@@ -8,7 +8,6 @@ function setUpApp(bootstrapApp) {
 		if(!sessionStorage.token) {
 			sessionStorage.token = jwt;
 		}
-		delete sessionStorage.role;
 		connect({"jwt": sessionStorage.token});
 
 	} else {

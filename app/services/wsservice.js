@@ -220,7 +220,6 @@ core.service("wsservice", function($interval, $q, AlertService) {
 
 		for(var req in wsservice.pendingReq) {
 			if(now - wsservice.pendingReq[req].timestamp > 60000) {
-				console.log(wsservice.pendingReq);
 				AlertService.add({type: "WARNING", message: "Web service is taking too long to respond. Please refresh. If this continues to appear you can email helpdesk@library.tamu.edu."}, "/app/warnings");  
 			} 
 		}

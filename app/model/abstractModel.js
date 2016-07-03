@@ -1,129 +1,129 @@
-/**
- *
- * @ngdoc service
- * @name  core.service:AbstractModel
- * @constructor
- * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- * @returns {service} AbsrtactModel returns the AbstractModel
- * 
- * @example
- * The following must be added to a model for it to extending this AbstractModel
- * <pre>
- *  angular.extend(self, AbstractModel); 
- * </pre>
- * 	
- * @description
- *	This abstract model should be inherited by all models using
- * 	the TAMU-UI-Core. It exposes unwrapping capabilites. All abstracted methods can go here: (e.g. AbstractModel.myMethod = funciton() {} )
- *	A model can then extend this my including "self = this;" and "angular.extend(self, AbstractModel);"
- * 	in its contructor.
- * 
- */
-core.service("AbstractModel", function () {
+core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 
+	return function AbstractModelNew() {
 
-	/**
-	 * @constructor
- 	 * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- 	 * @returns {service} AbsrtactModel returns the AbstractModel
- 	 * 
- 	 * @description
-	 * 	The constructor for the Abstract Service.
-	 */
-	var AbstractModel = function(data) {
-		angular.extend(this, data);
-	};
+		var abstractModel;
 
-	/**
-	 * @ngdoc method
-	 * @name unwrap
-	 * @methodOf core.service:AbstractModel
-	 * @param {service} self the model which is unwrapping the data
-	 * @param {Promise|object} futureData the promise of future data, or the data object
-	 * @returns {void} returns void
-	 *
-	 * @description
-	 * 	Unwraps future data and extends it onto the inheriting model.
-	 * 
-	 */
-	AbstractModel.unwrap = function(self, futureData) {
-		if(!futureData.$$state) {
-			angular.extend(self, futureData);
-			return;
-		}
-		futureData.then(
-			function(data) {
-				if(data.body) {
-					var response = JSON.parse(data.body);
-					var payload = response.payload;
-					var meta = response.meta;
-					var keys = Object.keys(payload);
-					if(meta.type == "ERROR") {
-						angular.extend(self, {'error':true});
-					}
-					else {
-						for(var i in keys) {
-							angular.extend(self, payload[keys[i]]);
-						}
-					}
-				} else {
-					angular.extend(self, data);
-				}
-			},
-			function(data) {
-				console.error(data);
-			},
-			function(data) {
-				if(data.body) {
-					var response = JSON.parse(data.body);
-					var payload = response.payload;
-					var meta = response.meta;
-					var keys = Object.keys(payload);
-					if(meta.type == "ERROR") {
-						angular.extend(self, {'error':true});
-					}
-					else {
-						for(var i in keys) {
-							angular.extend(self, payload[keys[i]]);
-						}
-					}
+		var mapping;
+
+		var defer = $q.defer();
+
+		var listenCallbacks = [];
+
+		var shadow = {};
+
+		var cache;
+
+		this.init = function(data, apiMapping) {
+
+			abstractModel = this;
+
+			mapping = apiMapping;
+
+			if(data) {
+				setData(data);
+			}
+			else if(cache !== undefined) {
+				setData(cache);
+			}
+			else {
+				
+				WsApi.fetch(mapping.instantiate).then(function(res) {
+					cache = cache !== undefined ? cache : {};
+
+					processResponse(res);
+
+					listen();
+				});
+			}
+
+		};
+
+		this.mapping = function() {
+			return mapping;
+		};
+
+		this.ready = function() {
+			return defer.promise;
+		};
+
+		this.save = function() {
+			return $q(function(resolve) {
+				if(abstractModel.dirty()) {
+					angular.extend(mapping.update, {data: abstractModel});
+					WsApi.fetch(mapping.update).then(function(res) {
+						resolve(res);
+					});
 				}
 				else {
-					angular.extend(self, {'value':data});
+					resolve(res);
 				}
-		});
-	};
+			});
+		};
 
-	/**
-	 * @ngdoc method
-	 * @name update
-	 * @methodOf core.service:AbstractModel
-	 * @param {service} self the model which is unwrapping the data
-	 * @param {Promise} promise the promise of future data
-	 * @returns {void} returns void
-	 *
-	 * @description
-	 * 	Unwraps the promise and re-extends it onto the inheriting model.
-	 * 
-	 */
-	AbstractModel.update = function(self, promise) {
-		promise.then(function(data) {
-			var response = JSON.parse(data.body);
-			var payload = response.payload;
-			var meta = response.meta;
-			var keys = Object.keys(payload);
-			for(var i in keys) {
-				if(typeof payload[keys[i]] != 'undefined') {
-					self.unwrap(self, payload[keys[i]]);
-				}
-				else {
-					console.log(keys[i] + ' is undefined');
-					console.log(data);
-				}
-			}			
-		});
+		this.delete = function() {
+			angular.extend(mapping.remove, {data: abstractModel});
+			return WsApi.fetch(mapping.remove);
+		};
+
+		this.listen = function(cb) {
+			listenCallbacks.push(cb);
+		};
+
+		this.refresh = function() {
+			angular.extend(abstractModel, shadow);
+		};
+
+		this.dirty = function() {
+			return angular.toJson(abstractModel) !== angular.toJson(shadow);
+		};
+
+		var setData = function(data) {
+			angular.extend(abstractModel, data);
+			shadow = angular.copy(abstractModel);
+			defer.resolve();
+		};
+
+		var listen = function() {
+
+			angular.extend(mapping.listen, {method: abstractModel.id});
+
+			return WsApi.listen(mapping.listen).then(null, null, function(res) {
+				processResponse(res);
+				
+				angular.forEach(listenCallbacks, function(cb) {
+					cb();
+				});
+
+			});
+		};
+
+		var processResponse = function(res) {
+
+			var resObj = angular.fromJson(res.body);
+
+			var meta = resObj.meta;
+
+			if(meta.type != 'ERROR') {
+				var payload = resObj.payload;
+
+				angular.forEach(payload, function(datum) {
+					angular.extend(cache, datum);
+				});
+
+				angular.extend(abstractModel, cache);
+				setData(cache);
+			}
+			else {
+				abstractModel.refresh();
+			}
+			
+		};
+		
+		// additional core level model methods and variables
+		
+		return this;
+
 	};
 	
-	return AbstractModel;
-
 });

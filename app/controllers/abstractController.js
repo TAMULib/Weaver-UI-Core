@@ -66,7 +66,7 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 	 * 	A boolean indicating that the current user is browsing anonymously.
 	 */
 	$scope.isAnonymous = function() {
-		return (sessionStorage.role == "ROLE_ANONYMOUS");
+		return (sessionStorage.role == appConfig.anonymousRole);
 	};
 
 	/**

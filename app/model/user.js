@@ -1,4 +1,4 @@
-vireo.model("User", function ($q, RestApi, StorageService) {
+core.model("User", function ($q, RestApi, StorageService) {
 
 	return function User() {
 

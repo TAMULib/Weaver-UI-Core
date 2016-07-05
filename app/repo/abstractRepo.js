@@ -51,6 +51,13 @@ core.service("AbstractRepo", function ($q, WsApi) {
 			});
 		});
 
+		abstractRepo.count = function() {
+			if(!initialized) {
+				console.error('Repo not initialized!');
+			}
+			return cache.length;
+		};
+
 		abstractRepo.getAll = function() {
 			return cache;
 		};

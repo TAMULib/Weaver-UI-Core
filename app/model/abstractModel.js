@@ -27,12 +27,9 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 				setData(cache);
 			}
 			else {
-				
 				WsApi.fetch(mapping.instantiate).then(function(res) {
 					cache = cache !== undefined ? cache : {};
-
 					processResponse(res);
-
 					listen();
 				});
 			}

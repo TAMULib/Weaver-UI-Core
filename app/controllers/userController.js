@@ -39,7 +39,7 @@ core.controller('UserController', function ($controller, $scope, StorageService,
 	 */
 	$scope.ready = $scope.user.ready();
 
-	if(!$scope.isAnonymous() && $scope.ready.ready() != null) {
+	if(!$scope.isAnonymous() && $scope.ready != null) {
 
 		/**
 		 * @ngdoc method
@@ -50,7 +50,7 @@ core.controller('UserController', function ($controller, $scope, StorageService,
 		 * @description
 		 * 	This method will set the StorageService role to the User credential role once the User Promise object is recieved.
 		 */
-		$scope.ready.ready().then(function() {
+		$scope.ready.then(function() {
 			StorageService.set('role', $scope.user.role);
 		});
 	}

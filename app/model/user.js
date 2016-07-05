@@ -68,8 +68,6 @@ core.model("User", function ($q, RestApi, StorageService) {
 
 					delete sessionStorage.role;
 
-					var user = user.login();
-
 					user.ready().then(function() {
 						StorageService.set("role", user.role);
 						deferred.resolve(data);

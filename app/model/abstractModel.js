@@ -82,16 +82,12 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 		};
 
 		var listen = function() {
-
 			angular.extend(mapping.listen, {method: abstractModel.id});
-
 			return WsApi.listen(mapping.listen).then(null, null, function(res) {
 				processResponse(res);
-				
 				angular.forEach(listenCallbacks, function(cb) {
-					cb();
+					cb(res);
 				});
-
 			});
 		};
 

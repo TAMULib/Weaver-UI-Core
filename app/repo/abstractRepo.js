@@ -39,14 +39,14 @@ core.service("AbstractRepo", function ($q, WsApi) {
 
 		WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
 			build(unwrap(res)).then(function() {
-				defer.resolve();
+				defer.resolve(res);
 			});
 		});
 
 		WsApi.listen(abstractRepo.mapping.listen).then(null, null, function(res) {
 			build(unwrap(res)).then(function() {
 				angular.forEach(listenCallbacks, function(cb) {
-					cb();
+					cb(res);
 				});
 			});
 		});

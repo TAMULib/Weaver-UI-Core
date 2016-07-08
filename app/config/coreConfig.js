@@ -14,19 +14,16 @@ var coreConfig = {
 		'types': [
 			'SUCCESS',
 			'INFO',
-			'VALIDATION_INFO',
 			'WARNING',
-			'VALIDATION_WARNING',
 			'ERROR',
-			'VALIDATION_ERROR',			
+			'INVALID',
 			'UNKNOWN'
 		],
 		'classes': {
 			'SUCCESS': 'success',
 			'WARNING': 'warning',
-			'VALIDATION_WARNING': 'warning',
-			'ERROR':   'danger',
-			'VALIDATION_ERROR':   'danger',
+			'ERROR': 'danger',
+			'INVALID': 'danger',
 			'UNKNOWN': 'danger',
 			'DEFAULT': 'info'
 		},

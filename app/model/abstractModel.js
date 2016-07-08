@@ -53,7 +53,13 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 					});
 				}
 				else {
-					resolve(res);
+					var payload = {};
+					payload[abstractModel.constructor.name] = abstractModel;
+					resolve({
+						body: angular.toJson({ 
+							payload: payload
+						})
+					});
 				}
 			});
 		};

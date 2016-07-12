@@ -18,8 +18,10 @@
  *	reporting functionality.
  *
 **/
-core.controller('AbstractController', function ($scope, $window, StorageService, RestApi) {
+core.controller('AbstractController', function ($scope, $window, ModalService, StorageService, RestApi) {
 
+	angular.extend($scope, ModalService);
+	
 	/**
 	 * @ngdoc property
 	 * @name core.controller:AbstractController#$scope.storage
@@ -29,7 +31,7 @@ core.controller('AbstractController', function ($scope, $window, StorageService,
 	 * 	The StorageService for the scope of the Abstract Controller
 	 */
 	$scope.storage = StorageService;
-
+	
 	/**
 	 * @ngdoc method
 	 * @name core.controller:AbstractController#$scope.isAssumed

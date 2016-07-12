@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name  core.service:wsservice
+ * @name  core.service:WsService
  * @requires ng.$interval
  * @requires ng.$q
  * @requires core.service:AlertService
@@ -11,45 +11,45 @@
  */
 core.service("WsService", function($interval, $q, AlertService) { 
 	
-	var wsservice = this;
+	var WsService = this;
 	
 	/**
 	 * @ngdoc property
-	 * @name  core.service:wsservice#wsservice.pendingReqCounter
-	 * @propertyOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.pendingReqCounter
+	 * @propertyOf core.service:WsService
 	 *
 	 * @description 
 	 *  A count of all unresolved requests.
 	 * 
 	 */
-	wsservice.pendingReqCounter = 0;
+	WsService.pendingReqCounter = 0;
 	
 	/**
 	 * @ngdoc property
-	 * @name  core.service:wsservice#wsservice.pendingReq
-	 * @propertyOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.pendingReq
+	 * @propertyOf core.service:WsService
 	 *
 	 * @description 
 	 *  An object store for pending requests.
 	 * 
 	 */
-	wsservice.pendingReq = {};
+	WsService.pendingReq = {};
 	
 	/**
 	 * @ngdoc property
-	 * @name  core.service:wsservice#wsservice.subscriptions
-	 * @propertyOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.subscriptions
+	 * @propertyOf core.service:WsService
 	 *
 	 * @description 
 	 *  An object store for subscriptions.
 	 * 
 	 */
-	wsservice.subscriptions = {};
+	WsService.subscriptions = {};
 
 	/**
 	 * @ngdoc method
-	 * @name  core.service:wsservice#wsservice.subscribe
-	 * @methodOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.subscribe
+	 * @methodOf core.service:WsService
 	 * @param {string} channel 
 	 *  The channel which will be subscribed to.
 	 * @param {boolean=} persist 
@@ -59,7 +59,7 @@ core.service("WsService", function($interval, $q, AlertService) {
 	 *  Registers a subscription to a stomp channel.
 	 * 
 	 */
-	wsservice.subscribe = function(channel, persist) {		
+	WsService.subscribe = function(channel, persist) {		
 		var id = "sub-" + window.stompClient.counter;		
 		var defer;
 		
@@ -67,7 +67,7 @@ core.service("WsService", function($interval, $q, AlertService) {
 		
 		var subObj;
 
-		if((subObj = wsservice.subExist(channel))) {
+		if((subObj = WsService.subExist(channel))) {
 			defer = subObj.defer;
 		} else {
 			
@@ -84,20 +84,20 @@ core.service("WsService", function($interval, $q, AlertService) {
 				var requestId = meta.id ? meta.id : null;				
 				var response = meta.type;
 
-				if(wsservice.pendingReq[requestId]) {
+				if(WsService.pendingReq[requestId]) {
 
 					//logger.info("");
 					//logger.debug(channel);
-					//logger.info("Resolving Request " + requestId + ": " + wsservice.pendingReq[requestId].request);
+					//logger.info("Resolving Request " + requestId + ": " + WsService.pendingReq[requestId].request);
 					//logger.log(JSON.parse(data.body));
 					
 					if(response == "REFRESH") {
-						wsservice.pendingReq[requestId].defer.notify(data);
+						WsService.pendingReq[requestId].defer.notify(data);
 					} else {
 						// We should always resolve to handle alternative notifications.
-						wsservice.pendingReq[requestId].defer.resolve(data);
+						WsService.pendingReq[requestId].defer.resolve(data);
 						AlertService.add(meta, channel);
-						delete wsservice.pendingReq[requestId];	
+						delete WsService.pendingReq[requestId];	
 					}
 					
 				}
@@ -106,7 +106,7 @@ core.service("WsService", function($interval, $q, AlertService) {
 
 			});
 
-			wsservice.subscriptions[id] = subObj;
+			WsService.subscriptions[id] = subObj;
 		}
 
 		return defer.promise;
@@ -114,8 +114,8 @@ core.service("WsService", function($interval, $q, AlertService) {
 
 	/**
 	 * @ngdoc method
-	 * @name  core.service:wsservice#wsservice.send
-	 * @methodOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.send
+	 * @methodOf core.service:WsService
 	 * @param {string} request 
 	 *  The destination of this request.
 	 * @param {object} headers
@@ -130,21 +130,21 @@ core.service("WsService", function($interval, $q, AlertService) {
 	 *  Sends a websocket message.
 	 * 
 	 */
-	wsservice.send = function(request, headers, payload, channel) {
+	WsService.send = function(request, headers, payload, channel) {
 
-		if(!wsservice.subExist(channel)) {
+		if(!WsService.subExist(channel)) {
 			var endpoint = channel; 
 			var controller = channel.substr(0, channel.lastIndexOf("/"));
 			AlertService.create(endpoint);
 			AlertService.create(controller);
-			wsservice.subscribe(channel);
+			WsService.subscribe(channel);
 		}
 		
-		headers.id = wsservice.pendingReqCounter++;
+		headers.id = WsService.pendingReqCounter++;
 
 		window.stompClient.send(request, headers, payload);
 		
-		wsservice.pendingReq[headers.id] = {
+		WsService.pendingReq[headers.id] = {
 			defer: $q.defer(),
 			timestamp: new Date().getTime(),
 			request: request,
@@ -154,14 +154,14 @@ core.service("WsService", function($interval, $q, AlertService) {
 			}
 		};
 
-		return wsservice.pendingReq[headers.id].defer.promise;
+		return WsService.pendingReq[headers.id].defer.promise;
 		
 	};
 
 	/**
 	 * @ngdoc method
-	 * @name  core.service:wsservice#wsservice.subExist
-	 * @methodOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.subExist
+	 * @methodOf core.service:WsService
 	 * @param {string} channel 
 	 *  The channel which is being confirmed.
 	 * @returns {boolean|object} 
@@ -172,9 +172,9 @@ core.service("WsService", function($interval, $q, AlertService) {
 	 *  subscription.
 	 * 
 	 */
-	wsservice.subExist = function(channel) {
-		for(var key in wsservice.subscriptions) {
-			var subObj = wsservice.subscriptions[key];
+	WsService.subExist = function(channel) {
+		for(var key in WsService.subscriptions) {
+			var subObj = WsService.subscriptions[key];
 			if(subObj.channel == channel) return subObj;
 		}
 		return false;
@@ -182,8 +182,8 @@ core.service("WsService", function($interval, $q, AlertService) {
 	
 	/**
 	 * @ngdoc method
-	 * @name  core.service:wsservice#wsservice.unsubscribe
-	 * @methodOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.unsubscribe
+	 * @methodOf core.service:WsService
 	 * @param {object} sub 
 	 *  The subscription which will be unsubscribed to.
 	 * @returns {void} returns void
@@ -192,25 +192,25 @@ core.service("WsService", function($interval, $q, AlertService) {
 	 *   Unsubscribes from the indicated subscription.
 	 * 
 	 */
-	wsservice.unsubscribe = function(sub) {
+	WsService.unsubscribe = function(sub) {
 		window.stompClient.unsubscribe(sub);
-		delete wsservice.subscriptions[sub];
+		delete WsService.subscriptions[sub];
 	};
 
 	/**
 	 * @ngdoc method
-	 * @name  core.service:wsservice#wsservice.unsubscribeAll
-	 * @methodOf core.service:wsservice
+	 * @name  core.service:WsService#WsService.unsubscribeAll
+	 * @methodOf core.service:WsService
 	 * @returns {void} returns void
 	 *
 	 *  @description 
 	 *   Unsubscribes from all subscriptions.
 	 * 
 	 */
-	wsservice.unsubscribeAll = function() {
-		for(var key in wsservice.subscriptions){
-			var sub = wsservice.subscriptions[key];
-			if(!sub.persist) wsservice.unsubscribe(key);
+	WsService.unsubscribeAll = function() {
+		for(var key in WsService.subscriptions){
+			var sub = WsService.subscriptions[key];
+			if(!sub.persist) WsService.unsubscribe(key);
 		}
 	};
 
@@ -218,9 +218,9 @@ core.service("WsService", function($interval, $q, AlertService) {
 
 		var now = new Date().getTime();
 
-		for(var req in wsservice.pendingReq) {
-			if(now - wsservice.pendingReq[req].timestamp > 60000) {
-				console.log(wsservice.pendingReq);
+		for(var req in WsService.pendingReq) {
+			if(now - WsService.pendingReq[req].timestamp > 60000) {
+				console.log(WsService.pendingReq);
 				AlertService.add({type: "WARNING", message: "Web service is taking too long to respond. Please refresh. If this continues to appear you can email helpdesk@library.tamu.edu."}, "/app/warnings");  
 			} 
 		}

@@ -14,6 +14,9 @@ core.service("AbstractRepo", function ($q, WsApi) {
 
 		var listenCallbacks = [];
 
+		var validations = {};
+
+		var entityName = new model({}).getEntityName();
 
 		var build = function(data) {
 			initialized = false;
@@ -37,6 +40,14 @@ core.service("AbstractRepo", function ($q, WsApi) {
 			return repoObj;
 		};
 
+		WsApi.fetch({
+			'endpoint': '/private/queue',
+			'controller': 'validations',
+			'method': entityName
+		}).then(function(res) {
+			validations = angular.fromJson(res.body).payload.HashMap;
+		});
+
 		WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
 			build(unwrap(res)).then(function() {
 				defer.resolve(res);
@@ -50,6 +61,14 @@ core.service("AbstractRepo", function ($q, WsApi) {
 				});
 			});
 		});
+
+		abstractRepo.getEntityName = function() {
+			return entityName;
+		};
+
+		abstractRepo.getValidations = function() {
+			return validations;
+		};
 
 		abstractRepo.count = function() {
 			if(!initialized) {

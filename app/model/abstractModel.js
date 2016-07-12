@@ -14,9 +14,13 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 
 		var cache;
 
+		var entityName;
+
 		this.init = function(data, apiMapping) {
 
 			abstractModel = this;
+
+			entityName = abstractModel.constructor.name;
 
 			mapping = apiMapping;
 
@@ -36,6 +40,10 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 
 		};
 
+		this.getEntityName = function() {
+			return entityName;
+		};
+
 		this.mapping = function() {
 			return mapping;
 		};
@@ -48,7 +56,7 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 			return $q(function(resolve) {
 				if(abstractModel.dirty()) {
 					angular.extend(mapping.update, {data: abstractModel});
-					WsApi.fetch(mapping.update).then(function(res) {
+					WsApi.fetch(mapping.update).then(function(res) {						
 						resolve(res);
 					});
 				}

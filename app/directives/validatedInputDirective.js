@@ -8,6 +8,8 @@ core.directive("validatedinput", function() {
 			"property": "@",
 			"label": "@",
 			"placeholder": "@",
+			"truevalue": "@",
+			"falsevalue": "@",
 			"results": "="
 		},
 		link: function ($scope, element, attr) {

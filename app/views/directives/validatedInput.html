@@ -1,6 +1,6 @@
 <div class="form-group">
  	
- 	<div ng-if="type === undefined || type == 'text' || type == 'password'">
+ 	<span ng-if="type === undefined || type == 'text' || type == 'password'">
 	 	<label for="">{{label}}</label>
 		<input 
 			id=""
@@ -8,9 +8,9 @@
 			class="form-control" 
 			ng-model="model[property]"
 			placeholder="{{placeholder}}"/>
-	</div>
+	</span>
 
-	<div ng-if="type == 'checkbox'">
+	<span ng-if="type == 'checkbox'">
 		<div class="col-sm-3">
 			<span class="pull-right">{{label}}</span>
 		</div>
@@ -18,10 +18,12 @@
 			<input 
 				id=""
 				type="{{type}}" 
-				ng-model="model[property]"/>
+				ng-model="model[property]"
+				ng-false-value="{{falsevalue}}" 
+				ng-true-value="{{truevalue}}"/>
 			<span>{{placeholder}}</span>
 		</div>
-	</div>
+	</span>
 
 	<div ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">

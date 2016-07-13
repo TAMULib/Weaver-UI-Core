@@ -1,11 +1,19 @@
 <div class="form-group">
  	<label for="">{{label}}</label>
 	<select 
+		ng-if="!optionproperty"
 		id=""
 		name=""
 		class="form-control"
 		ng-model="model[property]"
-		ng-options="key as value for (key, value) in options"></select>
+		ng-options="key as option for (key, option) in options"></select>
+	<select 
+		ng-if="optionproperty"
+		id=""
+		name=""
+		class="form-control"
+		ng-model="model[property]"
+		ng-options="option[optionproperty] for option in options"></select>
 	<div ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>

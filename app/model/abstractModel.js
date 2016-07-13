@@ -66,7 +66,10 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 					payload[abstractModel.constructor.name] = abstractModel;
 					resolve({
 						body: angular.toJson({ 
-							payload: payload
+							payload: payload,
+							meta: {
+								type: "SUCCESS"
+							}
 						})
 					});
 				}

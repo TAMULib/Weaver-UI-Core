@@ -1,11 +1,28 @@
 <div class="form-group">
- 	<label for="">{{label}}</label>
-	<input 
-		id=""
-		type="text" 
-		class="form-control" 
-		ng-model="model[property]"
-		placeholder="{{placeholder}}"/>
+ 	
+ 	<div ng-if="type === undefined || type == 'text' || type == 'password'">
+	 	<label for="">{{label}}</label>
+		<input 
+			id=""
+			type="{{type}}" 
+			class="form-control" 
+			ng-model="model[property]"
+			placeholder="{{placeholder}}"/>
+	</div>
+
+	<div ng-if="type == 'checkbox'">
+		<div class="col-sm-3">
+			<span class="pull-right">{{label}}</span>
+		</div>
+		<div class="col-sm-6">
+			<input 
+				id=""
+				type="{{type}}" 
+				ng-model="model[property]"/>
+			<span>{{placeholder}}</span>
+		</div>
+	</div>
+
 	<div ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>

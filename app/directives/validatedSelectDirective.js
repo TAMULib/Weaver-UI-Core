@@ -4,6 +4,7 @@ core.directive("validatedselect", function() {
 		restrict: 'E',
 		scope: {
 			"options": "=",
+			"optionproperty": "@",
 			"model": "=",
 			"property": "@",
 			"label": "@",

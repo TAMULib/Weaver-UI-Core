@@ -53,9 +53,10 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 		};
 
 		this.save = function() {
-			return $q(function(resolve) {
+			var promise = $q(function(resolve) {
 				if(abstractModel.dirty()) {
 					angular.extend(mapping.update, {data: abstractModel});
+					console.log(mapping.update)
 					WsApi.fetch(mapping.update).then(function(res) {						
 						resolve(res);
 					});
@@ -70,11 +71,25 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 					});
 				}
 			});
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractModel, angular.fromJson(res.body).payload);
+					console.log(abstractModel);
+				}
+			});
+			return promise;
 		};
 
 		this.delete = function() {
 			angular.extend(mapping.remove, {data: abstractModel});
-			return WsApi.fetch(mapping.remove);
+			var promise = WsApi.fetch(mapping.remove);
+			promise.then(function(res) {				
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractModel, angular.fromJson(res.body).payload);
+					console.log(abstractModel);
+				}
+			});
+			return promise;
 		};
 
 		this.listen = function(cb) {
@@ -97,12 +112,14 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 
 		var listen = function() {
 			angular.extend(mapping.listen, {method: abstractModel.id});
-			return WsApi.listen(mapping.listen).then(null, null, function(res) {
+			var notifyPromise = WsApi.listen(mapping.listen);
+			notifyPromise.then(null, null, function(res) {
 				processResponse(res);
 				angular.forEach(listenCallbacks, function(cb) {
 					cb(res);
 				});
 			});
+			return notifyPromise;
 		};
 
 		var processResponse = function(res) {

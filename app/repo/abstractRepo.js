@@ -113,26 +113,57 @@ core.service("AbstractRepo", function ($q, WsApi) {
 			return match;
 		};
 
-		// TODO: remove
 		abstractRepo.delete = function(model) {
-			return model.delete();
+			abstractRepo.clearValidationResults();
+			var promise = model.delete();
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
 
 		abstractRepo.deleteById = function(id) {
-			return abstractRepo.findById(id).delete();
+			abstractRepo.clearValidationResults();
+			var promise = abstractRepo.findById(id).delete();
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
 
 		abstractRepo.create = function(model) {
+			abstractRepo.clearValidationResults();
 			angular.extend(abstractRepo.mapping.create, {'data': model});
-			return WsApi.fetch(abstractRepo.mapping.create);
+			var promise = WsApi.fetch(abstractRepo.mapping.create);
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
 
 		// TODO: remove
 		abstractRepo.update = function(model) {
-           return model.save();
+			abstractRepo.clearValidationResults();
+           	var promise = model.save();
+           	promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
 
-		this.listen = function(cb) {
+		abstractRepo.listen = function(cb) {
 			listenCallbacks.push(cb);
 		};
 
@@ -140,14 +171,38 @@ core.service("AbstractRepo", function ($q, WsApi) {
 
 		// these should be added through decoration
 		abstractRepo.sort = function(facet) {
+			abstractRepo.clearValidationResults();
 			angular.extend(abstractRepo.mapping.sort, {'method': 'sort/' + facet});
-			return WsApi.fetch(abstractRepo.mapping.sort);
+			var promise = WsApi.fetch(abstractRepo.mapping.sort);
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
 
 		abstractRepo.reorder = function(src, dest) {
+			abstractRepo.clearValidationResults();
 			angular.extend(abstractRepo.mapping.reorder, {'method': 'reorder/' + src + '/' + dest});
-			return WsApi.fetch(abstractRepo.mapping.reorder);
+			var promise = WsApi.fetch(abstractRepo.mapping.reorder);
+			promise.then(function(res) {
+				if(angular.fromJson(res.body).meta.type == "INVALID") {
+					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+					console.log(abstractRepo);
+				}
+			});
+			return promise;
 		};
+
+		abstractRepo.getValidationResults = function() {
+			return abstractRepo.ValidationResults;
+		}
+
+		abstractRepo.clearValidationResults = function() {
+			delete abstractRepo.ValidationResults;
+		}
 
 		return abstractRepo;
 	}

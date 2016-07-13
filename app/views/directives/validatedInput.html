@@ -1,0 +1,23 @@
+<div class="form-group">
+ 	<label for="">{{label}}</label>
+	<input 
+		id=""
+		type="text" 
+		class="form-control" 
+		ng-model="model[property]"
+		placeholder="{{placeholder}}"/>
+	<div ng-messages="results.messages[property]" role="alert">
+		<div ng-message="required">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>
+	    </div>
+	    <div ng-message="minLength">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].minLength }}</div>
+	    </div>
+	    <div ng-message="maxLength">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].maxLength }}</div>
+	    </div>
+	    <div ng-message="pattern">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].pattern }}</div>
+	    </div>
+	</div>
+</div>

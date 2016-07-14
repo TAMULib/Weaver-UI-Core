@@ -1,8 +1,14 @@
 <div ng-messages="results.messages" role="alert">
     <div ng-message="method">
-    	<div class="alert alert-wrapper alert-danger" ng-repeat="message in results.messages.method">{{ message }}</div>
+    	<div class="alert alert-wrapper alert-danger" ng-repeat="message in results.messages.method">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    		{{ message }}
+    	</div>
     </div>
     <div ng-message="business">
-    	<div class="alert alert-wrapper alert-danger" ng-repeat="message in results.messages.business">{{ message }}</div>
+    	<div class="alert alert-wrapper alert-danger" ng-repeat="message in results.messages.business">
+    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    		{{ message }}
+		</div>
     </div>
 </div>

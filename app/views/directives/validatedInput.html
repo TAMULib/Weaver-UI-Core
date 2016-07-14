@@ -22,8 +22,8 @@
 				id="{{property}}-input"
 				type="{{type}}" 
 				ng-model="model[property]"
-				ng-false-value="{{falsevalue}}" 
-				ng-true-value="{{truevalue}}"
+				ng-false-value="{{falsevalue ? falsevalue : false}}" 
+				ng-true-value="{{truevalue ? truevalue : true}}"
 				aria-describedby="{{label}}"/>
 			<span>{{placeholder}}</span>
 		</div>

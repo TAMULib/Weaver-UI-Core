@@ -62,6 +62,8 @@ core.service("AbstractRepo", function ($q, WsApi) {
 			});
 		});
 
+		abstractRepo.ValidationResults = {};
+
 		abstractRepo.getEntityName = function() {
 			return entityName;
 		};
@@ -198,11 +200,13 @@ core.service("AbstractRepo", function ($q, WsApi) {
 
 		abstractRepo.getValidationResults = function() {
 			return abstractRepo.ValidationResults;
-		}
+		};
 
 		abstractRepo.clearValidationResults = function() {
-			delete abstractRepo.ValidationResults;
-		}
+			if(abstractRepo.ValidationResults.messages !== undefined) {
+				delete abstractRepo.ValidationResults.messages;
+			}
+		};
 
 		return abstractRepo;
 	}

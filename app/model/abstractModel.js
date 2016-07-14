@@ -44,7 +44,7 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 			return entityName;
 		};
 
-		this.mapping = function() {
+		this.getMapping = function() {
 			return mapping;
 		};
 

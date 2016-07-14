@@ -1,16 +1,16 @@
 <div class="form-group">
- 	<label for="">{{label}}</label>
+ 	<label for="select-{{label}}">{{label}}</label>
 	<select 
 		ng-if="!optionproperty"
-		id=""
-		name=""
+		id="select-{{label}}"
+		name="select-{{label}}"
 		class="form-control"
 		ng-model="model[property]"
 		ng-options="key as option for (key, option) in options"></select>
 	<select 
 		ng-if="optionproperty"
-		id=""
-		name=""
+		id="select-{{label}}"
+		name="select-{{label}}"
 		class="form-control"
 		ng-model="model[property]"
 		ng-options="option[optionproperty] for option in options"></select>

@@ -1,31 +1,35 @@
 <div class="form-group">
  	
- 	<span ng-if="type === undefined || type == 'text' || type == 'password'">
-	 	<label for="">{{label}}</label>
-		<input 
-			id=""
-			type="{{type}}" 
-			class="form-control" 
-			ng-model="model[property]"
-			placeholder="{{placeholder}}"/>
-	</span>
-
-	<span ng-if="type == 'checkbox'">
-		<div class="col-sm-3">
-			<span class="pull-right">{{label}}</span>
+	<div ng-if="type === undefined || type == 'text' || type == 'password'">
+		<label ng-if="label" for="{{property}}-input" class="control-label">{{label}}</label>
+		<div ng-class="{'input-group':tip}">
+			<input
+				id="{{property}}-input"
+				type="{{type}}"
+				class="form-control"
+				ng-model="model[property]"
+				ng-keydown="keydown($event)"
+				ng-blur="blur()"
+				placeholder="{{placeholder}}"
+				aria-describedby="{{label}}"/>
 		</div>
-		<div class="col-sm-6">
+	</div>
+
+	<div ng-if="type == 'checkbox'">
+		<label ng-if="label" for="{{property}}-input" class="checkbox">{{label}}</label>
+		<div class="checkbox-inline">
 			<input 
-				id=""
+				id="{{property}}-input"
 				type="{{type}}" 
 				ng-model="model[property]"
 				ng-false-value="{{falsevalue}}" 
-				ng-true-value="{{truevalue}}"/>
+				ng-true-value="{{truevalue}}"
+				aria-describedby="{{label}}"/>
 			<span>{{placeholder}}</span>
 		</div>
-	</span>
+	</div>
 
-	<div ng-messages="results.messages[property]" role="alert">
+	<div ng-if="results.messages" ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>
 	    </div>

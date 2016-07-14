@@ -1,21 +1,19 @@
-<div class="form-group">
+<span class="form-group">
  	
-	<div ng-if="type === undefined || type == 'text' || type == 'password'">
+	<span ng-if="type === undefined || type == 'text' || type == 'password'">
 		<label ng-if="label" for="{{property}}-input" class="control-label">{{label}}</label>
-		<div ng-class="{'input-group':tip}">
-			<input
-				id="{{property}}-input"
-				type="{{type}}"
-				class="form-control"
-				ng-model="model[property]"
-				ng-keydown="keydown($event)"
-				ng-blur="blur()"
-				placeholder="{{placeholder}}"
-				aria-describedby="{{label}}"/>
-		</div>
-	</div>
+		<input
+			id="{{property}}-input"
+			type="{{type}}"
+			class="form-control"
+			ng-model="model[property]"
+			ng-keydown="keydown($event)"
+			ng-blur="blur()"
+			placeholder="{{placeholder}}"
+			aria-describedby="{{label}}"/>
+	</span>
 
-	<div ng-if="type == 'checkbox'">
+	<span ng-if="type == 'checkbox'">
 		<label ng-if="label" for="{{property}}-input" class="checkbox">{{label}}</label>
 		<div class="checkbox-inline">
 			<input 
@@ -27,7 +25,7 @@
 				aria-describedby="{{label}}"/>
 			<span>{{placeholder}}</span>
 		</div>
-	</div>
+	</span>
 
 	<div ng-if="results.messages" ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
@@ -43,4 +41,4 @@
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].pattern }}</div>
 	    </div>
 	</div>
-</div>
+</span>

@@ -13,7 +13,7 @@
 		name="select-{{label}}"
 		class="form-control"
 		ng-model="model[property]"
-		ng-options="option[optionproperty] for option in options"></select>
+		ng-options="option as option[optionproperty] for option in options track by option.id"></select>
 	<div ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>

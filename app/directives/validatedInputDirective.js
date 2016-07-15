@@ -11,11 +11,13 @@ core.directive("validatedinput", function() {
 			"truevalue": "@",
 			"falsevalue": "@",
 			"blur": "&",
+			"form": "=",
+			"validations": "=",
 			"results": "="
 		},
 		link: function ($scope, element, attr) {
 			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/directives/validatedInput.html";
-		
+			
 			$scope.keydown = function($event) {
 				// enter(13): submit value to be persisted
 				if($event.which == 13) {

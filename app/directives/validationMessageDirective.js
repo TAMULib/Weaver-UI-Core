@@ -3,6 +3,10 @@ core.directive("validationmessage", function() {
 		template: '<span ng-include src="view"></span>',
 		restrict: 'E',
 		scope: {
+			"type": "@",
+			"property": "@",
+			"form": "=",
+			"validations": "=",
 			"results": "="
 		},
 		link: function ($scope, element, attr) {

@@ -1,31 +1,69 @@
 <div class="form-group">
+
  	<label for="select-{{label}}">{{label}}</label>
+ 	
 	<select 
 		ng-if="!optionproperty"
-		id="select-{{label}}"
-		name="select-{{label}}"
+		id="{{property}}"
+		name="{{property}}"
 		class="form-control"
 		ng-model="model[property]"
-		ng-options="key as option for (key, option) in options"></select>
+		ng-options="key as option for (key, option) in options"
+		ng-required="validations[property].required.value"
+		ng-minlength="validations[property].minlength.value"
+		ng-maxlength="validations[property].maxlength.value"
+		ng-pattern="validations[property].pattern.value">
+	</select>
+	
 	<select 
 		ng-if="optionproperty"
-		id="select-{{label}}"
-		name="select-{{label}}"
+		id="{{property}}"
+		name="{{property}}"
 		class="form-control"
 		ng-model="model[property]"
-		ng-options="option as option[optionproperty] for option in options track by option.id"></select>
+		ng-options="option as option[optionproperty] for option in options track by option.id"
+		ng-required="validations[property].required.value"
+		ng-minlength="validations[property].minlength.value"
+		ng-maxlength="validations[property].maxlength.value"
+		ng-pattern="validations[property].pattern.value">
+	</select>
+
+	<validationmessage
+		type="input"
+		property="{{property}}"
+		form="form"
+		validations="validations"
+		results="results">
+	</validationmessage>
+<!-- 	
 	<div ng-messages="results.messages[property]" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].required }}</div>
 	    </div>
-	    <div ng-message="minLength">
-	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].minLength }}</div>
+	    <div ng-message="minlength">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].minlength }}</div>
 	    </div>
-	    <div ng-message="maxLength">
-	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].maxLength }}</div>
+	    <div ng-message="maxlength">
+	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].maxlength }}</div>
 	    </div>
 	    <div ng-message="pattern">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].pattern }}</div>
 	    </div>
 	</div>
+	
+	<div ng-if="form.$invalid && !form.$pristine" ng-messages="form[property].$error" role="alert">
+		<div ng-message="required">
+	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].required.message }}</div>
+	    </div>
+	    <div ng-message="minlength">
+	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].minlength.message }}</div>
+	    </div>
+	    <div ng-message="maxlength">
+	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].maxlength.message }}</div>
+	    </div>
+	    <div ng-message="pattern">
+	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].pattern.message }}</div>
+	    </div>
+	</div>
+ -->	
 </div>

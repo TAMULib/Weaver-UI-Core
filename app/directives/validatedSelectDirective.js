@@ -8,6 +8,8 @@ core.directive("validatedselect", function() {
 			"model": "=",
 			"property": "@",
 			"label": "@",
+			"form": "=",
+			"validations": "=",
 			"results": "="
 		},
 		link: function ($scope, element, attr) {

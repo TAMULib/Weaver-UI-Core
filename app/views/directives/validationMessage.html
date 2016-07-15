@@ -29,8 +29,7 @@
 	    <div ng-message="pattern">
 	    	<div class="alert alert-wrapper alert-danger">{{ results.messages[property].pattern }}</div>
 	    </div>
-	</div>
-	
+	</div>	
 	<div ng-if="form.$invalid && !form.$pristine" ng-messages="form[property].$error" role="alert">
 		<div ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].required.message }}</div>

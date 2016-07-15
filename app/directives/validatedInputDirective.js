@@ -11,6 +11,7 @@ core.directive("validatedinput", function() {
 			"truevalue": "@",
 			"falsevalue": "@",
 			"blur": "&",
+			"blurEnabled": "=",
 			"form": "=",
 			"validations": "=",
 			"results": "="
@@ -20,7 +21,7 @@ core.directive("validatedinput", function() {
 			
 			$scope.keydown = function($event) {
 				// enter(13): submit value to be persisted
-				if($event.which == 13) {
+				if($event.which == 13 && $scope.blurEnabled) {
 					$event.target.blur();
 				}
 				// escape(27): reset value using shadow

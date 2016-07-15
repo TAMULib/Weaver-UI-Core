@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
+core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
 	return function AbstractModelNew() {
 
@@ -16,11 +16,15 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 
 		var entityName;
 
+		var validations;
+
 		this.init = function(data, apiMapping) {
 
 			abstractModel = this;
 
 			entityName = abstractModel.constructor.name;
+
+			validations = ValidationStore.getValidations(entityName);
 
 			mapping = apiMapping;
 
@@ -44,6 +48,10 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi) {
 			return entityName;
 		};
 
+		this.getValidations = function() {
+			return validations;
+		};
+		
 		this.getMapping = function() {
 			return mapping;
 		};

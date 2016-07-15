@@ -1,4 +1,4 @@
-core.service("AbstractRepo", function ($q, WsApi) {
+core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 	return function AbstractRepo(model, mapping) {
 
@@ -14,9 +14,9 @@ core.service("AbstractRepo", function ($q, WsApi) {
 
 		var listenCallbacks = [];
 
-		var validations = {};
-
 		var entityName = new model({}).getEntityName();
+
+		var validations = ValidationStore.getValidations(entityName);
 
 		var build = function(data) {
 			initialized = false;
@@ -39,14 +39,6 @@ core.service("AbstractRepo", function ($q, WsApi) {
 			})
 			return repoObj;
 		};
-
-		WsApi.fetch({
-			'endpoint': '/private/queue',
-			'controller': 'validations',
-			'method': entityName
-		}).then(function(res) {
-			validations = angular.fromJson(res.body).payload.HashMap;
-		});
 
 		WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
 			build(unwrap(res)).then(function() {

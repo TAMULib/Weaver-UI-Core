@@ -31,16 +31,16 @@
 	    </div>
 	</div>	
 	<div ng-if="form.$invalid && !form.$pristine" ng-messages="form[property].$error" role="alert">
-		<div ng-message="required">
+		<div ng-if="form[property].$dirty" ng-message="required">
 	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].required.message }}</div>
 	    </div>
-	    <div ng-message="minlength">
+	    <div ng-if="form[property].$dirty" ng-message="minlength">
 	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].minlength.message }}</div>
 	    </div>
-	    <div ng-message="maxlength">
+	    <div ng-if="form[property].$dirty" ng-message="maxlength">
 	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].maxlength.message }}</div>
 	    </div>
-	    <div ng-message="pattern">
+	    <div ng-if="form[property].$dirty" ng-message="pattern">
 	    	<div class="alert alert-wrapper alert-danger">{{ validations[property].pattern.message }}</div>
 	    </div>
 	</div>

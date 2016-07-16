@@ -7,10 +7,12 @@ core.directive("validatedinput", function() {
 			"model": "=",
 			"property": "@",
 			"label": "@",
+			"textField": "=",
 			"placeholder": "@",
 			"truevalue": "@",
 			"falsevalue": "@",			
 			"blurEnabled": "=",
+			"hint": "@",
 			"form": "=",
 			"confirm": "&",
 			"validations": "=",
@@ -32,7 +34,9 @@ core.directive("validatedinput", function() {
 
 			$scope.blur = function($event) {
 				if($scope.blurEnabled && $scope.form.$valid) {
-					$scope.confirm();
+					if($scope.confirm !== undefined) {
+						$scope.confirm();
+					}
 				}
 			};
 

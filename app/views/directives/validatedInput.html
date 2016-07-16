@@ -1,4 +1,4 @@
-<span class="form-group">
+<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty, 'text-field-form-group': textField }">
  	
 	<span ng-if="type === undefined || type == 'text' || type == 'password'">
 		<label ng-if="label" for="{{property}}-input" class="control-label">{{label}}</label>
@@ -6,7 +6,7 @@
 			id="{{property}}"
 			name="{{property}}"
 			type="{{type}}"
-			class="form-control"
+			class="form-control"			
 			ng-model="model[property]"
 			ng-keydown="keydown($event)"
 			ng-blur="blur($event)"
@@ -16,6 +16,7 @@
 			ng-minlength="validations[property].minlength.value"
 			ng-maxlength="validations[property].maxlength.value"
 			ng-pattern="validations[property].pattern.value"/>
+		<span ng-if="hint" class="hint">{{ hint }}</span>
 	</span>
 
 	<span ng-if="type == 'checkbox'">
@@ -24,16 +25,11 @@
 			<input 
 				id="{{property}}"
 				name="{{property}}"
-				type="{{type}}" 
-				class="form-control"
+				type="{{type}}"
 				ng-model="model[property]"
 				ng-false-value="{{falsevalue ? falsevalue : false}}" 
 				ng-true-value="{{truevalue ? truevalue : true}}"
-				aria-describedby="{{label}}"
-				ng-required="validations[property].required.value"
-				ng-minlength="validations[property].minlength.value"
-				ng-maxlength="validations[property].maxlength.value"
-				ng-pattern="validations[property].pattern.value"/>
+				aria-describedby="{{label}}"/>
 			<span>{{placeholder}}</span>
 		</div>
 	</span>
@@ -45,4 +41,4 @@
 		validations="validations"
 		results="results">
 	</validationmessage>
-</span>
+</div>

@@ -70,6 +70,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
             $window.open(appConfig.authService + "/token?referer="+ location.origin + path, "_self");
         }
 
+        UserService.fetchUser();
+
     };
 
     /**

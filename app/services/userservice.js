@@ -19,7 +19,6 @@ core.service("UserService",function(StorageService, User, WsApi) {
     };
 
     UserService.getCurrentUser = function() {
-    	console.log(sessionStorage)
         return UserService.currentUser;
     };
 

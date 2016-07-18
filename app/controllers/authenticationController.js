@@ -17,11 +17,27 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User, ValidationStore) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
-    var user = new User();
+    $scope.user = new User();
+
+    $scope.reset = function() {
+        $scope.user.clearValidationResults();
+        for(var key in $scope.forms) {
+            if(!$scope.forms[key].$pristine) {
+                $scope.forms[key].$setPristine();
+            }
+        }
+        $scope.account = {
+            email: '',
+            password: ''
+        };
+        $scope.closeModal();
+    };
+    
+    $scope.reset();
     
     /**
      * @ngdoc method
@@ -71,7 +87,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         delete sessionStorage.token;
         sessionStorage.role = appConfig.anonymousRole;
 
-        user.logout();
+        $scope.user.logout();
 
         angular.element(".dropdown").dropdown("toggle");
 

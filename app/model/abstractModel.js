@@ -18,6 +18,8 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
 		var validations;
 
+		var validationResults = {};
+
 		this.init = function(data, apiMapping) {
 
 			abstractModel = this;
@@ -113,6 +115,20 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
 		this.dirty = function() {
 			return angular.toJson(abstractModel) !== angular.toJson(shadow);
+		};
+
+		this.setValidationResults = function(results) {
+			angular.extend(validationResults, results);
+		};
+
+		this.getValidationResults = function() {
+			return validationResults;
+		};
+
+		this.clearValidationResults = function() {
+			if(validationResults.messages !== undefined) {
+				delete validationResults.messages;
+			}
 		};
 
 		var setData = function(data) {

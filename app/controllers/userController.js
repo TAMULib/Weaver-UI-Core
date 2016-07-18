@@ -15,7 +15,7 @@
  *	This controller sets the user's role in session storage. Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
-core.controller('UserController', function ($controller, $scope, StorageService, User) {
+core.controller('UserController', function ($controller, $scope, StorageService, UserService) {
 
 	angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
@@ -27,7 +27,7 @@ core.controller('UserController', function ($controller, $scope, StorageService,
 	 * @description
 	 * 	The User service for the scope of the User Controller
 	 */
-	$scope.user = new User();
+	$scope.user = UserService.getCurrentUser();
 
 	/**
 	 * @ngdoc property

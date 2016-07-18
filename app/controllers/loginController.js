@@ -1,4 +1,4 @@
-core.controller('LoginController', function ($controller, $location, $scope) {
+core.controller('LoginController', function ($controller, $location, $scope, UserService) {
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
@@ -7,6 +7,7 @@ core.controller('LoginController', function ($controller, $location, $scope) {
 	$scope.login = function() {
 		$scope.user.authenticate($scope.account).then(function(data) {
 			$scope.reset();
+			UserService.fetchUser();
 		});
 	};
 

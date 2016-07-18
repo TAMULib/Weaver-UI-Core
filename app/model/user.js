@@ -10,11 +10,6 @@ core.model("User", function ($q, RestApi, StorageService) {
 
 		this.authDefer = $q.defer();
 
-		this.login = function() {		
-			user.anonymous = false;
-			return user.refresh();
-		};
-
 		this.logout = function() {
 			user.anonymous = true;
 			user.authDefer = $q.defer();
@@ -66,10 +61,7 @@ core.model("User", function ($q, RestApi, StorageService) {
 				else {
 					StorageService.set("token", data.payload.JWT.tokenAsString);
 
-					delete sessionStorage.role;
-
-					user.ready().then(function() {
-						StorageService.set("role", user.role);
+					user.ready().then(function() {						
 						deferred.resolve(data);
 					});
 				}

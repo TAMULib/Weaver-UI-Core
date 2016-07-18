@@ -17,11 +17,11 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User, ValidationStore) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
-    $scope.user = new User();
+    $scope.user = UserService.getCurrentUser();
 
     $scope.reset = function() {
         $scope.user.clearValidationResults();
@@ -88,6 +88,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         sessionStorage.role = appConfig.anonymousRole;
 
         $scope.user.logout();
+
+        UserService.fetchUser();
 
         angular.element(".dropdown").dropdown("toggle");
 

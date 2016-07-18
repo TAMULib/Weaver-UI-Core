@@ -22,15 +22,11 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	
 	$scope.verifyEmail = function(email) {
 		$scope.user.verifyEmail(email).then(function(data) {
-			if(data.meta.type == 'INVALID') {
-				$scope.user.setValidationResults(data.payload.ValidationResults);
-			}
-			else {
-				$scope.reset();
-				$timeout(function() {
-					AlertService.add(data.meta, 'auth/register');
-				});
-			}			
+			$scope.reset();
+			$timeout(function() {
+				AlertService.add(data.meta, 'auth/register');
+			});
+					
 		});		
 	};
 
@@ -39,19 +35,14 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	}
 
 	$scope.register = function() {
-		$scope.user.register($scope.registration).then(function(data) {
-			if(data.meta.type == 'INVALID') {
-				$scope.user.setValidationResults(data.payload.ValidationResults);
-			}
-			else {
-				$scope.reset();
+		$scope.user.register($scope.registration).then(function(data) {			
+			$scope.reset();
 
-			    $location.path("/");
+		    $location.path("/");
 
-			    $timeout(function() {
-					AlertService.add(data.meta, 'auth/register');
-				});
-			}
+		    $timeout(function() {
+				AlertService.add(data.meta, 'auth/register');
+			});
 		});
 	};
 

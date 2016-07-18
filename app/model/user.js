@@ -23,7 +23,12 @@ core.model("User", function ($q, RestApi, StorageService) {
 				method: 'register?email=' + email
 			}).then(function(data) {
 
-				deferred.resolve(data);
+				if(data.meta.type == 'INVALID') {
+					user.setValidationResults(data.payload.ValidationResults);
+				}
+				else {
+					deferred.resolve(data);
+				}
 
 			});
 
@@ -37,9 +42,14 @@ core.model("User", function ($q, RestApi, StorageService) {
 				'controller': 'auth',
 				'method': 'register',
 				'data': registration
-			}).then(function(data) {
+			}).then(function(data) {				
 				
-				deferred.resolve(data);
+				if(data.meta.type == 'INVALID') {
+					user.setValidationResults(data.payload.ValidationResults);
+				}
+				else {
+					deferred.resolve(data);
+				}
 							
 			});
 
@@ -55,15 +65,15 @@ core.model("User", function ($q, RestApi, StorageService) {
 				data: account
 			}).then(function(data) {
 
-				if(typeof data.payload.JWT == 'undefined') {
-					console.log("User does not exist!");
+				if(typeof data.payload.JWT !== 'undefined') {					
+					StorageService.set("token", data.payload.JWT.tokenAsString);					
+				}
+
+				if(data.meta.type == 'INVALID') {
+					user.setValidationResults(data.payload.ValidationResults);
 				}
 				else {
-					StorageService.set("token", data.payload.JWT.tokenAsString);
-
-					user.ready().then(function() {						
-						deferred.resolve(data);
-					});
+					deferred.resolve(data);
 				}
 
 			});

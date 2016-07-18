@@ -10,7 +10,7 @@ core.directive("validatedinput", function() {
 			"textField": "=",
 			"placeholder": "@",
 			"truevalue": "@",
-			"falsevalue": "@",			
+			"falsevalue": "@",
 			"blurEnabled": "=",
 			"hint": "@",
 			"form": "=",
@@ -34,6 +34,14 @@ core.directive("validatedinput", function() {
 
 			$scope.blur = function($event) {
 				if($scope.blurEnabled && $scope.form.$valid) {
+					if($scope.confirm !== undefined) {
+						$scope.confirm();
+					}
+				}
+			};
+
+			$scope.change = function($event) {
+				if($scope.form.$valid) {
 					if($scope.confirm !== undefined) {
 						$scope.confirm();
 					}

@@ -40,11 +40,13 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			return repoObj;
 		};
 
-		WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
-			build(unwrap(res)).then(function() {
-				defer.resolve(res);
+		var fetch = function() {
+			WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
+				build(unwrap(res)).then(function() {
+					defer.resolve(res);
+				});
 			});
-		});
+		}
 
 		WsApi.listen(abstractRepo.mapping.listen).then(null, null, function(res) {
 			build(unwrap(res)).then(function() {
@@ -53,6 +55,8 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 				});
 			});
 		});
+
+		fetch();
 
 		abstractRepo.ValidationResults = {};
 
@@ -83,6 +87,11 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 		abstractRepo.ready = function() {
 			return defer.promise;
+		};
+
+		abstractRepo.reset = function() {
+			defer = $q.defer();
+			fetch();
 		};
 
 		abstractRepo.findById = function(id) {

@@ -12,8 +12,6 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
 		var shadow = {};
 
-		var cache;
-
 		var entityName;
 
 		var validations;
@@ -33,15 +31,16 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 			if(data) {
 				setData(data);
 			}
-			else if(cache !== undefined) {
-				setData(cache);
-			}
 			else {
-				WsApi.fetch(mapping.instantiate).then(function(res) {
-					cache = cache !== undefined ? cache : {};
-					processResponse(res);
-					listen();
-				});
+				if(mapping.instantiate !== undefined) {
+					WsApi.fetch(mapping.instantiate).then(function(res) {
+						processResponse(res);
+						listen();
+					});
+				}
+				else {
+					console.error('Instantiation mapping does not exist for ' + entityName);
+				}
 			}
 
 		};
@@ -157,13 +156,10 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
 			if(meta.type != 'ERROR') {
 				var payload = resObj.payload;
-
 				angular.forEach(payload, function(datum) {
-					angular.extend(cache, datum);
+					angular.extend(abstractModel, datum);
 				});
-
-				angular.extend(abstractModel, cache);
-				setData(cache);
+				setData(abstractModel);
 			}
 			else {
 				abstractModel.refresh();

@@ -6,7 +6,7 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 		abstractRepo.mapping = mapping;
 
-		var cache = [];
+		var list = [];
 
 		var initialized = false;
 
@@ -21,9 +21,9 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 		var build = function(data) {
 			initialized = false;
 			return $q(function(resolve) {
-				cache.length = 0;
+				list.length = 0;
 				angular.forEach(data, function(modelJson) {
-					cache.push(new model(modelJson));
+					list.push(new model(modelJson));
 				});
 				initialized = true
 				resolve();
@@ -72,15 +72,15 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			if(!initialized) {
 				console.error('Repo not initialized!');
 			}
-			return cache.length;
+			return list.length;
 		};
 
 		abstractRepo.getAll = function() {
-			return cache;
+			return list;
 		};
 
 		abstractRepo.saveAll = function() {
-			angular.forEach(cache, function(model) {
+			angular.forEach(list, function(model) {
 				model.save();
 			});
 		};
@@ -98,9 +98,9 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			var match;
 			
 			var find = function(id) {
-				for(var key in cache) {
-					if(cache[key].id == id) {
-						return cache[key];
+				for(var key in list) {
+					if(list[key].id == id) {
+						return list[key];
 					}
 				}
 			}
@@ -109,7 +109,7 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 				match = find(id);
 			}
 			else {
-				// TODO: think of a way to find after ready and have binding in cache
+				// TODO: think of a way to find after ready and have binding in list
 				console.error("Repo not initialized!");
 			}
 

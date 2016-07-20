@@ -9,6 +9,8 @@ core.directive("validatedinput", function() {
 			"label": "@",
 			"textField": "=",
 			"placeholder": "@",
+			"typeahead": "=",
+			"typeaheadproperty": "@",
 			"truevalue": "@",
 			"falsevalue": "@",
 			"blurEnabled": "=",

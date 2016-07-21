@@ -1,26 +1,33 @@
-<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty, 'text-field-form-group': textField }">
+<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
  	
-	<span ng-if="type === undefined || type == 'text' || type == 'password'">
-		<label ng-if="label" for="{{property}}-input" class="control-label">{{label}}</label>
-		<input
-			id="{{property}}"
-			name="{{property}}"
-			type="{{type}}"
-			class="form-control"
-			placeholder="{{placeholder}}"
-			aria-describedby="{{label}}"
-			uib-typeahead="data as data[typeaheadproperty] for data in typeahead"
-			ng-model="model[property]"
-			ng-keydown="keydown($event)"
-			ng-blur="blur($event)"
-			ng-required="validations[property].required.value"
-			ng-minlength="validations[property].minlength.value"
-			ng-maxlength="validations[property].maxlength.value"
-			ng-pattern="validations[property].pattern.value"/>
-		<span ng-if="hint" class="hint">{{ hint }}</span>
-	</span>
+ 	<div ng-if="type === undefined || type == 'text' || type == 'password'">
+	 	<label ng-if="label" for="{{property}}-input">{{label}}</label>
+		<div ng-class="{ 'input-group': toolTip !== undefined }">
+			<input
+				id="{{property}}"
+				name="{{property}}"
+				type="{{type}}"
+				class="form-control"
+				placeholder="{{placeholder}}"
+				aria-describedby="{{label}}"
+				uib-typeahead="data as data[typeaheadproperty] for data in typeahead"
+				ng-model="model[property]"
+				ng-keydown="keydown($event)"
+				ng-blur="blur($event)"
+				ng-required="validations[property].required.value"
+				ng-minlength="validations[property].minlength.value"
+				ng-maxlength="validations[property].maxlength.value"
+				ng-pattern="validations[property].pattern.value"/>
+			<span 
+				ng-if="toolTip" 
+				class="glyphicon glyphicon-info-sign opaque input-group-addon"
+				tooltip="{{ toolTip }}">
+			</span>
+		</div>
+		<span ng-if="hint">{{ hint }}</span>
+	</div>
 
-	<span ng-if="type == 'checkbox'">
+	<div ng-if="type == 'checkbox'">
 		<label ng-if="label" for="{{property}}-input" class="checkbox">{{label}}</label>
 		<div class="checkbox-inline">
 			<input 
@@ -34,7 +41,7 @@
 				aria-describedby="{{label}}"/>
 			<span>{{placeholder}}</span>
 		</div>
-	</span>
+	</div>
 	
 	<validationmessage
 		type="input"

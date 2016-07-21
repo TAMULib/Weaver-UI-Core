@@ -2,30 +2,45 @@ core.directive("validatedinput", function() {
 	return {
 		template: '<span ng-include src="view"></span>',
 		restrict: 'E',
-		scope: {
+		scope: {			
 			"type": "@",
 			"model": "=",
 			"property": "@",
 			"label": "@",
-			"textField": "=",
 			"placeholder": "@",
 			"typeahead": "=",
 			"typeaheadproperty": "@",
 			"truevalue": "@",
 			"falsevalue": "@",
-			"blurEnabled": "=",
 			"hint": "@",
+			"toolTip": "@",
 			"form": "=",
 			"confirm": "&",
 			"validations": "=",
-			"results": "="
+			"formView": "="
 		},
 		link: function ($scope, element, attr) {
-			$scope.view = attr.view ? attr.view : "bower_components/core/app/views/directives/validatedInput.html";
+
+			if($scope.formView) {
+				$scope.view = 'bower_components/core/app/views/directives/validatedInputForm.html';
+			}
+			else {
+				$scope.view = 'bower_components/core/app/views/directives/validatedInput.html';
+			}
+
+			if($scope.form === undefined) {
+				$scope.forms = {
+					dynamic: {}
+				}
+			}
+
+			var getForm = function() {
+				return $scope.form !== undefined ? $scope.form : $scope.forms.dynamic;
+			}
 
 			$scope.keydown = function($event) {
 				// enter(13): submit value to be persisted
-				if($event.which == 13 && $scope.blurEnabled && $scope.form.$valid) {
+				if($event.which == 13 && $scope.formView && getForm().$valid) {
 					$scope.confirm();
 				}
 				// escape(27): reset value using shadow
@@ -35,7 +50,7 @@ core.directive("validatedinput", function() {
 			};
 
 			$scope.blur = function($event) {
-				if($scope.blurEnabled && $scope.form.$valid) {
+				if($scope.formView && getForm().$valid) {
 					if($scope.confirm !== undefined) {
 						$scope.confirm();
 					}
@@ -43,7 +58,7 @@ core.directive("validatedinput", function() {
 			};
 
 			$scope.change = function($event) {
-				if($scope.form.$valid) {
+				if(getForm().$valid) {
 					if($scope.confirm !== undefined) {
 						$scope.confirm();
 					}

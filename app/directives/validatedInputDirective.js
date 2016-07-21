@@ -1,8 +1,8 @@
-core.directive("validatedinput", function() {
+core.directive("validatedinput", function($timeout) {
 	return {
 		template: '<span ng-include src="view"></span>',
 		restrict: 'E',
-		scope: {
+		scope: {			
 			"type": "@",
 			"model": "=",
 			"property": "@",
@@ -21,6 +21,8 @@ core.directive("validatedinput", function() {
 		},
 		link: function ($scope, element, attr) {
 
+			$scope.inProgress = false;
+
 			if($scope.formView) {
 				$scope.view = 'bower_components/core/app/views/directives/validatedInputForm.html';
 			}
@@ -38,10 +40,19 @@ core.directive("validatedinput", function() {
 				return $scope.form !== undefined ? $scope.form : $scope.forms.dynamic;
 			}
 
+			var update = function() {
+				$scope.inProgress = true;
+				$scope.confirm().then(function() {
+					$timeout(function() {
+						$scope.inProgress = false;
+					}, 500);
+				});
+			};
+
 			$scope.keydown = function($event) {
 				// enter(13): submit value to be persisted
 				if($event.which == 13 && $scope.formView && getForm().$valid) {
-					$scope.confirm();
+					update();
 				}
 				// escape(27): reset value using shadow
 				if($event.which == 27) {
@@ -52,7 +63,7 @@ core.directive("validatedinput", function() {
 			$scope.blur = function($event) {
 				if($scope.formView && getForm().$valid) {
 					if($scope.confirm !== undefined) {
-						$scope.confirm();
+						update();
 					}
 				}
 			};
@@ -60,7 +71,7 @@ core.directive("validatedinput", function() {
 			$scope.change = function($event) {
 				if(getForm().$valid) {
 					if($scope.confirm !== undefined) {
-						$scope.confirm();
+						update();
 					}
 				}
 			};

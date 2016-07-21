@@ -19,9 +19,10 @@
 				ng-maxlength="validations[property].maxlength.value"
 				ng-pattern="validations[property].pattern.value"/>
 			<span 
-				ng-if="toolTip" 
-				class="glyphicon glyphicon-info-sign opaque input-group-addon"
-				tooltip="{{ toolTip }}">
+				ng-if="toolTip"
+				class="input-group-addon">
+				<span ng-if="!inProgress" class="glyphicon glyphicon-info-sign opaque" tooltip="{{ toolTip }}"></span>
+				<span ng-if="inProgress" class="glyphicon glyphicon-refresh opaque spinning"></span>
 			</span>
 		</div>
 		<span ng-if="hint">{{ hint }}</span>

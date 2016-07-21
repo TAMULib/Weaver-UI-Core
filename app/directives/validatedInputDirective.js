@@ -2,7 +2,7 @@ core.directive("validatedinput", function() {
 	return {
 		template: '<span ng-include src="view"></span>',
 		restrict: 'E',
-		scope: {			
+		scope: {
 			"type": "@",
 			"model": "=",
 			"property": "@",

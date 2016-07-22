@@ -506,6 +506,11 @@ footer a, footer li, footer p {
 
 
 
+validatedinput .glyphicon {
+  top: 0;
+}
+
+
 .glyphicon.spinning {
     animation: spin 1s infinite linear;
     -webkit-animation: spin2 1s infinite linear;

@@ -21,6 +21,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
+    var user = new User();
+    
     /**
      * @ngdoc method
      * @name core.controller:AuthenticationController#$scope.login
@@ -28,7 +30,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      * @returns {void} returns void
      * 
      * @description
-     *  The login method deletes the default 'ROLE_ANONYMOUS' and its specific token based on user role found in 
+     *  The login method deletes the default 'appConfig.roleAnonymous' and its specific token based on user role found in 
      *  user credentials.
      */
     $scope.login = function(page) {
@@ -61,15 +63,15 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      * @returns {void} returns void
      * 
      * @description
-     *  The logout method will delete the session storage token, will set the sessionStorage role to default 'ROLE_ANONYMOUS' and will 
+     *  The logout method will delete the session storage token, will set the sessionStorage role to default 'appConfig.roleAnonymous' and will 
      *  direct to the default home page
      */
     $scope.logout = function() {
 
         delete sessionStorage.token;
-        sessionStorage.role = "ROLE_ANONYMOUS";
+        sessionStorage.role = appConfig.anonymousRole;
 
-        User.logout();
+        user.logout();
 
         angular.element(".dropdown").dropdown("toggle");
 

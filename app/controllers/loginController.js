@@ -2,6 +2,8 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
+    var user = new User();
+    
     var reset = function() {
     	$scope.account = {
 	    	email: '',
@@ -12,7 +14,7 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
     reset();
 
 	$scope.login = function() {
-		User.authenticate($scope.account).then(function(data) {
+		user.authenticate($scope.account).then(function(data) {
 			reset();
 		});
 	};

@@ -8,15 +8,9 @@
  * 	An angular service wraper for local and session storage.
  * 
  */
-core.service("StorageService",function($q, AbstractModel) { 
+core.service("StorageService",function($q) { 
 	
 	var StorageService = this;
-
-	var Data = function(futureData) {
-		self = this;
-		angular.extend(self, AbstractModel);
-		self.unwrap(self, futureData);
-	};
 	
 	/**
 	 * @ngdoc property
@@ -118,7 +112,11 @@ core.service("StorageService",function($q, AbstractModel) {
 		if(!StorageService.keys[type][key]) {
 			StorageService.keys[type][key] = $q.defer();
 		}
-		var data = new Data(StorageService.keys[type][key].promise);
+		var data = {};		
+		StorageService.keys[type][key].promise.then(null, null, function(promisedData) {
+			console.log(promisedData);
+			angular.extend(data, promisedData);
+		})
 		return data;
 	}
 

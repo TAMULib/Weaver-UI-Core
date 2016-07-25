@@ -9,7 +9,7 @@
  *  An angular service wrapper for stop communication over websockets.
  * 
  */
-core.service("wsservice", function($interval, $q, AlertService) { 
+core.service("WsService", function($interval, $q, AlertService) { 
 	
 	var wsservice = this;
 	

@@ -1,0 +1,36 @@
+<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
+
+ 	<label for="select-{{label}}">{{label}}</label>
+
+	<select 
+		ng-if="!optionproperty"
+		id="{{property}}"
+		name="{{property}}"
+		class="form-control"
+		ng-model="model[property]"
+		ng-options="key as option for (key, option) in options"
+		ng-blur="blur($event)"
+		aria-describedby="{{label}}"
+		ng-required="validations[property].required.value">
+	</select>
+	
+	<select 
+		ng-if="optionproperty"
+		id="{{property}}"
+		name="{{property}}"
+		class="form-control"
+		ng-model="model[property]"
+		ng-options="option as option[optionproperty] for option in options track by option.id"
+		ng-blur="blur($event)"
+		aria-describedby="{{label}}"
+		ng-required="validations[property].required.value">
+	</select>
+
+	<validationmessage
+		type="input"
+		property="{{property}}"
+		form="form"
+		validations="validations"
+		results="results">
+	</validationmessage>
+</div>

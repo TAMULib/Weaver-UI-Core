@@ -17,9 +17,27 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, User) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore) {
 
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+    
+    $scope.user = UserService.getCurrentUser();
+
+    $scope.reset = function() {
+        $scope.user.clearValidationResults();
+        for(var key in $scope.forms) {
+            if(!$scope.forms[key].$pristine) {
+                $scope.forms[key].$setPristine();
+            }
+        }
+        $scope.account = {
+            email: '',
+            password: ''
+        };
+        $scope.closeModal();
+    };
+    
+    $scope.reset();
     
     /**
      * @ngdoc method
@@ -28,7 +46,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      * @returns {void} returns void
      * 
      * @description
-     *  The login method deletes the default 'ROLE_ANONYMOUS' and its specific token based on user role found in 
+     *  The login method deletes the default 'appConfig.roleAnonymous' and its specific token based on user role found in 
      *  user credentials.
      */
     $scope.login = function(page) {
@@ -52,6 +70,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
             $window.open(appConfig.authService + "/token?referer="+ location.origin + path, "_self");
         }
 
+        UserService.fetchUser();
+
     };
 
     /**
@@ -61,15 +81,17 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      * @returns {void} returns void
      * 
      * @description
-     *  The logout method will delete the session storage token, will set the sessionStorage role to default 'ROLE_ANONYMOUS' and will 
+     *  The logout method will delete the session storage token, will set the sessionStorage role to default 'appConfig.roleAnonymous' and will 
      *  direct to the default home page
      */
     $scope.logout = function() {
 
         delete sessionStorage.token;
-        sessionStorage.role = "ROLE_ANONYMOUS";
+        sessionStorage.role = appConfig.anonymousRole;
 
-        User.logout();
+        $scope.user.logout();
+
+        UserService.fetchUser();
 
         angular.element(".dropdown").dropdown("toggle");
 

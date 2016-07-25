@@ -15,7 +15,7 @@
  *	This controller sets the user's role in session storage. Extends {@link core.controller:AbstractController 'AbstractController'}
  *
 **/
-core.controller('UserController', function ($controller, $scope, StorageService, User) {
+core.controller('UserController', function ($controller, $scope, StorageService, UserService) {
 
 	angular.extend(this, $controller('AbstractController', {$scope: $scope}));
 
@@ -27,7 +27,7 @@ core.controller('UserController', function ($controller, $scope, StorageService,
 	 * @description
 	 * 	The User service for the scope of the User Controller
 	 */
-	$scope.user = User.get();
+	$scope.user = UserService.getCurrentUser();
 
 	/**
 	 * @ngdoc property
@@ -37,20 +37,20 @@ core.controller('UserController', function ($controller, $scope, StorageService,
 	 * @description
 	 * 	The User promise for the scope of the User Controller
 	 */
-	$scope.ready = User.ready();
+	$scope.ready = $scope.user.ready();
 
-	if(!$scope.isAnonymous() && User.ready() != null) {
+	if(!$scope.isAnonymous() && $scope.ready != null) {
 
-	/**
-	 * @ngdoc method
-	 * @name core.controller:AbstractController#$scope.isAssuming
-	 * @methodOf core.controller:AbstractController
-	 * @returns {void} returns void
-	 * 
-	 * @description
-	 * 	This method will set the StorageService role to the User credential role once the User Promise object is recieved.
-	 */
-		User.ready().then(function() {
+		/**
+		 * @ngdoc method
+		 * @name core.controller:AbstractController#$scope.isAssuming
+		 * @methodOf core.controller:AbstractController
+		 * @returns {void} returns void
+		 * 
+		 * @description
+		 * 	This method will set the StorageService role to the User credential role once the User Promise object is recieved.
+		 */
+		$scope.ready.then(function() {
 			StorageService.set('role', $scope.user.role);
 		});
 	}

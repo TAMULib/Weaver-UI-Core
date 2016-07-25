@@ -1,22 +1,32 @@
-core.controller('RegistrationController', function ($controller, $location, $scope, $timeout, AlertService, User) {
+core.controller('RegistrationController', function ($controller, $location, $scope, $timeout, AlertService) {
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
+
+    angular.extend(this, $controller('AuthenticationController', {$scope: $scope}));
     
-    var reset = function() {
+    $scope.reset = function() {
+    	$scope.user.clearValidationResults();
+    	for(var key in $scope.forms) {
+            if(!$scope.forms[key].$pristine) {
+                $scope.forms[key].$setPristine();
+            }
+        }
     	$scope.registration = {
 	    	email: '',
 	    	token: ''
 	    };
+	    $scope.closeModal();
     };
     
-    reset();
+    $scope.reset();
 	
 	$scope.verifyEmail = function(email) {
-		User.verifyEmail(email).then(function(data) {
-			reset();
+		$scope.user.verifyEmail(email).then(function(data) {
+			$scope.reset();
 			$timeout(function() {
 				AlertService.add(data.meta, 'auth/register');
 			});
+					
 		});		
 	};
 
@@ -25,8 +35,8 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	}
 
 	$scope.register = function() {
-		User.register($scope.registration).then(function(data) {
-			reset();
+		$scope.user.register($scope.registration).then(function(data) {			
+			$scope.reset();
 
 		    $location.path("/");
 

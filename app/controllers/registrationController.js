@@ -2,6 +2,8 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	
     angular.extend(this, $controller('AbstractController', {$scope: $scope}));
     
+    var user = new User();
+    
     var reset = function() {
     	$scope.registration = {
 	    	email: '',
@@ -12,7 +14,7 @@ core.controller('RegistrationController', function ($controller, $location, $sco
     reset();
 	
 	$scope.verifyEmail = function(email) {
-		User.verifyEmail(email).then(function(data) {
+		user.verifyEmail(email).then(function(data) {
 			reset();
 			$timeout(function() {
 				AlertService.add(data.meta, 'auth/register');
@@ -25,7 +27,7 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 	}
 
 	$scope.register = function() {
-		User.register($scope.registration).then(function(data) {
+		user.register($scope.registration).then(function(data) {
 			reset();
 
 		    $location.path("/");

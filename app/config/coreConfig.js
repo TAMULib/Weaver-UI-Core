@@ -13,15 +13,20 @@ var coreConfig = {
 	'alerts': {
 		'types': [
 			'SUCCESS',
-			'WARNING',
-			'ERROR',
 			'INFO',
+			'VALIDATION_INFO',
+			'WARNING',
+			'VALIDATION_WARNING',
+			'ERROR',
+			'VALIDATION_ERROR',			
 			'UNKNOWN'
 		],
 		'classes': {
 			'SUCCESS': 'success',
 			'WARNING': 'warning',
+			'VALIDATION_WARNING': 'warning',
 			'ERROR':   'danger',
+			'VALIDATION_ERROR':   'danger',
 			'UNKNOWN': 'danger',
 			'DEFAULT': 'info'
 		},

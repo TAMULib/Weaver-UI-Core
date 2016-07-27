@@ -38,11 +38,11 @@ core.model("User", function ($q, RestApi, StorageService) {
 		this.register = function(registration) {
 			var deferred = $q.defer();
 
-			RestApi.anonymousGet({
+			RestApi.anonymousPost({
 				'controller': 'auth',
 				'method': 'register',
 				'data': registration
-			}).then(function(data) {				
+			}).then(function(data) {
 				
 				if(data.meta.type == 'INVALID') {
 					user.setValidationResults(data.payload.ValidationResults);
@@ -50,23 +50,23 @@ core.model("User", function ($q, RestApi, StorageService) {
 				else {
 					deferred.resolve(data);
 				}
-							
+
 			});
 
 			return deferred.promise;
 		};
 
-		this.authenticate = function(account) {		
+		this.authenticate = function(account) {
 			var deferred = user.authDefer;
 
-			RestApi.anonymousGet({
+			RestApi.anonymousPost({
 				controller: 'auth',
 				method: 'login',
 				data: account
 			}).then(function(data) {
 
-				if(typeof data.payload.JWT !== 'undefined') {					
-					StorageService.set("token", data.payload.JWT.tokenAsString);					
+				if(typeof data.payload.JWT !== 'undefined') {
+					StorageService.set("token", data.payload.JWT.tokenAsString);
 				}
 
 				if(data.meta.type == 'INVALID') {

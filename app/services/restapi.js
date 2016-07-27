@@ -59,9 +59,42 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 		return $http({
 				method: 'GET',
     			url: url,
-   				headers: {
+    			headers: {
    					'data': data
    				}
+   			}).then(
+			//success callback	
+			function(response) {
+				return response.data;
+			},
+			//error callback
+			function(response) {
+				return response.data;
+			});
+	};
+
+	/**
+	 * @ngdoc method
+	 * @name core.service:RestApi#anonymousPost
+	 * @methodOf core.service:RestApi
+	 * 
+	 * @param {object} req 
+	 * 	a request object
+	 * @returns {Promise} returns a promise
+	 * 
+	 * @description
+	 *	Initiates a post request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
+	 */
+	this.anonymousPost = function(req) {
+
+		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+
+		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+
+		return $http({
+				method: 'POST',
+    			url: url,
+    			data: data
    			}).then(
 			//success callback	
 			function(response) {
@@ -94,7 +127,7 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 			method: 'GET',
 			url: url,
 			headers: {
-				'jwt': sessionStorage.token, 
+				'jwt': sessionStorage.token,
 				'data': data,
 				'X-Requested-With': undefined
 			}
@@ -151,15 +184,20 @@ core.service("RestApi",function($http, $window, AuthServiceApi) {
 
 		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
 
+		var headers = req.file === undefined ? {
+			'jwt': sessionStorage.token, 
+			'X-Requested-With': undefined
+		} : {
+			'jwt': sessionStorage.token, 
+			'X-Requested-With': undefined,
+			'data': data
+		};
+
 		var restObj = {
 			method: 'POST',
 			url: url,
-			data: req.file,
-			headers: {
-				'jwt': sessionStorage.token, 
-				'data': data,
-				'X-Requested-With': undefined
-			}
+			data: req.file !== undefined ? req.file : data,
+			headers: headers
 		};
 
 		return $http(restObj).then(

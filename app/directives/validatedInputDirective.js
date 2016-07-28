@@ -52,7 +52,9 @@ core.directive("validatedinput", function($timeout) {
 			$scope.keydown = function($event) {
 				// enter(13): submit value to be persisted
 				if($event.which == 13 && $scope.formView && getForm().$valid) {
-					update();
+					if($scope.confirm !== undefined) {
+						update();
+					}
 				}
 				// escape(27): reset value using shadow
 				if($event.which == 27) {

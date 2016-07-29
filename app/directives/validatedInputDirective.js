@@ -2,12 +2,13 @@ core.directive("validatedinput", function($timeout) {
 	return {
 		template: '<span ng-include src="view"></span>',
 		restrict: 'E',
-		scope: {			
+		scope: {
 			"type": "@",
 			"model": "=",
 			"property": "@",
 			"label": "@",
 			"placeholder": "@",
+			"autocomplete": "@",
 			"typeahead": "=",
 			"typeaheadproperty": "@",
 			"truevalue": "@",

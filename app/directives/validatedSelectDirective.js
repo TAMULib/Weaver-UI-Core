@@ -11,6 +11,7 @@ core.directive("validatedselect", function() {
 			"blurEnabled": "=",
 			"form": "=",
 			"confirm": "&",
+			"change": "&",
 			"validations": "=",
 			"results": "="
 		},

@@ -7,10 +7,11 @@
 		id="{{property}}"
 		name="{{property}}"
 		class="form-control"
+		aria-describedby="{{label}}"
 		ng-model="model[property]"
 		ng-options="key as option for (key, option) in options"
 		ng-blur="blur($event)"
-		aria-describedby="{{label}}"
+		ng-change="change()"
 		ng-required="validations[property].required.value">
 	</select>
 	
@@ -19,10 +20,11 @@
 		id="{{property}}"
 		name="{{property}}"
 		class="form-control"
+		aria-describedby="{{label}}"
 		ng-model="model[property]"
 		ng-options="option as option[optionproperty] for option in options track by option.id"
 		ng-blur="blur($event)"
-		aria-describedby="{{label}}"
+		ng-change="change()"
 		ng-required="validations[property].required.value">
 	</select>
 

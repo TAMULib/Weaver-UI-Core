@@ -1,5 +1,5 @@
 <div class="modal-header {{attr.modalHeaderClass}}">
-	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	<button type="button" class="close" ng-click="closeModal()" aria-label="Close">
 		<span class="modal-close" aria-hidden="true">&times;</span>
 	</button>
 	<h3 class="modal-title">Error Report</h3>
@@ -10,5 +10,5 @@
 </div>
 
 <div class="modal-footer">
-	<button type="button" class="btn btn-warning" data-dismiss="modal">ok</button>
+	<button type="button" class="btn btn-warning" ng-click="closeModal()">ok</button>
 </div>

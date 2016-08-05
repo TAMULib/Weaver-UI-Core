@@ -20,7 +20,7 @@
  * 	in its contructor.
  * 
  */
-core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
+core.service("AssumedControl", function($q, AuthServiceApi, StorageService, UserService) {
 
 	var AssumedControl = function() {
 		return this;
@@ -69,7 +69,7 @@ core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
 		return AssumedControl.promise;
 	};
 
-	AssumedControl.assume = function(user, services) {
+	AssumedControl.assume = function(user) {
 		return $q(function(resolve) {
 
 			if (!locked) {
@@ -88,35 +88,17 @@ core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
 
 					if(response.data.assumed) {
 
-						if(response.data) {
+						UserService.fetchUser();
 
-							for(var i in services) {
-								services[i].refresh();
-							}
+						StorageService.set('assumed', 'true');
 
-							StorageService.set('assumed', 'true');
+						AssumedControl.set({
+							'netid': user.netid,
+							'button': 'Unassume User',
+							'status': 'assumed'
+						});
 
-							AssumedControl.set({
-								'netid': user.netid,
-								'button': 'Unassume User',
-								'status': 'assumed'
-							});
-
-							resolve(true);
-
-						}
-						else {
-
-							StorageService.set('assuming', 'false');
-
-							AssumedControl.set({
-								'netid': user.netid,
-								'button': 'Assume User',
-								'status': 'invalid netid'
-							});
-
-							resolve(false);
-						}
+						resolve(true);
 						
 					}
 					else {
@@ -139,7 +121,7 @@ core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
 		});
 	};
 
-	AssumedControl.unassume = function(user, services, role) {
+	AssumedControl.unassume = function(user, role) {
 		return $q(function(resolve) {
 
 			if (!locked) {
@@ -158,9 +140,7 @@ core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
 					'status': ''
 				});
 
-				for(var i in services) {
-					services[i].refresh();
-				}
+				UserService.fetchUser();
 
 				StorageService.set('assumed', 'false');
 

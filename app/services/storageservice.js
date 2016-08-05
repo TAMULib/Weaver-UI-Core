@@ -57,10 +57,8 @@ core.service("StorageService",function($q) {
 	 * 
 	 */
 	StorageService.set = function(key, value, type) {
-		if(!type) {
-			type = appConfig.storageType;
-		}
-		if(!StorageService.keys[type][key]) {
+		type = (type !== undefined) ? type : appConfig.storageType;
+		if(StorageService.keys[type][key] === undefined) {
 			StorageService.keys[type][key] = $q.defer();			
 		}
 		StorageService.storage[type][key] = value;
@@ -82,9 +80,7 @@ core.service("StorageService",function($q) {
 	 * 
 	 */
 	StorageService.get = function(key, type) {
-		if(!type) {
-			type = appConfig.storageType;
-		}
+		type = (type !== undefined) ? type : appConfig.storageType;
 		return StorageService.storage[type][key];
 	}
 
@@ -106,10 +102,8 @@ core.service("StorageService",function($q) {
 	 * 
 	 */
 	StorageService.listen = function(key, type) {
-		if(!type) {
-			type = appConfig.storageType;
-		}
-		if(!StorageService.keys[type][key]) {
+		type = (type !== undefined) ? type : appConfig.storageType;
+		if(StorageService.keys[type][key] === undefined) {
 			StorageService.keys[type][key] = $q.defer();
 		}
 		var data = {};		
@@ -135,10 +129,10 @@ core.service("StorageService",function($q) {
 	 * 
 	 */
 	StorageService.delete = function(key, type) {
-		if(!type) {
-			type = appConfig.storageType;
+		type = (type !== undefined) ? type : appConfig.storageType;
+		if(StorageService.keys[type][key] !== undefined) {
+			StorageService.keys[type][key].notify(null);
 		}
-		StorageService.keys[type][key].notify(null);
 		delete StorageService.keys[type][key];
 		delete StorageService.storage[type][key];
 	}

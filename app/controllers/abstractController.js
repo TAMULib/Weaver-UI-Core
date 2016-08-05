@@ -139,7 +139,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
 			method: 'error',
 			data: alert
 		}).then(function() {
-			angular.element("#reportModal").modal('show');
+			$scope.closeModal();
 		}, function(response) {
 			if(response.data == null || response.data.message != "EXPIRED_JWT") {
 				var subject = 'Error Report';

@@ -6,7 +6,7 @@ core.model("User", function ($q, RestApi, StorageService) {
 		
 		// additional model methods and variables
 
-		this.anonymous = (sessionStorage.role == 'NONE');
+		this.anonymous = (sessionStorage.role == appConfig.anonymousRole);
 
 		this.authDefer = $q.defer();
 

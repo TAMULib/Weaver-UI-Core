@@ -1,6 +1,6 @@
 core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 
-	return function AbstractModelNew() {
+	return function AbstractModel() {
 
 		var abstractModel;
 

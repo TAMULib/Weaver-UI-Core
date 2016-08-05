@@ -20,34 +20,22 @@
  * 	in its contructor.
  * 
  */
-core.service("AssumedControl", function($q, AbstractModel, AuthServiceApi, StorageService) {
+core.service("AssumedControl", function($q, AuthServiceApi, StorageService) {
 
-	var self;
+	var AssumedControl = function() {
+		return this;
+	}
 
 	var initiliazed = false;
 	var set = false;
 	var locked = false;
-	
-	/**
-	 * @constructor
- 	 * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- 	 * @returns {service} AssumedControl returns AssumedControl object
- 	 * 
- 	 * @description
-	 * 	The constructor for the AssumedControl Service.
-	 */
-	var AssumedControl = function(data) {
-		self = this;
-		angular.extend(self, AbstractModel);
-		self.unwrap(self, data);
-	};
 	
 	AssumedControl.data = null;
 
 	AssumedControl.promise = null;
 	
 	AssumedControl.set = function(data) {
-		self.unwrap(self, data);
+		angular.extend(AssumedControl.data, data);
 		AssumedControl.promise.resolve();
 	};
 

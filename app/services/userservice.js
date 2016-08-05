@@ -5,13 +5,13 @@ core.service("UserService",function(StorageService, User, WsApi) {
     UserService.currentUser = new User();
 
     UserService.fetchUser = function() {
-    	WsApi.fetch(UserService.currentUser.getMapping().instantiate).then(function(res) {
-    		delete sessionStorage.role;
-    		var credentials = angular.fromJson(res.body).payload.Credentials;
-    		UserService.currentUser.anonymous = credentials.role == 'NONE' ? true : false;
-			angular.extend(UserService.currentUser, credentials);
-			StorageService.set("role", UserService.currentUser.role);
-		});
+        WsApi.fetch(UserService.currentUser.getMapping().instantiate).then(function(res) {
+            delete sessionStorage.role;
+            var credentials = angular.fromJson(res.body).payload.Credentials;
+            UserService.currentUser.anonymous = credentials.role == appConfig.anonymousRole ? true : false;
+            angular.extend(UserService.currentUser, credentials);
+            StorageService.set("role", UserService.currentUser.role);
+        });
     };
 
     UserService.setCurrentUser = function(user) {

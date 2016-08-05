@@ -19,7 +19,18 @@ core.repo = function(delegateName, delegateFunction) {
 	var modelName = delegateName.replace('Repo', '');
 	return core.factory(delegateName, function ($injector, AbstractRepo, AbstractAppRepo, api) {
 				
-  		delegateFunction.$inject = $injector.annotate(delegateFunction);
+		var $inject = $injector.annotate(delegateFunction);
+
+		for(var i in $inject) {
+			var injection = $inject[i]; 
+			if(injection.indexOf("_MODEL_") != -1) {
+				modelName = injection.replace("_MODEL_", "");
+				$inject.splice(injection);
+				break;
+			}
+		}
+
+  		delegateFunction.$inject = $inject;
 
   		var abstractRepo = new AbstractRepo($injector.get(modelName), api[modelName]);
 

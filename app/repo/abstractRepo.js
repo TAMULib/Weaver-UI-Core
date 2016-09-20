@@ -41,12 +41,14 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 		};
 
 		var fetch = function() {
-			WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
-				build(unwrap(res)).then(function() {
-					defer.resolve(res);
+			if(abstractRepo.mapping.all !== undefined) {
+				WsApi.fetch(abstractRepo.mapping.all).then(function(res) {
+					build(unwrap(res)).then(function() {
+						defer.resolve(res);
+					});
 				});
-			});
-		}
+			}
+		};
 
 		WsApi.listen(abstractRepo.mapping.listen).then(null, null, function(res) {
 			build(unwrap(res)).then(function() {

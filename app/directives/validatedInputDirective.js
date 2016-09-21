@@ -39,15 +39,17 @@ core.directive("validatedinput", function($timeout) {
 
 			var getForm = function() {
 				return $scope.form !== undefined ? $scope.form : $scope.forms.dynamic;
-			}
+			};
 
 			var update = function() {
-				$scope.inProgress = true;
-				$scope.confirm().then(function() {
-					$timeout(function() {
-						$scope.inProgress = false;
-					}, 500);
-				});
+				if($scope.confirm !== undefined) {
+					$scope.inProgress = true;
+						$scope.confirm().then(function() {
+						$timeout(function() {
+							$scope.inProgress = false;
+						}, 500);
+					});
+				}
 			};
 
 			$scope.keydown = function($event) {

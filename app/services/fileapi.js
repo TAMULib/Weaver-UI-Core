@@ -15,7 +15,8 @@ core.service("FileApi",function($http, $q, $window, AuthServiceApi, Upload) {
     			url: url,
     			headers: {
    					'data': data
-   				}
+   				},
+   				responseType: 'arraybuffer'
    			}).then(
 			//success callback	
 			function(response) {
@@ -61,12 +62,14 @@ core.service("FileApi",function($http, $q, $window, AuthServiceApi, Upload) {
 				'jwt': sessionStorage.token,
 				'data': data,
 				'X-Requested-With': undefined
-			}
+			},
+			responseType: 'arraybuffer'
 		};
 
 		return $http(restObj).then(
 			//success callback	
 			function(response) {
+				console.log(response)
 				return response.data;
 			},
 			//error callback

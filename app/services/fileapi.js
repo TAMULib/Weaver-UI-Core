@@ -69,7 +69,6 @@ core.service("FileApi",function($http, $q, $window, AuthServiceApi, Upload) {
 		return $http(restObj).then(
 			//success callback	
 			function(response) {
-				console.log(response)
 				return response.data;
 			},
 			//error callback

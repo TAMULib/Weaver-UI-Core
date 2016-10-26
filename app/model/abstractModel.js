@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
+core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, ValidationStore) {
 
 	return function AbstractModel() {
 
@@ -17,6 +17,15 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 		var validations;
 
 		var validationResults = {};
+		
+		var fetch = function() {
+			if(mapping.instantiate !== undefined) {
+				WsApi.fetch(mapping.instantiate).then(function(res) {
+					processResponse(res);
+					listen();
+				});
+			}
+		}
 
 		this.init = function(data, apiMapping) {
 
@@ -32,18 +41,17 @@ core.factory("AbstractModel", function ($q, $sanitize, WsApi, ValidationStore) {
 				setData(data);
 			}
 			else {
-				if(mapping.instantiate !== undefined) {
-					WsApi.fetch(mapping.instantiate).then(function(res) {
-						processResponse(res);
-						listen();
-					});
-				}
-				else {
-					console.error('Instantiation mapping does not exist for ' + entityName);
+				if(!mapping.lazy) {
+					fetch();
 				}
 			}
-
 		};
+		
+		$timeout(function() {
+			if(mapping.lazy) {
+				fetch();
+			}
+		});
 
 		this.getEntityName = function() {
 			return entityName;

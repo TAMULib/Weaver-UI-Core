@@ -58,7 +58,9 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			});
 		});
 
-		fetch();
+		if(!mapping.lazy) {
+			fetch();
+		}
 
 		abstractRepo.ValidationResults = {};
 
@@ -78,6 +80,9 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 		};
 
 		abstractRepo.getAll = function() {
+			if(mapping.lazy) {
+				fetch();
+			}
 			return list;
 		};
 

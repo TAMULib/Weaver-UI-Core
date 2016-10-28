@@ -92,8 +92,9 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 				}
 			});
 			promise.then(function(res) {
-				if(angular.fromJson(res.body).meta.type == "INVALID") {
+				if(angular.fromJson(res.body).meta.type != "INVALID") {
 					angular.extend(abstractModel, angular.fromJson(res.body).payload);
+					shadow = angular.copy(abstractModel);
 					console.log(abstractModel);
 				}
 			});
@@ -136,6 +137,11 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 			if(validationResults.messages !== undefined) {
 				delete validationResults.messages;
 			}
+		};
+		
+		this.update = function(data) {
+			angular.extend(abstractModel, data);
+			shadow = angular.copy(abstractModel);
 		};
 
 		var setData = function(data) {

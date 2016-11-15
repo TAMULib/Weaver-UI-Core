@@ -1,4 +1,4 @@
-core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
+core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
 
 	return function AbstractRepo(model, mapping) {
 
@@ -18,14 +18,19 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 		var validations = ValidationStore.getValidations(entityName);
 
+		$rootScope.$on("$locationChangeSuccess", function() {
+	        listenCallbacks.length = 0;   
+	    });
+
 		var build = function(data) {
+
 			initialized = false;
 			return $q(function(resolve) {
 				list.length = 0;
 				angular.forEach(data, function(modelJson) {
 					list.push(new model(modelJson));
 				});
-				initialized = true
+				initialized = true;
 				resolve();
 			});
 		};
@@ -36,7 +41,7 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			var keys = Object.keys(payload);
 			angular.forEach(keys, function(key) {
 				angular.extend(repoObj, payload[key]);
-			})
+			});
 			return repoObj;
 		};
 
@@ -64,6 +69,16 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 		abstractRepo.ValidationResults = {};
 
+		abstractRepo.add = function(modelJson) {			
+			initialized = true;
+			build([modelJson]);
+		};
+
+		abstractRepo.addAll = function(modelJsons) {		
+			initialized = true;
+			build(modelJsons);
+		};
+
 		abstractRepo.getEntityName = function() {
 			return entityName;
 		};
@@ -74,7 +89,7 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 
 		abstractRepo.count = function() {
 			if(!initialized) {
-				console.error('Repo not initialized!');
+				console.warn('Repo ('+entityName+') not initialized!');
 			}
 			return list.length;
 		};
@@ -83,6 +98,10 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			if(mapping.lazy) {
 				fetch();
 			}
+			return abstractRepo.getContents();
+		};
+
+		abstractRepo.getContents = function() {
 			return list;
 		};
 
@@ -110,14 +129,14 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 						return list[key];
 					}
 				}
-			}
+			};
 
 			if(initialized) {
 				match = find(id);
 			}
 			else {
 				// TODO: think of a way to find after ready and have binding in list
-				console.error("Repo not initialized!");
+				console.warn('Repo ('+entityName+') not initialized!');
 			}
 
 			return match;
@@ -129,7 +148,6 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			promise.then(function(res) {
 				if(angular.fromJson(res.body).meta.type == "INVALID") {
 					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
-					console.log(abstractRepo);
 				}
 			});
 			return promise;
@@ -141,7 +159,6 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			promise.then(function(res) {
 				if(angular.fromJson(res.body).meta.type == "INVALID") {
 					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
-					console.log(abstractRepo);
 				}
 			});
 			return promise;
@@ -154,7 +171,6 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
 			promise.then(function(res) {
 				if(angular.fromJson(res.body).meta.type == "INVALID") {
 					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
-					console.log(abstractRepo);
 				}
 			});
 			return promise;
@@ -167,7 +183,6 @@ core.service("AbstractRepo", function ($q, WsApi, ValidationStore) {
            	promise.then(function(res) {
 				if(angular.fromJson(res.body).meta.type == "INVALID") {
 					angular.extend(abstractRepo, angular.fromJson(res.body).payload);
-					console.log(abstractRepo);
 				}
 			});
 			return promise;

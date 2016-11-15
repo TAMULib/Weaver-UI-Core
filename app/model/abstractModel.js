@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, ValidationStore) {
+core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
 
 	return function AbstractModel() {
 
@@ -17,12 +17,15 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 		var validations;
 
 		var validationResults = {};
+
+		$rootScope.$on("$locationChangeSuccess", function() {
+	        listenCallbacks.length = 0;   
+	    });
 		
 		var fetch = function() {
 			if(mapping.instantiate !== undefined) {
 				WsApi.fetch(mapping.instantiate).then(function(res) {
-					processResponse(res);
-					listen();
+					processResponse(res);					
 				});
 			}
 		}
@@ -45,6 +48,9 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 					fetch();
 				}
 			}
+
+			listen();
+
 		};
 		
 		$timeout(function() {
@@ -151,15 +157,19 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 		};
 
 		var listen = function() {
-			angular.extend(mapping.listen, {method: abstractModel.id});
-			var notifyPromise = WsApi.listen(mapping.listen);
-			notifyPromise.then(null, null, function(res) {
-				processResponse(res);
-				angular.forEach(listenCallbacks, function(cb) {
-					cb(res);
+
+			if(abstractModel.id && mapping.listen) {
+				angular.extend(mapping.listen, {method: "/"+abstractModel.id});
+				var notifyPromise = WsApi.listen(mapping.listen);
+				notifyPromise.then(null, null, function(res) {
+					processResponse(res);
+					angular.forEach(listenCallbacks, function(cb) {
+						cb(res);
+					});
 				});
-			});
-			return notifyPromise;
+				return notifyPromise;
+			}
+			
 		};
 
 		var processResponse = function(res) {
@@ -170,9 +180,11 @@ core.factory("AbstractModel", function ($q, $sanitize, $timeout, WsApi, Validati
 
 			if(meta.type != 'ERROR') {
 				var payload = resObj.payload;
+
 				angular.forEach(payload, function(datum) {
 					angular.extend(abstractModel, datum);
 				});
+
 				setData(abstractModel);
 			}
 			else {

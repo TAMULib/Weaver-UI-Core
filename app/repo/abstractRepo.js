@@ -79,6 +79,19 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
 			build(modelJsons);
 		};
 
+		abstractRepo.remove = function(modelToRemove) {
+			for(var i in list) { 
+				if(list[i].id===modelToRemove.id) {
+					list.splice(i,1);
+					break;
+				}
+			}
+		};
+
+		abstractRepo.empty = function() {
+			list.length=0;
+		};
+
 		abstractRepo.getEntityName = function() {
 			return entityName;
 		};

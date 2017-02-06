@@ -26,7 +26,7 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
             return $q(function(resolve) {
                 list.length = 0;
                 angular.forEach(data, function(modelJson) {
-                    list.push(new model(modelJson));
+                    abstractRepo.add(modelJson);
                 });
                 initialized = true;
                 resolve();
@@ -69,11 +69,12 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
 
         abstractRepo.add = function(modelJson) {
             list.push(new model(modelJson));
+            initialized = true;
         };
 
         abstractRepo.addAll = function(modelJsons) {
             for (var i in modelJsons) {
-                list.push(new model(modelJsons[i]));
+                abstractRepo.add(modelJsons[i]);
             }
         };
 

@@ -1,71 +1,70 @@
 /**
- * 
+ *
  * @ngdoc object
  * @name core
- * @description 
- * 
+ * @description
+ *
  *  This is the main module for the TAMU-UI-Core framework.
  *  The TAMU UI Core is an Angular Module intended to be imported into
  *  any UI build to work with the TAMU Webservice Core.
  *
-**/
+ **/
 
-var core = angular.module('core', 
-[
-	'core.version',
-	'ngFileUpload'
+var core = angular.module('core', [
+    'core.version',
+    'ngFileUpload'
 ]).constant('coreConfig', coreConfig);
 
 core.repo = function(delegateName, delegateFunction) {
-	var modelName = delegateName.replace('Repo', '');
-	return core.factory(delegateName, function ($injector, AbstractRepo, AbstractAppRepo, api) {
-				
-  		delegateFunction.$inject = $injector.annotate(delegateFunction);
+    var modelName = delegateName.replace('Repo', '');
+    return core.factory(delegateName, function($injector, AbstractRepo, AbstractAppRepo, api) {
 
-  		var abstractRepo = new AbstractRepo($injector.get(modelName), api[modelName]);
+        delegateFunction.$inject = $injector.annotate(delegateFunction);
 
-		var abstractAppRepo = new AbstractAppRepo();
+        var abstractRepo = new AbstractRepo(modelName, $injector.get(modelName), api[modelName]);
 
-		angular.extend(abstractAppRepo, abstractRepo);
+        var abstractAppRepo = new AbstractAppRepo();
 
-		angular.extend(delegateFunction.prototype, abstractAppRepo);
+        angular.extend(abstractAppRepo, abstractRepo);
 
-		var repoInstance = $injector.invoke(delegateFunction, delegateFunction.prototype);
+        angular.extend(delegateFunction.prototype, abstractAppRepo);
 
-		angular.extend(abstractAppRepo, repoInstance);
+        var repoInstance = $injector.invoke(delegateFunction, delegateFunction.prototype);
 
-		angular.extend(abstractRepo, abstractAppRepo);
+        angular.extend(abstractAppRepo, repoInstance);
 
-		return repoInstance;
-	});
-      	
+        angular.extend(abstractRepo, abstractAppRepo);
+
+        return repoInstance;
+    });
+
 };
 
 core.model = function(delegateName, delegateFunction) {
-	return core.factory(delegateName, function ($injector, AbstractModel, AbstractAppModel, api) {
-		return function(data) {
+    return core.factory(delegateName, function($injector, AbstractModel, AbstractAppModel, api) {
+        return function(data) {
 
-			delegateFunction.$inject = $injector.annotate(delegateFunction);
+            delegateFunction.$inject = $injector.annotate(delegateFunction);
 
-			var model = $injector.invoke(delegateFunction, delegateFunction.prototype);
+            var model = $injector.invoke(delegateFunction, delegateFunction.prototype);
 
-			var abstractModel = new AbstractModel();
-			
-			var abstractAppModel = new AbstractAppModel();
+            var abstractModel = new AbstractModel();
 
-			angular.extend(abstractAppModel, abstractModel);
+            var abstractAppModel = new AbstractAppModel();
 
-			angular.extend(model.prototype, abstractAppModel);
+            angular.extend(abstractAppModel, abstractModel);
 
-			var modelInstance = new model();
+            angular.extend(model.prototype, abstractAppModel);
 
-			modelInstance.init(data, api[delegateName]);
+            var modelInstance = new model();
 
-			angular.extend(abstractAppModel, modelInstance);
+            modelInstance.init(data, api[delegateName]);
 
-			angular.extend(abstractModel, abstractAppModel);
+            angular.extend(abstractAppModel, modelInstance);
 
-			return modelInstance;
-		};
-	});
+            angular.extend(abstractModel, abstractAppModel);
+
+            return modelInstance;
+        };
+    });
 };

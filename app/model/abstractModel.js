@@ -1,202 +1,199 @@
-core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
+core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
 
-	return function AbstractModel() {
+    return function AbstractModel() {
 
-		var abstractModel;
+        var abstractModel;
 
-		var mapping;
+        var mapping;
 
-		var defer = $q.defer();
+        var defer = $q.defer();
 
-		var listenCallbacks = [];
+        var listenCallbacks = [];
 
-		var shadow = {};
+        var shadow = {};
 
-		var entityName;
+        var entityName;
 
-		var validations;
+        var validations;
 
-		var validationResults = {};
+        var validationResults = {};
 
-		$rootScope.$on("$locationChangeSuccess", function() {
-	        listenCallbacks.length = 0;   
-	    });
-		
-		var fetch = function() {
-			if(mapping.instantiate !== undefined) {
-				WsApi.fetch(mapping.instantiate).then(function(res) {
-					processResponse(res);					
-				});
-			}
-		}
+        $rootScope.$on("$locationChangeSuccess", function() {
+            listenCallbacks.length = 0;
+        });
 
-		this.init = function(data, apiMapping) {
+        this.fetch = function() {
+            if (mapping.instantiate !== undefined) {
+                WsApi.fetch(mapping.instantiate).then(function(res) {
+                    processResponse(res);
+                });
+            }
+        }
 
-			abstractModel = this;
+        this.init = function(data, apiMapping) {
 
-			entityName = abstractModel.constructor.name;
+            abstractModel = this;
 
-			validations = ValidationStore.getValidations(entityName);
+            entityName = abstractModel.constructor.name;
 
-			mapping = apiMapping;
+            validations = ValidationStore.getValidations(entityName);
 
-			if(data) {
-				setData(data);
-			}
-			else {
-				if(!mapping.lazy) {
-					fetch();
-				}
-			}
+            mapping = apiMapping;
 
-			listen();
+            if (data) {
+                setData(data);
+            } else {
+                if (!mapping.lazy) {
+                    this.fetch();
+                }
+            }
 
-		};
-		
-		$timeout(function() {
-			if(mapping.lazy) {
-				fetch();
-			}
-		});
+            listen();
 
-		this.getEntityName = function() {
-			return entityName;
-		};
+        };
 
-		this.getValidations = function() {
-			return validations;
-		};
-		
-		this.getMapping = function() {
-			return mapping;
-		};
+        this.getEntityName = function() {
+            return entityName;
+        };
 
-		this.ready = function() {
-			return defer.promise;
-		};
+        this.getValidations = function() {
+            return validations;
+        };
 
-		this.save = function() {
-			var promise = $q(function(resolve) {
-				if(abstractModel.dirty()) {
-					angular.extend(mapping.update, {data: abstractModel});
-					console.log(mapping.update)
-					WsApi.fetch(mapping.update).then(function(res) {						
-						resolve(res);
-					});
-				}
-				else {
-					var payload = {};
-					payload[abstractModel.constructor.name] = abstractModel;
-					resolve({
-						body: angular.toJson({ 
-							payload: payload,
-							meta: {
-								type: "SUCCESS"
-							}
-						})
-					});
-				}
-			});
-			promise.then(function(res) {
-				if(angular.fromJson(res.body).meta.type != "INVALID") {
-					angular.extend(abstractModel, angular.fromJson(res.body).payload);
-					shadow = angular.copy(abstractModel);
-					console.log(abstractModel);
-				}
-			});
-			return promise;
-		};
+        this.getMapping = function() {
+            return mapping;
+        };
 
-		this.delete = function() {
-			angular.extend(mapping.remove, {data: abstractModel});
-			var promise = WsApi.fetch(mapping.remove);
-			promise.then(function(res) {				
-				if(angular.fromJson(res.body).meta.type == "INVALID") {
-					angular.extend(abstractModel, angular.fromJson(res.body).payload);
-					console.log(abstractModel);
-				}
-			});
-			return promise;
-		};
+        this.ready = function() {
+            return defer.promise;
+        };
 
-		this.listen = function(cb) {
-			listenCallbacks.push(cb);
-		};
+        this.save = function() {
+            var promise = $q(function(resolve) {
+                if (abstractModel.dirty()) {
+                    angular.extend(mapping.update, {
+                        data: abstractModel
+                    });
+                    console.log(mapping.update)
+                    WsApi.fetch(mapping.update).then(function(res) {
+                        resolve(res);
+                    });
+                } else {
+                    var payload = {};
+                    payload[abstractModel.constructor.name] = abstractModel;
+                    resolve({
+                        body: angular.toJson({
+                            payload: payload,
+                            meta: {
+                                type: "SUCCESS"
+                            }
+                        })
+                    });
+                }
+            });
+            promise.then(function(res) {
+                if (angular.fromJson(res.body).meta.type != "INVALID") {
+                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                    shadow = angular.copy(abstractModel);
+                    console.log(abstractModel);
+                }
+            });
+            return promise;
+        };
 
-		this.refresh = function() {
-			angular.extend(abstractModel, shadow);
-		};
+        this.delete = function() {
+            angular.extend(mapping.remove, {
+                data: abstractModel
+            });
+            var promise = WsApi.fetch(mapping.remove);
+            promise.then(function(res) {
+                if (angular.fromJson(res.body).meta.type == "INVALID") {
+                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                    console.log(abstractModel);
+                }
+            });
+            return promise;
+        };
 
-		this.dirty = function() {
-			return angular.toJson(abstractModel) !== angular.toJson(shadow);
-		};
+        this.listen = function(cb) {
+            listenCallbacks.push(cb);
+        };
 
-		this.setValidationResults = function(results) {
-			angular.extend(validationResults, results);
-		};
+        this.refresh = function() {
+            angular.extend(abstractModel, shadow);
+        };
 
-		this.getValidationResults = function() {
-			return validationResults;
-		};
+        this.dirty = function() {
+            return angular.toJson(abstractModel) !== angular.toJson(shadow);
+        };
 
-		this.clearValidationResults = function() {
-			if(validationResults.messages !== undefined) {
-				delete validationResults.messages;
-			}
-		};
-		
-		this.update = function(data) {
-			angular.extend(abstractModel, data);
-			shadow = angular.copy(abstractModel);
-		};
+        this.setValidationResults = function(results) {
+            angular.extend(validationResults, results);
+        };
 
-		var setData = function(data) {
-			angular.extend(abstractModel, data);
-			shadow = angular.copy(abstractModel);
-			defer.resolve();
-		};
+        this.getValidationResults = function() {
+            return validationResults;
+        };
 
-		var listen = function() {
+        this.clearValidationResults = function() {
+            if (validationResults.messages !== undefined) {
+                delete validationResults.messages;
+            }
+        };
 
-			if(abstractModel.id && mapping.listen) {
-				angular.extend(mapping.listen, {method: "/"+abstractModel.id});
-				var notifyPromise = WsApi.listen(mapping.listen);
-				notifyPromise.then(null, null, function(res) {
-					processResponse(res);
-					angular.forEach(listenCallbacks, function(cb) {
-						cb(res);
-					});
-				});
-				return notifyPromise;
-			}
-			
-		};
+        this.update = function(data) {
+            angular.extend(abstractModel, data);
+            shadow = angular.copy(abstractModel);
+        };
 
-		var processResponse = function(res) {
+        var setData = function(data) {
+            angular.extend(abstractModel, data);
+            shadow = angular.copy(abstractModel);
+            defer.resolve();
+        };
 
-			var resObj = angular.fromJson(res.body);
+        var listen = function() {
 
-			var meta = resObj.meta;
+            if (abstractModel.id && mapping.listen) {
+                angular.extend(mapping.listen, {
+                    method: "/" + abstractModel.id
+                });
+                var notifyPromise = WsApi.listen(mapping.listen);
+                notifyPromise.then(null, null, function(res) {
+                    processResponse(res);
+                    angular.forEach(listenCallbacks, function(cb) {
+                        cb(res);
+                    });
+                });
+                return notifyPromise;
+            }
 
-			if(meta.type != 'ERROR') {
-				var payload = resObj.payload;
+        };
 
-				angular.forEach(payload, function(datum) {
-					angular.extend(abstractModel, datum);
-				});
+        var processResponse = function(res) {
 
-				setData(abstractModel);
-			}
-			else {
-				abstractModel.refresh();
-			}
-			
-		};
-		
-		// additional core level model methods and variables
-		
-		return this;
+            var resObj = angular.fromJson(res.body);
 
-	};
-	
+            var meta = resObj.meta;
+
+            if (meta.type != 'ERROR') {
+                var payload = resObj.payload;
+
+                angular.forEach(payload, function(datum) {
+                    angular.extend(abstractModel, datum);
+                });
+
+                setData(abstractModel);
+            } else {
+                abstractModel.refresh();
+            }
+
+        };
+
+        // additional core level model methods and variables
+
+        return this;
+
+    };
+
 });

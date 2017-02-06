@@ -68,13 +68,13 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
         abstractRepo.ValidationResults = {};
 
         abstractRepo.add = function(modelJson) {
-            initialized = true;
-            build([modelJson]);
+            list.push(new model(modelJson));
         };
 
         abstractRepo.addAll = function(modelJsons) {
-            initialized = true;
-            build(modelJsons);
+            for (var i in modelJsons) {
+                list.push(new model(modelJsons[i]));
+            }
         };
 
         abstractRepo.remove = function(modelToRemove) {

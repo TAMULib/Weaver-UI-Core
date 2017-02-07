@@ -8,8 +8,6 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
 
         var list = [];
 
-        var initialized = false;
-
         var defer = $q.defer();
 
         var listenCallbacks = [];
@@ -21,14 +19,11 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
         });
 
         var build = function(data) {
-
-            initialized = false;
             return $q(function(resolve) {
                 list.length = 0;
                 angular.forEach(data, function(modelJson) {
                     abstractRepo.add(modelJson);
                 });
-                initialized = true;
                 resolve();
             });
         };
@@ -69,7 +64,6 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
 
         abstractRepo.add = function(modelJson) {
             list.push(new model(modelJson));
-            initialized = true;
         };
 
         abstractRepo.addAll = function(modelJsons) {
@@ -100,9 +94,6 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
         };
 
         abstractRepo.count = function() {
-            if (!initialized) {
-                console.warn('Repo (' + modelName + ') not initialized!');
-            }
             return list.length;
         };
 
@@ -133,24 +124,11 @@ core.service("AbstractRepo", function($rootScope, $q, WsApi, ValidationStore) {
         };
 
         abstractRepo.findById = function(id) {
-            var match;
-
-            var find = function(id) {
-                for (var key in list) {
-                    if (list[key].id == id) {
-                        return list[key];
-                    }
+            for (var i in list) {
+                if (list[i].id == id) {
+                    return list[i];
                 }
-            };
-
-            if (initialized) {
-                match = find(id);
-            } else {
-                // TODO: think of a way to find after ready and have binding in list
-                console.warn('Repo (' + modelName + ') not initialized!');
             }
-
-            return match;
         };
 
         abstractRepo.delete = function(model) {

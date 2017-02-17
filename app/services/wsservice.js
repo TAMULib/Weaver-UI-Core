@@ -109,6 +109,7 @@ core.service("WsService", function($interval, $q, AlertService) {
             WsService.pendingReq[requestId].defer.resolve(data);
             AlertService.add(meta, channel);
             delete WsService.pendingReq[requestId];
+            if (WsService.delinquentReq[requestId]) delete WsService.delinquentReq[requestId];
           }
 
         }
@@ -231,6 +232,7 @@ core.service("WsService", function($interval, $q, AlertService) {
 
     for (var req in WsService.pendingReq) {
       if (now - WsService.pendingReq[req].timestamp > 120000) {
+        console.warn(WsService.pendingReq);
         if (WsService.delinquentReq[req] === undefined) {
           WsService.delinquentReq[req] = WsService.pendingReq[req];
           AlertService.add({

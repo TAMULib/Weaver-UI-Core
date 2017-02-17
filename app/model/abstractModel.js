@@ -73,7 +73,6 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                     angular.extend(mapping.update, {
                         data: abstractModel
                     });
-                    console.log(mapping.update)
                     WsApi.fetch(mapping.update).then(function(res) {
                         resolve(res);
                     });
@@ -94,7 +93,6 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                 if (angular.fromJson(res.body).meta.type != "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                     shadow = angular.copy(abstractModel);
-                    console.log(abstractModel);
                 }
             });
             return promise;
@@ -108,7 +106,6 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             promise.then(function(res) {
                 if (angular.fromJson(res.body).meta.type == "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
-                    console.log(abstractModel);
                 }
             });
             return promise;

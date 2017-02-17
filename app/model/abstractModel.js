@@ -26,6 +26,7 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             if (mapping.instantiate !== undefined) {
                 WsApi.fetch(mapping.instantiate).then(function(res) {
                     processResponse(res);
+                    listen();
                 });
             }
         }
@@ -47,8 +48,6 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                     this.fetch();
                 }
             }
-
-            listen();
 
         };
 

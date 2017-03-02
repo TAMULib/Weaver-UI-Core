@@ -18,6 +18,8 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         var validationResults = {};
 
+        var listening = false;
+
         $rootScope.$on("$locationChangeSuccess", function() {
             listenCallbacks.length = 0;
         });
@@ -69,9 +71,7 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
         this.save = function() {
             var promise = $q(function(resolve) {
                 if (abstractModel.dirty()) {
-                    angular.extend(mapping.update, {
-                        data: abstractModel
-                    });
+                    angular.extend(mapping.update, {data: abstractModel});
                     WsApi.fetch(mapping.update).then(function(res) {
                         resolve(res);
                     });
@@ -98,9 +98,7 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
         };
 
         this.delete = function() {
-            angular.extend(mapping.remove, {
-                data: abstractModel
-            });
+            angular.extend(mapping.remove, {data: abstractModel});
             var promise = WsApi.fetch(mapping.remove);
             promise.then(function(res) {
                 if (angular.fromJson(res.body).meta.type == "INVALID") {
@@ -137,19 +135,20 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
         };
 
         this.update = function(data) {
-            angular.extend(abstractModel, data);
+            angular.merge(abstractModel, data);
             shadow = angular.copy(abstractModel);
         };
 
         var setData = function(data) {
-            angular.extend(abstractModel, data);
+            angular.merge(abstractModel, data);
             shadow = angular.copy(abstractModel);
-            listen();
+            if (!listening) {
+                listen();
+            }
             defer.resolve();
         };
 
         var listen = function() {
-
             if (abstractModel.id && mapping.listen) {
                 angular.extend(mapping.listen, {
                     method: "/" + abstractModel.id
@@ -161,29 +160,21 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                         cb(res);
                     });
                 });
+                listening = true;
                 return notifyPromise;
             }
-
         };
 
         var processResponse = function(res) {
-
             var resObj = angular.fromJson(res.body);
-
-            var meta = resObj.meta;
-
-            if (meta.type != 'ERROR') {
-                var payload = resObj.payload;
-
-                angular.forEach(payload, function(datum) {
-                    angular.extend(abstractModel, datum);
+            if (resObj.meta.type != 'ERROR') {
+                angular.forEach(resObj.payload, function(datum) {
+                    angular.merge(abstractModel, datum);
                 });
-
                 setData(abstractModel);
             } else {
                 abstractModel.refresh();
             }
-
         };
 
         // additional core level model methods and variables

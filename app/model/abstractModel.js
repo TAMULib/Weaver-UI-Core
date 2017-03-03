@@ -6,15 +6,15 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         var mapping;
 
+        var entityName;
+
+        var validations;
+
         var defer = $q.defer();
 
         var listenCallbacks = [];
 
         var shadow = {};
-
-        var entityName;
-
-        var validations;
 
         var validationResults = {};
 
@@ -22,9 +22,11 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         var combinationOperation = 'extend';
 
-        $rootScope.$on("$locationChangeSuccess", function() {
-            listenCallbacks.length = 0;
-        });
+        var beforeMethodBuffer = [];
+
+        this.before = function(beforeMethod) {
+            beforeMethodBuffer.push(beforeMethod);
+        }
 
         this.fetch = function() {
             if (mapping.instantiate !== undefined) {
@@ -149,12 +151,19 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             shadow = angular.copy(abstractModel);
         };
 
+        $rootScope.$on("$locationChangeSuccess", function() {
+            listenCallbacks.length = 0;
+        });
+
         var setData = function(data) {
             angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
             if (!listening) {
                 listen();
             }
+            angular.forEach(beforeMethodBuffer, function(beforeMethod) {
+                beforeMethod();
+            });
             defer.resolve();
         };
 

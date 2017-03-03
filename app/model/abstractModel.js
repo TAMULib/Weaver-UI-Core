@@ -20,6 +20,8 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         var listening = false;
 
+        var combinationOperation = 'extend';
+
         $rootScope.$on("$locationChangeSuccess", function() {
             listenCallbacks.length = 0;
         });
@@ -50,6 +52,14 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                 }
             }
 
+        };
+
+        this.enableMergeCombinationOperation = function() {
+            combinationOperation = 'merge';
+        };
+
+        this.enableExtendCombinationOperation = function() {
+            combinationOperation = 'extend';
         };
 
         this.getEntityName = function() {
@@ -135,12 +145,12 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
         };
 
         this.update = function(data) {
-            angular.merge(abstractModel, data);
+            angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
         };
 
         var setData = function(data) {
-            angular.merge(abstractModel, data);
+            angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
             if (!listening) {
                 listen();
@@ -169,7 +179,7 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             var resObj = angular.fromJson(res.body);
             if (resObj.meta.type != 'ERROR') {
                 angular.forEach(resObj.payload, function(datum) {
-                    angular.merge(abstractModel, datum);
+                    angular[combinationOperation](abstractModel, datum);
                 });
                 setData(abstractModel);
             } else {

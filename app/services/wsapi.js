@@ -52,7 +52,18 @@ core.service("WsApi", function($q, $http, WsService, AuthServiceApi) {
 	 *  websocket communication on the desired channel
 	 * 
 	 */
-	WsApi.fetch = function(apiReq) {
+	WsApi.fetch = function(apiReq, manifest) {
+
+		if(manifest && manifest.pathValues) {
+			var templateKeys = Object.keys(manifest.pathValues);
+			for(var i in templateKeys) {
+				var key = templateKeys[i];
+				var value = manifest.pathValues[key];
+				apiReq.method=apiReq.method.replace(new RegExp(':'+key, 'g'), value);
+			}
+		}
+
+		if(manifest && manifest.data) apiReq.data = manifest.data;
 
 		var request = '/ws/' + apiReq.controller + '/' + apiReq.method;	  
 		var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;

@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
+core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore, ModelCache) {
 
     return function AbstractModel() {
 
@@ -30,9 +30,26 @@ core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsA
 
         this.fetch = function () {
             if (mapping.instantiate !== undefined) {
-                WsApi.fetch(mapping.instantiate).then(function (res) {
-                    processResponse(res);
-                });
+
+                var fetch = true;
+
+                if (mapping.caching) {
+
+                    var cached = ModelCache.get(entityName);
+
+                    if (cached) {
+                        setData(cached);
+                        fetch = false;
+                    }
+
+                }
+
+                if (fetch) {
+                    WsApi.fetch(mapping.instantiate).then(function (res) {
+                        processResponse(res);
+                    });
+                }
+
             }
         }
 
@@ -164,6 +181,9 @@ core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsA
             shadow = angular.copy(abstractModel);
             if (!listening) {
                 listen();
+            }
+            if (mapping.caching) {
+                ModelCache.set(entityName, abstractModel);
             }
             angular.forEach(beforeMethodBuffer, function (beforeMethod) {
                 beforeMethod();

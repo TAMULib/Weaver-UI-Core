@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
+core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore) {
 
     return function AbstractModel() {
 
@@ -24,19 +24,19 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         var beforeMethodBuffer = [];
 
-        this.before = function(beforeMethod) {
+        this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
         }
 
-        this.fetch = function() {
+        this.fetch = function () {
             if (mapping.instantiate !== undefined) {
-                WsApi.fetch(mapping.instantiate).then(function(res) {
+                WsApi.fetch(mapping.instantiate).then(function (res) {
                     processResponse(res);
                 });
             }
         }
 
-        this.init = function(data, apiMapping) {
+        this.init = function (data, apiMapping) {
 
             abstractModel = this;
 
@@ -56,35 +56,37 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
 
         };
 
-        this.enableMergeCombinationOperation = function() {
+        this.enableMergeCombinationOperation = function () {
             combinationOperation = 'merge';
         };
 
-        this.enableExtendCombinationOperation = function() {
+        this.enableExtendCombinationOperation = function () {
             combinationOperation = 'extend';
         };
 
-        this.getEntityName = function() {
+        this.getEntityName = function () {
             return entityName;
         };
 
-        this.getValidations = function() {
+        this.getValidations = function () {
             return validations;
         };
 
-        this.getMapping = function() {
+        this.getMapping = function () {
             return mapping;
         };
 
-        this.ready = function() {
+        this.ready = function () {
             return defer.promise;
         };
 
-        this.save = function() {
-            var promise = $q(function(resolve) {
+        this.save = function () {
+            var promise = $q(function (resolve) {
                 if (abstractModel.dirty()) {
-                    angular.extend(mapping.update, {data: abstractModel});
-                    WsApi.fetch(mapping.update).then(function(res) {
+                    angular.extend(mapping.update, {
+                        data: abstractModel
+                    });
+                    WsApi.fetch(mapping.update).then(function (res) {
                         resolve(res);
                     });
                 } else {
@@ -100,7 +102,7 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
                     });
                 }
             });
-            promise.then(function(res) {
+            promise.then(function (res) {
                 if (angular.fromJson(res.body).meta.type != "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                     shadow = angular.copy(abstractModel);
@@ -109,10 +111,12 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             return promise;
         };
 
-        this.delete = function() {
-            angular.extend(mapping.remove, {data: abstractModel});
+        this.delete = function () {
+            angular.extend(mapping.remove, {
+                data: abstractModel
+            });
             var promise = WsApi.fetch(mapping.remove);
-            promise.then(function(res) {
+            promise.then(function (res) {
                 if (angular.fromJson(res.body).meta.type == "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                 }
@@ -120,62 +124,66 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             return promise;
         };
 
-        this.listen = function(cb) {
+        this.listen = function (cb) {
             listenCallbacks.push(cb);
         };
 
-        this.refresh = function() {
+        this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };
 
-        this.dirty = function() {
+        this.dirty = function () {
             return angular.toJson(abstractModel) !== angular.toJson(shadow);
         };
 
-        this.setValidationResults = function(results) {
+        this.setValidationResults = function (results) {
             angular.extend(validationResults, results);
         };
 
-        this.getValidationResults = function() {
+        this.getValidationResults = function () {
             return validationResults;
         };
 
-        this.clearValidationResults = function() {
+        this.clearValidationResults = function () {
             if (validationResults.messages !== undefined) {
                 delete validationResults.messages;
             }
         };
 
-        this.update = function(data) {
+        this.update = function (data) {
             angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
         };
 
-        $rootScope.$on("$locationChangeSuccess", function() {
+        $rootScope.$on("$locationChangeSuccess", function () {
             listenCallbacks.length = 0;
         });
 
-        var setData = function(data) {
+        var setData = function (data) {
             angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
             if (!listening) {
                 listen();
             }
-            angular.forEach(beforeMethodBuffer, function(beforeMethod) {
+            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
                 beforeMethod();
             });
             defer.resolve();
         };
 
-        var listen = function() {
-            if (abstractModel.id && mapping.listen) {
-                angular.extend(mapping.listen, {
-                    method: "/" + abstractModel.id
-                });
+        var listen = function () {
+            if (abstractModel && mapping.listen) {
+                if (abstractModel.id) {
+                    angular.extend(mapping.listen, {
+                        method: "/" + abstractModel.id
+                    });
+                }
+                console.info('Listening for', entityName, mapping.listen);
                 var notifyPromise = WsApi.listen(mapping.listen);
-                notifyPromise.then(null, null, function(res) {
+                notifyPromise.then(null, null, function (res) {
+                    console.log(entityName, res);
                     processResponse(res);
-                    angular.forEach(listenCallbacks, function(cb) {
+                    angular.forEach(listenCallbacks, function (cb) {
                         cb(res);
                     });
                 });
@@ -184,10 +192,10 @@ core.factory("AbstractModel", function($rootScope, $q, $sanitize, $timeout, WsAp
             }
         };
 
-        var processResponse = function(res) {
+        var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
             if (resObj.meta.type != 'ERROR') {
-                angular.forEach(resObj.payload, function(datum) {
+                angular.forEach(resObj.payload, function (datum) {
                     angular[combinationOperation](abstractModel, datum);
                 });
                 setData(abstractModel);

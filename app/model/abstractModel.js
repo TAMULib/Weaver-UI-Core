@@ -181,7 +181,7 @@ core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsA
                 console.info('Listening for', entityName, mapping.listen);
                 var notifyPromise = WsApi.listen(mapping.listen);
                 notifyPromise.then(null, null, function (res) {
-                    console.log(entityName, res);
+                    console.info(entityName, res);
                     processResponse(res);
                     angular.forEach(listenCallbacks, function (cb) {
                         cb(res);

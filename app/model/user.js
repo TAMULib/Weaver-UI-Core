@@ -1,87 +1,84 @@
 core.model("User", function ($q, RestApi, StorageService) {
 
-	return function User() {
+    return function User() {
 
-		var user = this;
-		
-		// additional model methods and variables
+        var user = this;
 
-		this.anonymous = (sessionStorage.role == appConfig.anonymousRole);
+        // additional model methods and variables
 
-		this.authDefer = $q.defer();
+        this.anonymous = (sessionStorage.role == appConfig.anonymousRole);
 
-		this.logout = function() {
-			user.anonymous = true;
-			user.authDefer = $q.defer();
-		};
+        this.authDefer = $q.defer();
 
-		this.verifyEmail = function(email) {
-			var deferred = $q.defer();
+        this.logout = function () {
+            user.anonymous = true;
+            user.authDefer = $q.defer();
+        };
 
-			RestApi.anonymousGet({
-				controller: 'auth',
-				method: 'register?email=' + email
-			}).then(function(data) {
+        this.verifyEmail = function (email) {
+            var deferred = $q.defer();
 
-				if(data.meta.type == 'INVALID') {
-					user.setValidationResults(data.payload.ValidationResults);
-				}
-				else {
-					deferred.resolve(data);
-				}
+            RestApi.anonymousGet({
+                controller: 'auth',
+                method: 'register?email=' + email
+            }).then(function (data) {
 
-			});
+                if (data.meta.type == 'INVALID') {
+                    user.setValidationResults(data.payload.ValidationResults);
+                } else {
+                    deferred.resolve(data);
+                }
 
-			return deferred.promise;
-		};
+            });
 
-		this.register = function(registration) {
-			var deferred = $q.defer();
+            return deferred.promise;
+        };
 
-			RestApi.anonymousPost({
-				'controller': 'auth',
-				'method': 'register',
-				'data': registration
-			}).then(function(data) {
-				
-				if(data.meta.type == 'INVALID') {
-					user.setValidationResults(data.payload.ValidationResults);
-				}
-				else {
-					deferred.resolve(data);
-				}
+        this.register = function (registration) {
+            var deferred = $q.defer();
 
-			});
+            RestApi.anonymousPost({
+                'controller': 'auth',
+                'method': 'register',
+                'data': registration
+            }).then(function (data) {
 
-			return deferred.promise;
-		};
+                if (data.meta.type == 'INVALID') {
+                    user.setValidationResults(data.payload.ValidationResults);
+                } else {
+                    deferred.resolve(data);
+                }
 
-		this.authenticate = function(account) {
-			var deferred = user.authDefer;
+            });
 
-			RestApi.anonymousPost({
-				controller: 'auth',
-				method: 'login',
-				data: account
-			}).then(function(data) {
+            return deferred.promise;
+        };
 
-				if(typeof data.payload.JWT !== 'undefined') {
-					StorageService.set("token", data.payload.JWT.tokenAsString);
-				}
+        this.authenticate = function (account) {
+            var deferred = user.authDefer;
 
-				if(data.meta.type == 'INVALID') {
-					user.setValidationResults(data.payload.ValidationResults);
-				}
-				else {
-					deferred.resolve(data);
-				}
+            RestApi.anonymousPost({
+                controller: 'auth',
+                method: 'login',
+                data: account
+            }).then(function (data) {
 
-			});
+                if (typeof data.payload.JWT !== 'undefined') {
+                    StorageService.set("token", data.payload.JWT.tokenAsString);
+                }
 
-			return deferred.promise;
-		};
+                if (data.meta.type == 'INVALID') {
+                    user.setValidationResults(data.payload.ValidationResults);
+                } else {
+                    deferred.resolve(data);
+                }
 
-		return this;
-	}
+            });
+
+            return deferred.promise;
+        };
+
+        return this;
+    }
 
 });

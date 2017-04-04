@@ -1,157 +1,155 @@
 /**
  *
  * @ngdoc service
- * @name  core.service:AssumedControl 
+ * @name  core.service:AssumedControl
  * @requires $scope
  * @constructor
  * @param {object} data The models data, from the webservice, to be extended onto the model itself.
  * @returns {service} AssumedControl returns AssumedControl
- * 
+ *
  * @example
  * The following must be added to a model for it to extending this AbstractModel
  * <pre>
- *  angular.extend(self, AbstractModel); 
+ *  angular.extend(self, AbstractModel);
  * </pre>
- * 	
+ *
  * @description
  *	This abstract model should be inherited by all models using
  * 	the TAMU-UI-Core. It exposes unwrapping capabilites. All abstracted methods can go here: (e.g. AbstractModel.myMethod = funciton() {} )
  *	A model can then extend this my including "self = this;" and "angular.extend(self, AbstractModel);"
  * 	in its contructor.
- * 
+ *
  */
-core.service("AssumedControl", function($q, AuthServiceApi, StorageService, UserService) {
+core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService) {
 
-	var AssumedControl = function() {
-		return this;
-	}
+    var AssumedControl = function () {
+        return this;
+    }
 
-	var initiliazed = false;
-	var set = false;
-	var locked = false;
-	
-	AssumedControl.data = null;
+    var initiliazed = false;
+    var set = false;
+    var locked = false;
 
-	AssumedControl.promise = null;
-	
-	AssumedControl.set = function(data) {
-		angular.extend(AssumedControl.data, data);
-		AssumedControl.promise.resolve();
-	};
+    AssumedControl.data = null;
 
-	AssumedControl.get = function() {
-		
-		if(!initiliazed) {
-			initiliazed = true;
-			if(StorageService.get("assumed") != 'true') {
-				StorageService.set('assumed', 'false');
-			}
-			if(StorageService.get("assuming") != 'true') {
-				StorageService.set('assuming', 'false');
-			}
-		}
+    AssumedControl.promise = null;
 
-		var newAssumedControlPromise = $q.defer();
+    AssumedControl.set = function (data) {
+        angular.extend(AssumedControl.data, data);
+        AssumedControl.promise.resolve();
+    };
 
-		AssumedControl.promise = newAssumedControlPromise;
+    AssumedControl.get = function () {
 
-		if(AssumedControl.data) {
-			AssumedControl.promise.resolve();
-		}
-		else {
-			AssumedControl.data = new AssumedControl(newAssumedControlPromise);
-		}
+        if (!initiliazed) {
+            initiliazed = true;
+            if (StorageService.get("assumed") != 'true') {
+                StorageService.set('assumed', 'false');
+            }
+            if (StorageService.get("assuming") != 'true') {
+                StorageService.set('assuming', 'false');
+            }
+        }
 
-		return AssumedControl.data;	
-	};
+        var newAssumedControlPromise = $q.defer();
 
-	AssumedControl.ready = function() {
-		return AssumedControl.promise;
-	};
+        AssumedControl.promise = newAssumedControlPromise;
 
-	AssumedControl.assume = function(user) {
-		return $q(function(resolve) {
+        if (AssumedControl.data) {
+            AssumedControl.promise.resolve();
+        } else {
+            AssumedControl.data = new AssumedControl(newAssumedControlPromise);
+        }
 
-			if (!locked) {
-				
-				locked = true;
+        return AssumedControl.data;
+    };
 
-				logger.log("Assuming user");
+    AssumedControl.ready = function () {
+        return AssumedControl.promise;
+    };
 
-				StorageService.set('assumedUser', JSON.stringify(user));
+    AssumedControl.assume = function (user) {
+        return $q(function (resolve) {
 
-				StorageService.set('assuming', 'true');
+            if (!locked) {
 
-				StorageService.set('adminToken', StorageService.get("token"));
+                locked = true;
 
-				AuthServiceApi.getAssumedUser(user).then(function(response) {
+                logger.log("Assuming user");
 
-					if(response.data.assumed) {
+                StorageService.set('assumedUser', JSON.stringify(user));
 
-						UserService.fetchUser();
+                StorageService.set('assuming', 'true');
 
-						StorageService.set('assumed', 'true');
+                StorageService.set('adminToken', StorageService.get("token"));
 
-						AssumedControl.set({
-							'netid': user.netid,
-							'button': 'Unassume User',
-							'status': 'assumed'
-						});
+                AuthServiceApi.getAssumedUser(user).then(function (response) {
 
-						resolve(true);
-						
-					}
-					else {
-						StorageService.set('assuming', 'false');
+                    if (response.data.assumed) {
 
-						AssumedControl.set({
-							'netid': user.netid,
-							'button': 'Assume User',
-							'status': 'invalid netid'
-						});
+                        UserService.fetchUser();
 
-						resolve(false);
-					}
+                        StorageService.set('assumed', 'true');
 
-				});
+                        AssumedControl.set({
+                            'netid': user.netid,
+                            'button': 'Unassume User',
+                            'status': 'assumed'
+                        });
 
-				locked = false;
-			}
+                        resolve(true);
 
-		});
-	};
+                    } else {
+                        StorageService.set('assuming', 'false');
 
-	AssumedControl.unassume = function(user, role) {
-		return $q(function(resolve) {
+                        AssumedControl.set({
+                            'netid': user.netid,
+                            'button': 'Assume User',
+                            'status': 'invalid netid'
+                        });
 
-			if (!locked) {
+                        resolve(false);
+                    }
 
-				locked = true;
+                });
 
-				logger.log("Unassuming user");
+                locked = false;
+            }
 
-				StorageService.delete('assumedUser');
-				StorageService.set('assuming', 'false');
-				StorageService.set('token', StorageService.get("adminToken"));
-				
-				AssumedControl.set({
-					'netid': '',
-					'button': 'Assume User',
-					'status': ''
-				});
+        });
+    };
 
-				UserService.fetchUser();
+    AssumedControl.unassume = function (user, role) {
+        return $q(function (resolve) {
 
-				StorageService.set('assumed', 'false');
+            if (!locked) {
 
-				StorageService.set("role", role);
+                locked = true;
 
-				locked = false;	
-			}
+                logger.log("Unassuming user");
 
-		});
-	};
+                StorageService.delete('assumedUser');
+                StorageService.set('assuming', 'false');
+                StorageService.set('token', StorageService.get("adminToken"));
 
-	return AssumedControl;
-	
+                AssumedControl.set({
+                    'netid': '',
+                    'button': 'Assume User',
+                    'status': ''
+                });
+
+                UserService.fetchUser();
+
+                StorageService.set('assumed', 'false');
+
+                StorageService.set("role", role);
+
+                locked = false;
+            }
+
+        });
+    };
+
+    return AssumedControl;
+
 });

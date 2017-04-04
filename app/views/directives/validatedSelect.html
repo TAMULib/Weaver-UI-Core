@@ -2,7 +2,7 @@
 
  	<label for="select-{{label}}">{{label}}</label>
 
-	<select 
+	<select
 		ng-if="!optionproperty"
 		id="{{property}}"
 		name="{{property}}"
@@ -14,8 +14,8 @@
 		ng-change="change()"
 		ng-required="validations[property].required.value">
 	</select>
-	
-	<select 
+
+	<select
 		ng-if="optionproperty"
 		id="{{property}}"
 		name="{{property}}"

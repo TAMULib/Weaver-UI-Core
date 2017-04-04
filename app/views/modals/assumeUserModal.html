@@ -10,14 +10,10 @@
 		<form>
 			<div class="input-group">
 				<input id="assumeNetid" ng-disabled="isAssuming() == 'true' || isAssumed() == 'true'" type="netid" class="form-control" placeholder="Enter netid" ng-model="assumedControl.netid" ng-pattern="word" ng-trim="false" />
-			    
-			    <span class="input-group-btn" ng-if="isAssuming() == 'false' || isAssumed() == 'true'">
-					<button class="btn btn-primary" type="submit" ng-click="assumeUser(assumedControl)">{{assumedControl.button}}</button>
-			    </span>
-			    
-			    <span class="input-group-addon" ng-if="isAssuming() == 'true' && isAssumed() == 'false'"><img class="modalLoadingWheel" src="resources/images/ajax-loader.gif" /></span>
-		    </div>
-		     <span class="assume-status">{{assumedControl.status}}</span>
+		    <span class="input-group-btn" ng-if="isAssuming() == 'false' || isAssumed() == 'true'"><button class="btn btn-primary" type="submit" ng-click="assumeUser(assumedControl)">{{assumedControl.button}}</button></span>
+		    <span class="input-group-addon" ng-if="isAssuming() == 'true' && isAssumed() == 'false'"><img class="modalLoadingWheel" src="resources/images/ajax-loader.gif" /></span>
+	    </div>
+	    <span class="assume-status">{{assumedControl.status}}</span>
 		</form>
 	</div>
 </div>
@@ -25,7 +21,3 @@
 <div class="modal-footer">
 	<button type="button" class="btn btn-warning" ng-click="closeModal()">cancel</button>
 </div>
-
-
-	
-

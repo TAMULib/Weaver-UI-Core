@@ -9,15 +9,14 @@
  *  any UI build to work with the TAMU Webservice Core.
  *
  **/
-
 var core = angular.module('core', [
     'core.version',
     'ngFileUpload'
 ]).constant('coreConfig', coreConfig);
 
-core.repo = function(delegateName, delegateFunction) {
+core.repo = function (delegateName, delegateFunction) {
     var modelName = delegateName.replace('Repo', '');
-    return core.factory(delegateName, function($injector, AbstractRepo, AbstractAppRepo, api) {
+    return core.factory(delegateName, function ($injector, AbstractRepo, AbstractAppRepo, api) {
 
         delegateFunction.$inject = $injector.annotate(delegateFunction);
 
@@ -40,9 +39,9 @@ core.repo = function(delegateName, delegateFunction) {
 
 };
 
-core.model = function(delegateName, delegateFunction) {
-    return core.factory(delegateName, function($injector, AbstractModel, AbstractAppModel, api) {
-        return function(data) {
+core.model = function (delegateName, delegateFunction) {
+    return core.factory(delegateName, function ($injector, AbstractModel, AbstractAppModel, api) {
+        return function (data) {
 
             delegateFunction.$inject = $injector.annotate(delegateFunction);
 

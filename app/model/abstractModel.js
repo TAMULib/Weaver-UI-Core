@@ -186,7 +186,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             if (!listening) {
                 listen();
             }
-            if (mapping.caching) {
+            if (ModelCache.get(entityName) === undefined && mapping.caching) {
                 ModelCache.set(entityName, abstractModel);
             }
             angular.forEach(beforeMethodBuffer, function (beforeMethod) {

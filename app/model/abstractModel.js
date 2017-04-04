@@ -198,10 +198,8 @@ core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsA
                         method: "/" + abstractModel.id
                     });
                 }
-                console.info('Listening for', entityName, mapping.listen);
                 var notifyPromise = WsApi.listen(mapping.listen);
                 notifyPromise.then(null, null, function (res) {
-                    console.info(entityName, res);
                     processResponse(res);
                     angular.forEach(listenCallbacks, function (cb) {
                         cb(res);

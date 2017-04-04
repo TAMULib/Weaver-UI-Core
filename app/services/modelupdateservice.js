@@ -55,13 +55,11 @@ core.service("ModelUpdateService", function ($q) {
     };
 
     ModelUpdateService.clear = function () {
-        var registry = getModelRegistry(model);
-        var callbacks = getCallbacks(model);
-        for (var i in registry) {
-            delete registry[j];
+        for (var i in modelRegistry) {
+            delete modelRegistry[j];
         }
-        for (var j in callbacks) {
-            delete callbacks[j];
+        for (var j in updateCallbackRegistry) {
+            delete updateCallbackRegistry[j];
         }
     };
 

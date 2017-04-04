@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsApi, ValidationStore, ModelCache) {
+core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, ModelCache, ModelUpdateService) {
 
     return function AbstractModel() {
 
@@ -70,6 +70,10 @@ core.factory("AbstractModel", function ($rootScope, $q, $sanitize, $timeout, WsA
                     this.fetch();
                 }
             }
+
+            this.ready().then(function () {
+                ModelUpdateService.register(abstractModel);
+            });
 
         };
 

@@ -20,7 +20,7 @@
  * 	in its contructor.
  *
  */
-core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService) {
+core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, SubscriptionService) {
 
     var AssumedControl = function () {
         return this;
@@ -87,6 +87,9 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                     if (response.data.assumed) {
 
+                        ModelCache.clear();
+                        SubscriptionService.clear();
+
                         UserService.fetchUser();
 
                         StorageService.set('assumed', 'true');
@@ -100,6 +103,7 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                         resolve(true);
 
                     } else {
+
                         StorageService.set('assuming', 'false');
 
                         AssumedControl.set({
@@ -138,6 +142,9 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                     'status': ''
                 });
 
+                ModelCache.clear();
+                SubscriptionService.clear();
+
                 UserService.fetchUser();
 
                 StorageService.set('assumed', 'false');
@@ -145,6 +152,8 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                 StorageService.set("role", role);
 
                 locked = false;
+
+                resolve();
             }
 
         });

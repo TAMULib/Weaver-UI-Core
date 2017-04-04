@@ -16,6 +16,12 @@ core.service("ModelCache", function () {
         delete cache[key];
     };
 
+    ModalCache.clear = function () {
+        for (var key in cache) {
+            delete cache[key];
+        }
+    };
+
     return ModalCache;
 
 });

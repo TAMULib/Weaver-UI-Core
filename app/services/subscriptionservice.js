@@ -16,6 +16,12 @@ core.service("SubscriptionService", function () {
         delete subscriptions[key];
     };
 
+    SubscriptionService.clear = function () {
+        for (var key in subscriptions) {
+            delete subscriptions[key];
+        }
+    };
+
     return SubscriptionService;
 
 });

@@ -20,7 +20,7 @@
  * 	in its contructor.
  *
  */
-core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, SubscriptionService) {
+core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, SubscriptionService, ModelUpdateService) {
 
     var AssumedControl = function () {
         return this;
@@ -89,6 +89,7 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                         ModelCache.clear();
                         SubscriptionService.clear();
+                        ModelUpdateService.clear();
 
                         UserService.fetchUser();
 
@@ -144,6 +145,7 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                 ModelCache.clear();
                 SubscriptionService.clear();
+                ModelUpdateService.clear();
 
                 UserService.fetchUser();
 

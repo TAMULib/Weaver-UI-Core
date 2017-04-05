@@ -32,16 +32,12 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             if (mapping.instantiate !== undefined) {
 
                 var fetch = true;
-
                 if (mapping.caching) {
-
-                    var cached = ModelCache.get(entityName);
-
-                    if (cached) {
-                        setData(cached);
+                    var cachedModel = ModelCache.get(entityName);
+                    if (cachedModel) {
+                        setData(cachedModel);
                         fetch = false;
                     }
-
                 }
 
                 if (fetch) {
@@ -186,8 +182,13 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             if (!listening) {
                 listen();
             }
-            if (ModelCache.get(entityName) === undefined && mapping.caching) {
-                ModelCache.set(entityName, abstractModel);
+            if (mapping.caching) {
+                var cachedModel = ModelCache.get(entityName);
+                if (cachedModel === undefined) {
+                    ModelCache.set(entityName, abstractModel);
+                } else {
+                    // could possibly update cache here
+                }
             }
             angular.forEach(beforeMethodBuffer, function (beforeMethod) {
                 beforeMethod();

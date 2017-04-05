@@ -1,25 +1,33 @@
-core.service("UserService", function (StorageService, User, WsApi) {
+core.service("UserService", function ($q, StorageService, User, WsApi) {
 
     var UserService = this;
 
-    UserService.currentUser = new User();
+    var userEvents = $q.defer();
+
+    var currentUser = new User();
 
     UserService.fetchUser = function () {
-        WsApi.fetch(UserService.currentUser.getMapping().instantiate).then(function (res) {
+        userEvents.notify('FETCH');
+        WsApi.fetch(currentUser.getMapping().instantiate).then(function (res) {
             delete sessionStorage.role;
             var credentials = angular.fromJson(res.body).payload.Credentials;
-            UserService.currentUser.anonymous = credentials.role == appConfig.anonymousRole ? true : false;
-            angular.extend(UserService.currentUser, credentials);
-            StorageService.set("role", UserService.currentUser.role);
+            currentUser.anonymous = credentials.role == appConfig.anonymousRole ? true : false;
+            angular.extend(currentUser, credentials);
+            StorageService.set("role", currentUser.role);
+            userEvents.notify('RECEIVED');
         });
     };
 
+    UserService.userEvents = function () {
+        return userEvents.promise;
+    }
+
     UserService.setCurrentUser = function (user) {
-        angular.extend(UserService.currentUser, user);
+        angular.extend(currentUser, user);
     };
 
     UserService.getCurrentUser = function () {
-        return UserService.currentUser;
+        return currentUser;
     };
 
 });

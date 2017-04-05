@@ -241,6 +241,7 @@ core.service("WsService", function ($interval, $q, AlertService) {
      *
      */
     WsService.unsubscribe = function (sub) {
+        console.info("Unsubscribing: ", WsService.subscriptions[sub].channel);
         window.stompClient.unsubscribe(sub);
         delete WsService.subscriptions[sub];
     };
@@ -258,7 +259,9 @@ core.service("WsService", function ($interval, $q, AlertService) {
     WsService.unsubscribeAll = function () {
         for (var key in WsService.subscriptions) {
             var sub = WsService.subscriptions[key];
-            if (!sub.persist) WsService.unsubscribe(key);
+            if (!sub.persist) {
+                WsService.unsubscribe(key);
+            }
         }
     };
 

@@ -39,12 +39,16 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, Subscripti
         var subscription = SubscriptionService.get(angular.toJson(apiReq));
 
         if (!subscription) {
-            console.log('Subscription:', [apiReq.endpoint, '/', apiReq.controller, apiReq.method ? '/' + apiReq.method : ''].join(''));
+            console.info('Subscribing:', [apiReq.endpoint, '/', apiReq.controller, apiReq.method ? '/' + apiReq.method : ''].join(''));
             subscription = WsService.subscribe(channel);
             SubscriptionService.set(angular.toJson(apiReq), subscription);
         }
 
         return subscription
+    };
+
+    WsApi.clearSubscriptions = function () {
+        WsService.unsubscribeAll();
     };
 
     /**

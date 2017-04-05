@@ -72,6 +72,34 @@ core.service("WsService", function ($interval, $q, AlertService) {
         };
     }
 
+    var completeRequest = function (channel, meta, requestId) {
+        AlertService.add(meta, channel);
+        delete WsService.pendingReq[requestId];
+        if (WsService.delinquentReq[requestId]) {
+            delete WsService.delinquentReq[requestId];
+        }
+    };
+
+    var processResponse = function (channel, response) {
+        var meta = JSON.parse(response.body).meta
+
+        var requestId = meta.id ? meta.id : null;
+        var status = meta.type;
+
+        if (WsService.pendingReq[requestId]) {
+            if (status === "REFRESH") {
+                WsService.pendingReq[requestId].defer.notify(response);
+            } else if (status === "ERROR") {
+                WsService.pendingReq[requestId].defer.reject(response);
+                completeRequest(channel, meta, requestId);
+            } else {
+                // We should always resolve to handle alternative notifications.
+                WsService.pendingReq[requestId].defer.resolve(response);
+                completeRequest(channel, meta, requestId);
+            }
+        }
+    }
+
     /**
      * @ngdoc method
      * @name  core.service:WsService#WsService.subscribe
@@ -103,34 +131,9 @@ core.service("WsService", function ($interval, $q, AlertService) {
                 defer: defer
             };
 
-            window.stompClient.subscribe(channel, function (data) {
-
-                var meta = JSON.parse(data.body).meta
-
-                var requestId = meta.id ? meta.id : null;
-                var response = meta.type;
-
-                if (WsService.pendingReq[requestId]) {
-
-                    //logger.info("");
-                    //logger.debug(channel);
-                    //logger.info("Resolving Request " + requestId + ": " + WsService.pendingReq[requestId].request);
-                    //logger.log(JSON.parse(data.body));
-
-                    if (response == "REFRESH") {
-                        WsService.pendingReq[requestId].defer.notify(data);
-                    } else {
-                        // We should always resolve to handle alternative notifications.
-                        WsService.pendingReq[requestId].defer.resolve(data);
-                        AlertService.add(meta, channel);
-                        delete WsService.pendingReq[requestId];
-                        if (WsService.delinquentReq[requestId]) delete WsService.delinquentReq[requestId];
-                    }
-
-                }
-
-                defer.notify(data);
-
+            window.stompClient.subscribe(channel, function (response) {
+                processResponse(channel, response);
+                defer.notify(response);
             });
 
             WsService.subscriptions[id] = subObj;

@@ -43,6 +43,8 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                 if (fetch) {
                     WsApi.fetch(mapping.instantiate).then(function (res) {
                         processResponse(res);
+                    }, function (error) {
+                        defer.reject(error);
                     });
                 }
 

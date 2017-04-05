@@ -18,9 +18,13 @@
  *	reporting functionality.
  *
  **/
-core.controller('AbstractController', function ($scope, $window, ModalService, StorageService, RestApi) {
+core.controller('AbstractController', function ($scope, $window, ModalService, StorageService, RestApi, WsApi) {
 
     angular.extend($scope, ModalService);
+
+    $window.onbeforeunload = function (evt) {
+        WsApi.clearSubscriptions();
+    };
 
     /**
      * @ngdoc property

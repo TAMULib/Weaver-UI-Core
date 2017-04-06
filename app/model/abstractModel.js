@@ -55,7 +55,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
             abstractModel = this;
 
-            entityName = abstractModel.constructor.name;
+            entityName = abstractModel.constructor.getName();
 
             validations = ValidationStore.getValidations(entityName);
 

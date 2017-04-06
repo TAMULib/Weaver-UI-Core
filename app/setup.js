@@ -1,3 +1,7 @@
+Function.prototype.getName = function () {
+    return this.name || this.toString().split("(")[0].replace(/function\s*/, "");
+};
+
 function setUpApp(bootstrapApp) {
 
     var sockJSConnection;

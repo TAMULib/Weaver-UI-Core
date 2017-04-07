@@ -1,35 +1,35 @@
 /**
-* @ngdoc directive
-* @name  core.directive:tamuheader
-* @restrict 'E'
-* @requires $controller
-*
-* @example
-* <pre>
-* 	<tamuheader title="PROJECT TITLE"></tamuheader>
-* </pre>
-* 
-* @description 
-* The tamuheader element directive is used to provide TAMU specific header information from header.html file.
-* 
-*/
+ * @ngdoc directive
+ * @name  core.directive:tamuheader
+ * @restrict 'E'
+ * @requires $controller
+ *
+ * @example
+ * <pre>
+ * 	<tamuheader title="PROJECT TITLE"></tamuheader>
+ * </pre>
+ *
+ * @description
+ * The tamuheader element directive is used to provide TAMU specific header information from header.html file.
+ *
+ */
 core.directive('tamuheader', function ($controller) {
-	return {
-		templateUrl: 'bower_components/core/app/views/header.html',
-		restrict: 'E',
-		replace: false,
-		transclude: true,
-		link: function ($scope, element, attr) {
+    return {
+        templateUrl: 'bower_components/core/app/views/header.html',
+        restrict: 'E',
+        replace: false,
+        transclude: true,
+        link: function ($scope, element, attr) {
 
-			/**
-			 * @ngdoc property
-			 * @name core.directive:tamuheader#$scope.attr
-			 * @propertyOf core.directive:tamuheader
-			 *
-			 * @description
-			 * 	A $scope variable 'title' to store the 'title' property of the 'attr' object
-			 */	        	
-			$scope.title = attr.title;
-	    }
-	};
+            /**
+             * @ngdoc property
+             * @name core.directive:tamuheader#$scope.attr
+             * @propertyOf core.directive:tamuheader
+             *
+             * @description
+             * 	A $scope variable 'title' to store the 'title' property of the 'attr' object
+             */
+            $scope.title = attr.title;
+        }
+    };
 });

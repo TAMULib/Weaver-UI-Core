@@ -1,129 +1,238 @@
-/**
- *
- * @ngdoc service
- * @name  core.service:AbstractModel
- * @constructor
- * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- * @returns {service} AbsrtactModel returns the AbstractModel
- * 
- * @example
- * The following must be added to a model for it to extending this AbstractModel
- * <pre>
- *  angular.extend(self, AbstractModel); 
- * </pre>
- * 	
- * @description
- *	This abstract model should be inherited by all models using
- * 	the TAMU-UI-Core. It exposes unwrapping capabilites. All abstracted methods can go here: (e.g. AbstractModel.myMethod = funciton() {} )
- *	A model can then extend this my including "self = this;" and "angular.extend(self, AbstractModel);"
- * 	in its contructor.
- * 
- */
-core.service("AbstractModel", function () {
+core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, ModelCache, ModelUpdateService) {
 
+    return function AbstractModel() {
 
-	/**
-	 * @constructor
- 	 * @param {object} data The models data, from the webservice, to be extended onto the model itself.
- 	 * @returns {service} AbsrtactModel returns the AbstractModel
- 	 * 
- 	 * @description
-	 * 	The constructor for the Abstract Service.
-	 */
-	var AbstractModel = function(data) {
-		angular.extend(this, data);
-	};
+        var abstractModel;
 
-	/**
-	 * @ngdoc method
-	 * @name unwrap
-	 * @methodOf core.service:AbstractModel
-	 * @param {service} self the model which is unwrapping the data
-	 * @param {Promise|object} futureData the promise of future data, or the data object
-	 * @returns {void} returns void
-	 *
-	 * @description
-	 * 	Unwraps future data and extends it onto the inheriting model.
-	 * 
-	 */
-	AbstractModel.unwrap = function(self, futureData) {
-		if(!futureData.$$state) {
-			angular.extend(self, futureData);
-			return;
-		}
-		futureData.then(
-			function(data) {
-				if(data.body) {
-					var response = JSON.parse(data.body);
-					var payload = response.payload;
-					var meta = response.meta;
-					var keys = Object.keys(payload);
-					if(meta.type == "ERROR") {
-						angular.extend(self, {'error':true});
-					}
-					else {
-						for(var i in keys) {
-							angular.extend(self, payload[keys[i]]);
-						}
-					}
-				} else {
-					angular.extend(self, data);
-				}
-			},
-			function(data) {
-				console.error(data);
-			},
-			function(data) {
-				if(data.body) {
-					var response = JSON.parse(data.body);
-					var payload = response.payload;
-					var meta = response.meta;
-					var keys = Object.keys(payload);
-					if(meta.type == "ERROR") {
-						angular.extend(self, {'error':true});
-					}
-					else {
-						for(var i in keys) {
-							angular.extend(self, payload[keys[i]]);
-						}
-					}
-				}
-				else {
-					angular.extend(self, {'value':data});
-				}
-		});
-	};
+        var mapping;
 
-	/**
-	 * @ngdoc method
-	 * @name update
-	 * @methodOf core.service:AbstractModel
-	 * @param {service} self the model which is unwrapping the data
-	 * @param {Promise} promise the promise of future data
-	 * @returns {void} returns void
-	 *
-	 * @description
-	 * 	Unwraps the promise and re-extends it onto the inheriting model.
-	 * 
-	 */
-	AbstractModel.update = function(self, promise) {
-		promise.then(function(data) {
-			var response = JSON.parse(data.body);
-			var payload = response.payload;
-			var meta = response.meta;
-			var keys = Object.keys(payload);
-			for(var i in keys) {
-				if(typeof payload[keys[i]] != 'undefined') {
-					self.unwrap(self, payload[keys[i]]);
-				}
-				else {
-					console.log(keys[i] + ' is undefined');
-					console.log(data);
-				}
-			}			
-		});
-	};
-	
-	return AbstractModel;
+        var entityName;
+
+        var validations;
+
+        var defer = $q.defer();
+
+        var listenCallbacks = [];
+
+        var shadow = {};
+
+        var validationResults = {};
+
+        var listening = false;
+
+        var combinationOperation = 'extend';
+
+        var beforeMethodBuffer = [];
+
+        this.before = function (beforeMethod) {
+            beforeMethodBuffer.push(beforeMethod);
+        }
+
+        this.fetch = function () {
+            if (mapping.instantiate !== undefined) {
+
+                var fetch = true;
+                if (mapping.caching) {
+                    var cachedModel = ModelCache.get(entityName);
+                    if (cachedModel) {
+                        setData(cachedModel);
+                        fetch = false;
+                    }
+                }
+
+                if (fetch) {
+                    WsApi.fetch(mapping.instantiate).then(function (res) {
+                        processResponse(res);
+                    }, function (error) {
+                        defer.reject(error);
+                    });
+                }
+
+            }
+        }
+
+        this.init = function (data, apiMapping) {
+
+            abstractModel = this;
+
+            entityName = abstractModel.constructor.getName();
+
+            validations = ValidationStore.getValidations(entityName);
+
+            mapping = apiMapping;
+
+            if (data) {
+                setData(data);
+            } else {
+                if (!mapping.lazy) {
+                    this.fetch();
+                }
+            }
+
+            this.ready().then(function () {
+                ModelUpdateService.register(abstractModel);
+            });
+
+        };
+
+        this.enableMergeCombinationOperation = function () {
+            combinationOperation = 'merge';
+        };
+
+        this.enableExtendCombinationOperation = function () {
+            combinationOperation = 'extend';
+        };
+
+        this.getEntityName = function () {
+            return entityName;
+        };
+
+        this.getValidations = function () {
+            return validations;
+        };
+
+        this.getMapping = function () {
+            return mapping;
+        };
+
+        this.ready = function () {
+            return defer.promise;
+        };
+
+        this.save = function () {
+            var promise = $q(function (resolve) {
+                if (abstractModel.dirty()) {
+                    angular.extend(mapping.update, {
+                        data: abstractModel
+                    });
+                    WsApi.fetch(mapping.update).then(function (res) {
+                        resolve(res);
+                    });
+                } else {
+                    var payload = {};
+                    payload[abstractModel.constructor.name] = abstractModel;
+                    resolve({
+                        body: angular.toJson({
+                            payload: payload,
+                            meta: {
+                                type: "SUCCESS"
+                            }
+                        })
+                    });
+                }
+            });
+            promise.then(function (res) {
+                if (angular.fromJson(res.body).meta.type != "INVALID") {
+                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                    shadow = angular.copy(abstractModel);
+                }
+            });
+            return promise;
+        };
+
+        this.delete = function () {
+            angular.extend(mapping.remove, {
+                data: abstractModel
+            });
+            var promise = WsApi.fetch(mapping.remove);
+            promise.then(function (res) {
+                if (angular.fromJson(res.body).meta.type == "INVALID") {
+                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                }
+            });
+            return promise;
+        };
+
+        this.listen = function (cb) {
+            listenCallbacks.push(cb);
+        };
+
+        this.refresh = function () {
+            angular.extend(abstractModel, shadow);
+        };
+
+        this.dirty = function () {
+            return angular.toJson(abstractModel) !== angular.toJson(shadow);
+        };
+
+        this.setValidationResults = function (results) {
+            angular.extend(validationResults, results);
+        };
+
+        this.getValidationResults = function () {
+            return validationResults;
+        };
+
+        this.clearValidationResults = function () {
+            if (validationResults.messages !== undefined) {
+                delete validationResults.messages;
+            }
+        };
+
+        this.update = function (data) {
+            angular[combinationOperation](abstractModel, data);
+            shadow = angular.copy(abstractModel);
+        };
+
+        $rootScope.$on("$locationChangeSuccess", function () {
+            listenCallbacks.length = 0;
+        });
+
+        var setData = function (data) {
+            angular[combinationOperation](abstractModel, data);
+            shadow = angular.copy(abstractModel);
+            if (!listening) {
+                listen();
+            }
+            if (mapping.caching) {
+                var cachedModel = ModelCache.get(entityName);
+                if (cachedModel === undefined) {
+                    ModelCache.set(entityName, abstractModel);
+                } else {
+                    // could possibly update cache here
+                }
+            }
+            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
+                beforeMethod();
+            });
+            defer.resolve(abstractModel);
+        };
+
+        var listen = function () {
+            if (abstractModel && mapping.listen) {
+                if (abstractModel.id) {
+                    angular.extend(mapping.listen, {
+                        method: "/" + abstractModel.id
+                    });
+                }
+                var notifyPromise = WsApi.listen(mapping.listen);
+                notifyPromise.then(null, null, function (res) {
+                    processResponse(res);
+                    angular.forEach(listenCallbacks, function (cb) {
+                        cb(res);
+                    });
+                });
+                listening = true;
+                return notifyPromise;
+            }
+        };
+
+        var processResponse = function (res) {
+            var resObj = angular.fromJson(res.body);
+            if (resObj.meta.type != 'ERROR') {
+                angular.forEach(resObj.payload, function (datum) {
+                    angular[combinationOperation](abstractModel, datum);
+                });
+                setData(abstractModel);
+            } else {
+                abstractModel.refresh();
+            }
+        };
+
+        // additional core level model methods and variables
+
+        return this;
+
+    };
 
 });

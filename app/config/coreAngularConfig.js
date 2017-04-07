@@ -1,7 +1,7 @@
-core.config(function($httpProvider, $locationProvider, $sceDelegateProvider) {
+core.config(function ($httpProvider, $locationProvider, $sceDelegateProvider) {
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
     $locationProvider.html5Mode(true);
-	$sceDelegateProvider.resourceUrlWhitelist([
+    $sceDelegateProvider.resourceUrlWhitelist([
         'self',
         appConfig.webService + "/**"
     ]);

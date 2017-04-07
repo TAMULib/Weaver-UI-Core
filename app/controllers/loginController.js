@@ -1,20 +1,18 @@
-core.controller('LoginController', function ($controller, $location, $scope, $timeout, AlertService, StorageService, User) {
-	
-    angular.extend(this, $controller('AbstractController', {$scope: $scope}));
-    
-    var reset = function() {
-    	$scope.account = {
-	    	email: '',
-	    	password: ''
-	    };
-    };
-    
-    reset();
+core.controller('LoginController', function ($controller, $location, $scope, UserService) {
 
-	$scope.login = function() {
-		User.authenticate($scope.account).then(function(data) {
-			reset();
-		});
-	};
+    angular.extend(this, $controller('AbstractController', {
+        $scope: $scope
+    }));
+
+    angular.extend(this, $controller('AuthenticationController', {
+        $scope: $scope
+    }));
+
+    $scope.login = function () {
+        $scope.user.authenticate($scope.account).then(function (data) {
+            $scope.reset();
+            UserService.fetchUser();
+        });
+    };
 
 });

@@ -1,11 +1,11 @@
 <!-- Modal Button -->
-<span ng-click="click()" class="{{attr.modalBtnClasses}}" data-toggle="modal" data-target="#{{attr.modalId}}" ng-transclude></span> 
+<span ng-click="openModal('#' + attr.modalId); click();" class="{{attr.modalBtnClasses}}" ng-transclude></span>
 
 <!-- Modal -->
-<div id="{{attr.modalId}}" class="modal fade" ng-class="{'modal-wide': attr.modalFullscreen}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="{{attr.modalKeyboard}}" data-backdrop="{{attr.modalBackdrop}}">
-  	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
-      	<span ng-include src="attr.modalView"></span>
-    	</div>
+<div id="{{attr.modalId}}" class="modal fade" ng-class="{'modal-wide': attr.modalFullscreen}" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="{{attr.modalKeyboard}}" data-backdrop="{{attr.modalBackdrop}}">
+	<div class="modal-dialog" role="document">
+  	<div class="modal-content">
+    	<span ng-include src="attr.modalView"></span>
   	</div>
+	</div>
 </div>

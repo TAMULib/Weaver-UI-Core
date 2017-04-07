@@ -72,7 +72,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing anonymously.
      */
     $scope.isAnonymous = function () {
-        return (sessionStorage.role == appConfig.anonymousRole);
+        return (sessionStorage.role === appConfig.anonymousRole);
     };
 
     /**
@@ -85,7 +85,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_USER'.
      */
     $scope.isUser = function () {
-        return (sessionStorage.role == "ROLE_USER");
+        return (sessionStorage.role === "ROLE_USER");
     };
 
     /**
@@ -98,7 +98,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_ANNOTATOR'.
      */
     $scope.isAnnotator = function () {
-        return (sessionStorage.role == "ROLE_ANNOTATOR");
+        return (sessionStorage.role === "ROLE_ANNOTATOR");
     };
 
     /**
@@ -111,7 +111,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_MANGER'.
      */
     $scope.isManager = function () {
-        return (sessionStorage.role == "ROLE_MANAGER");
+        return (sessionStorage.role === "ROLE_MANAGER");
     };
 
     /**
@@ -124,7 +124,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_ADMIN'.
      */
     $scope.isAdmin = function () {
-        return (sessionStorage.role == "ROLE_ADMIN");
+        return (sessionStorage.role === "ROLE_ADMIN");
     };
 
     /**
@@ -145,7 +145,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
         }).then(function () {
             $scope.closeModal();
         }, function (response) {
-            if (response.data == null || response.data.message != "EXPIRED_JWT") {
+            if (response.data === undefined || response.data.message !== "EXPIRED_JWT") {
                 var subject = 'Error Report';
                 var body = 'Error Report\n\nchannel: ' + alert.channel +
                     '\ntime: ' + new Date(alert.time) +

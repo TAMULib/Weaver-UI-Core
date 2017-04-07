@@ -17,11 +17,6 @@ core.controller('CoreAdminController', function ($controller, $injector, $route,
     $scope.$watch('user.role', function () {
         if ($scope.user.role) {
             StorageService.set('role', $scope.user.role);
-            if ($scope.user.role == 'ROLE_ADMIN') {
-                $scope.admin = true;
-            } else {
-                $scope.admin = false;
-            }
         }
     });
 

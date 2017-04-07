@@ -81,7 +81,8 @@ core.service("WsService", function ($interval, $q, AlertService) {
     };
 
     var processResponse = function (channel, response) {
-        var meta = JSON.parse(response.body).meta
+        var responseBody = JSON.parse(response.body)
+        var meta = responseBody.meta
 
         var requestId = meta.id ? meta.id : null;
         var status = meta.type;
@@ -90,10 +91,12 @@ core.service("WsService", function ($interval, $q, AlertService) {
             if (status === "REFRESH") {
                 WsService.pendingReq[requestId].defer.notify(response);
             } else if (status === "ERROR") {
-                WsService.pendingReq[requestId].defer.reject(response);
+                // lets reject the errors as the response body with channel added
+                responseBody.channel = channel;
+                WsService.pendingReq[requestId].defer.reject(responseBody);
                 completeRequest(channel, meta, requestId);
             } else {
-                // We should always resolve to handle alternative notifications.
+                // if not refresh or error resolve to handle alternative notifications
                 WsService.pendingReq[requestId].defer.resolve(response);
                 completeRequest(channel, meta, requestId);
             }

@@ -195,7 +195,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             angular.forEach(beforeMethodBuffer, function (beforeMethod) {
                 beforeMethod();
             });
-            defer.resolve();
+            defer.resolve(abstractModel);
         };
 
         var listen = function () {

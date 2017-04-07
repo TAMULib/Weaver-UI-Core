@@ -69,6 +69,11 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
     };
 
     AssumedControl.assume = function (user) {
+
+        AssumedControl.set({
+            'status': 'assuming'
+        });
+
         return $q(function (resolve) {
 
             if (!locked) {
@@ -162,6 +167,14 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                 resolve();
             }
 
+        });
+    };
+
+    AssumedControl.cancel = function () {
+        AssumedControl.set({
+            'netid': '',
+            'button': 'Assume User',
+            'status': ''
         });
     };
 

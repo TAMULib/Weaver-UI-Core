@@ -30,6 +30,8 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
     var set = false;
     var locked = false;
 
+    var callbacks = [];
+
     AssumedControl.data = null;
 
     AssumedControl.promise = null;
@@ -37,6 +39,10 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
     AssumedControl.set = function (data) {
         angular.extend(AssumedControl.data, data);
         AssumedControl.promise.resolve();
+    };
+
+    AssumedControl.addCallback = function (callback) {
+        callbacks.push(callback);
     };
 
     AssumedControl.get = function () {
@@ -93,6 +99,10 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                     if (response.data.assumed) {
 
                         WsApi.clearSubscriptions();
+
+                        for (var i in callbacks) {
+                            callbacks[i]();
+                        }
 
                         ModelCache.clear();
                         SubscriptionService.clear();
@@ -155,6 +165,10 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                 ModelCache.clear();
                 SubscriptionService.clear();
                 ModelUpdateService.clear();
+
+                for (var i in callbacks) {
+                    callbacks[i]();
+                }
 
                 UserService.fetchUser();
 

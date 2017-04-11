@@ -1,11 +1,11 @@
 <div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
- 	
+
  	<label for="textarea-{{label}}">{{label}}</label>
 
-	<textarea 
+	<textarea
 		id="{{property}}"
 		name="{{property}}"
-		class="form-control" 
+		class="form-control"
 		ng-model="model[property]"
 		rows="{{rows}}"
 		ng-blur="blur($event)"
@@ -14,7 +14,7 @@
 		ng-minlength="validations[property].minlength.value"
 		ng-maxlength="validations[property].maxlength.value"
 		ng-pattern="validations[property].pattern.value">
-	</textarea>	
+	</textarea>
 
 	<validationmessage
 		type="input"

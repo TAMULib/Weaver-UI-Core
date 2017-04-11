@@ -1,7 +1,7 @@
 <form name="forms.dynamic" novalidate>
- 	
+
  	<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
- 	
+
 	 	<div ng-if="type === undefined || type == 'text' || type == 'password'">
 		 	<label ng-if="label" for="{{property}}-input">{{label}}</label>
 			<div ng-class="{ 'input-group': toolTip !== undefined }">
@@ -21,7 +21,7 @@
 					ng-minlength="validations[property].minlength.value"
 					ng-maxlength="validations[property].maxlength.value"
 					ng-pattern="validations[property].pattern.value"/>
-				<span 
+				<span
 					ng-if="toolTip"
 					class="input-group-addon">
 					<span ng-if="!inProgress" class="glyphicon glyphicon-info-sign opaque" tooltip="{{ toolTip }}"></span>
@@ -34,19 +34,19 @@
 		<div ng-if="type == 'checkbox'">
 			<label ng-if="label" for="{{property}}-input" class="checkbox">{{label}}</label>
 			<div class="checkbox-inline">
-				<input 
+				<input
 					id="{{property}}"
 					name="{{property}}"
 					type="{{type}}"
 					ng-change="change($event)"
 					ng-model="model[property]"
-					ng-false-value="{{falsevalue ? falsevalue : false}}" 
+					ng-false-value="{{falsevalue ? falsevalue : false}}"
 					ng-true-value="{{truevalue ? truevalue : true}}"
 					aria-describedby="{{label}}"/>
 				<span>{{placeholder}}</span>
 			</div>
 		</div>
-		
+
 		<validationmessage
 			type="input"
 			property="{{property}}"

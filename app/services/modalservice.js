@@ -1,18 +1,18 @@
-core.service("ModalService", function() {
-	
-	var ModalService = this;
-	
-	ModalService.openModalId;
+core.service("ModalService", function () {
 
-	ModalService.openModal = function (id) {
-		ModalService.openModalId = id;
-		angular.element(id).modal('show');
+    var ModalService = this;
+
+    ModalService.openModalId;
+
+    ModalService.openModal = function (id) {
+        ModalService.openModalId = id;
+        angular.element(id).modal('show');
     };
-    
-    ModalService.closeModal = function() {
-    	angular.element(ModalService.openModalId).modal('hide');
+
+    ModalService.closeModal = function () {
+        angular.element(ModalService.openModalId).modal('hide');
     };
-    
+
     return ModalService;
 
 });

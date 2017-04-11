@@ -7,234 +7,234 @@
  *
  * @description
  * 	The RestApi Service facilitates all restful communication
- * 	with a Spring implementation of the TAMU Webservice Core. 
- * 	This is service is the http counterpart to the websocket 
+ * 	with a Spring implementation of the TAMU Webservice Core.
+ * 	This is service is the http counterpart to the websocket
  * 	functionality of WsApi.
- * 
+ *
  */
-core.service("RestApi",function($http, $window, AuthServiceApi) {
+core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
-	/**
-	 * @ngdoc property
-	 * @name core.service:RestApi#webservice
-	 * @propertyOf core.service:RestApi
-	 *
-	 * @description
-	 * 	A private reference to the application's configuration
-	 * 	for webService.
-	 * 	
-	 */
-	var webservice = appConfig.webService;
+    /**
+     * @ngdoc property
+     * @name core.service:RestApi#webservice
+     * @propertyOf core.service:RestApi
+     *
+     * @description
+     * 	A private reference to the application's configuration
+     * 	for webService.
+     *
+     */
+    var webservice = appConfig.webService;
 
-	/**
-	 * @ngdoc property
-	 * @name core.service:RestApi#authService
-	 * @propertyOf core.service:RestApi
-	 *
-	 * @description
-	 * 	A private reference to the application's configuration
-	 * 	for authService.
-	 * 	
-	 */
-	var authservice = appConfig.authService;
+    /**
+     * @ngdoc property
+     * @name core.service:RestApi#authService
+     * @propertyOf core.service:RestApi
+     *
+     * @description
+     * 	A private reference to the application's configuration
+     * 	for authService.
+     *
+     */
+    var authservice = appConfig.authService;
 
-	/**
-	 * @ngdoc method
-	 * @name core.service:RestApi#anonymousGet
-	 * @methodOf core.service:RestApi
-	 * 
-	 * @param {object} req 
-	 * 	a request object
-	 * @returns {Promise} returns a promise
-	 * 
-	 * @description
-	 *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
-	 */
-	this.anonymousGet = function(req) {
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#anonymousGet
+     * @methodOf core.service:RestApi
+     *
+     * @param {object} req
+     * 	a request object
+     * @returns {Promise} returns a promise
+     *
+     * @description
+     *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
+     */
+    this.anonymousGet = function (req) {
 
-		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
 
-		return $http({
-				method: 'GET',
-    			url: url,
-    			headers: {
-   					'data': data
-   				}
-   			}).then(
-			//success callback	
-			function(response) {
-				return response.data;
-			},
-			//error callback
-			function(response) {
-				return response.data;
-			});
-	};
+        return $http({
+            method: 'GET',
+            url: url,
+            headers: {
+                'data': data
+            }
+        }).then(
+            //success callback
+            function (response) {
+                return response.data;
+            },
+            //error callback
+            function (response) {
+                return response.data;
+            });
+    };
 
-	/**
-	 * @ngdoc method
-	 * @name core.service:RestApi#anonymousPost
-	 * @methodOf core.service:RestApi
-	 * 
-	 * @param {object} req 
-	 * 	a request object
-	 * @returns {Promise} returns a promise
-	 * 
-	 * @description
-	 *	Initiates a post request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
-	 */
-	this.anonymousPost = function(req) {
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#anonymousPost
+     * @methodOf core.service:RestApi
+     *
+     * @param {object} req
+     * 	a request object
+     * @returns {Promise} returns a promise
+     *
+     * @description
+     *	Initiates a post request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
+     */
+    this.anonymousPost = function (req) {
 
-		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
 
-		return $http({
-				method: 'POST',
-    			url: url,
-    			data: data
-   			}).then(
-			//success callback	
-			function(response) {
-				return response.data;
-			},
-			//error callback
-			function(response) {
-				return response.data;
-			});
-	};
+        return $http({
+            method: 'POST',
+            url: url,
+            data: data
+        }).then(
+            //success callback
+            function (response) {
+                return response.data;
+            },
+            //error callback
+            function (response) {
+                return response.data;
+            });
+    };
 
-	/**
-	 * @ngdoc method
-	 * @name core.service:RestApi#get
-	 * @methodOf core.service:RestApi
-	 * @param {object} req a request object
-	 * @param {boolean=} isUrl a boolean
-	 * @returns {Promise} returns a promise
-	 * 
-	 * @description
-	 *	Initiates a get request to the configured web service on behalf of an authenticated user.
-	 */
-	this.get = function(req, isUrl) {
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#get
+     * @methodOf core.service:RestApi
+     * @param {object} req a request object
+     * @param {boolean=} isUrl a boolean
+     * @returns {Promise} returns a promise
+     *
+     * @description
+     *	Initiates a get request to the configured web service on behalf of an authenticated user.
+     */
+    this.get = function (req, isUrl) {
 
-		var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
+        var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
-		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
 
-		var restObj = {
-			method: 'GET',
-			url: url,
-			headers: {
-				'jwt': sessionStorage.token,
-				'data': data,
-				'X-Requested-With': undefined
-			}
-		};
+        var restObj = {
+            method: 'GET',
+            url: url,
+            headers: {
+                'jwt': sessionStorage.token,
+                'data': data,
+                'X-Requested-With': undefined
+            }
+        };
 
-		return $http(restObj).then(
-			//success callback	
-			function(response) {
-				return response.data;
-			},
-			//error callback
-			function(response) {
-				if(response.data.code == "EXPIRED_JWT") {
-					
-					if(sessionStorage.assumedUser) {
-					
-						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
-							restObj.headers.jwt = sessionStorage.token;
-							return $http(restObj).then(function(response) {
-								return response.data;	
-							});
-						});
-						
-					} else {
-						
-						return AuthServiceApi.getRefreshToken().then(function() {
-							restObj.headers.jwt = sessionStorage.token;
-							return $http(restObj).then(function(response) {
-								return response.data;	
-							});
-						});
-						
-					}
+        return $http(restObj).then(
+            //success callback
+            function (response) {
+                return response.data;
+            },
+            //error callback
+            function (response) {
+                if (response.data.code == "EXPIRED_JWT") {
 
-				} else {
-					$window.location.replace(authservice + "/token?referer=" + window.location);
-				}
-			});
-	};
+                    if (sessionStorage.assumedUser) {
 
-	/**
-	 * @ngdoc method
-	 * @name core.service:RestApi#post
-	 * @methodOf core.service:RestApi
-	 * @param {object} req a request object
-	 * @returns {Promise} returns a promise
-	 * 
-	 * @description
-	 *	Initiates a post request to the configured web service on behalf of an authenticated user.
-	 */
-	this.post = function(req) {
+                        return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
 
-		var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+                    } else {
 
-		var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+                        return AuthServiceApi.getRefreshToken().then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
 
-		var headers = req.file === undefined ? {
-			'jwt': sessionStorage.token, 
-			'X-Requested-With': undefined
-		} : {
-			'jwt': sessionStorage.token, 
-			'X-Requested-With': undefined,
-			'data': data
-		};
+                    }
 
-		var restObj = {
-			method: 'POST',
-			url: url,
-			data: req.file !== undefined ? req.file : data,
-			headers: headers
-		};
+                } else {
+                    $window.location.replace(authservice + "/token?referer=" + window.location);
+                }
+            });
+    };
 
-		return $http(restObj).then(
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#post
+     * @methodOf core.service:RestApi
+     * @param {object} req a request object
+     * @returns {Promise} returns a promise
+     *
+     * @description
+     *	Initiates a post request to the configured web service on behalf of an authenticated user.
+     */
+    this.post = function (req) {
 
-			//success callback	
-			function(response) {
-				return response.data;
-			},
+        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-			//error callback
-			function(response) {
-				if(response.data.code == "EXPIRED_JWT") {
-					
-					if(sessionStorage.assumedUser) {
-					
-						return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function() {
-							restObj.headers.jwt = sessionStorage.token;
-							return $http(restObj).then(function(response) {
-								return response.data;	
-							});
-						});
-						
-					} else {
-						
-						return AuthServiceApi.getRefreshToken().then(function() {
-							restObj.headers.jwt = sessionStorage.token;
-							return $http(restObj).then(function(response) {
-								return response.data;	
-							});
-						});
-						
-					}
+        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
 
-				} else {
-					$window.location.replace(authservice + "/token?referer=" + window.location);
-				}
-			});
-	};
+        var headers = req.file === undefined ? {
+            'jwt': sessionStorage.token,
+            'X-Requested-With': undefined
+        } : {
+            'jwt': sessionStorage.token,
+            'X-Requested-With': undefined,
+            'data': data
+        };
+
+        var restObj = {
+            method: 'POST',
+            url: url,
+            data: req.file !== undefined ? req.file : data,
+            headers: headers
+        };
+
+        return $http(restObj).then(
+
+            //success callback
+            function (response) {
+                return response.data;
+            },
+
+            //error callback
+            function (response) {
+                if (response.data.code == "EXPIRED_JWT") {
+
+                    if (sessionStorage.assumedUser) {
+
+                        return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
+
+                    } else {
+
+                        return AuthServiceApi.getRefreshToken().then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
+
+                    }
+
+                } else {
+                    $window.location.replace(authservice + "/token?referer=" + window.location);
+                }
+            });
+    };
 
 });

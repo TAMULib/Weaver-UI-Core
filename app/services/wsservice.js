@@ -59,7 +59,10 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
     var pendingRequestBank = {};
 
-    var craftRequest = function (request, headers, payload, queued) {
+    var sendRequest = function (request, headers, payload, queued) {
+        if (!queued) {
+            window.stompClient.send(request, headers, payload);
+        }
         return {
             defer: $q.defer(),
             timestamp: new Date().getTime(),
@@ -175,13 +178,12 @@ core.service("WsService", function ($interval, $q, AlertService) {
         headers.id = WsService.requestCount++;
 
         if (Object.keys(payload).length > 0) {
-            window.stompClient.send(request, headers, payload);
-            WsService.pendingReq[headers.id] = craftRequest(request, headers, payload, false);
+            WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, false);
         } else {
 
             if (pendingRequestBank[request]) {
 
-                WsService.pendingReq[headers.id] = craftRequest(request, headers, payload, true);
+                WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, true);
 
                 pendingRequestBank[request].queue.push({
                     id: headers.id,
@@ -189,14 +191,12 @@ core.service("WsService", function ($interval, $q, AlertService) {
                 });
             } else {
 
+                WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, false);
+
                 pendingRequestBank[request] = {
                     id: headers.id,
                     queue: []
-                }
-
-                window.stompClient.send(request, headers, payload);
-
-                WsService.pendingReq[headers.id] = craftRequest(request, headers, payload, false);
+                };
 
                 WsService.pendingReq[headers.id].defer.promise.then(function (response) {
                     for (var i in pendingRequestBank[request].queue) {

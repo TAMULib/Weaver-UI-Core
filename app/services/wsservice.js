@@ -70,14 +70,12 @@ core.service("WsService", function ($interval, $q, AlertService) {
                 window.stompClient.send(request, headers, payload);
             }
         };
-    }
+    };
 
     var completeRequest = function (channel, meta, requestId) {
         AlertService.add(meta, channel);
         delete WsService.pendingReq[requestId];
-        if (WsService.delinquentReq[requestId]) {
-            delete WsService.delinquentReq[requestId];
-        }
+        delete WsService.delinquentReq[requestId];
     };
 
     var processResponse = function (channel, response) {
@@ -101,7 +99,7 @@ core.service("WsService", function ($interval, $q, AlertService) {
                 completeRequest(channel, meta, requestId);
             }
         }
-    }
+    };
 
     /**
      * @ngdoc method
@@ -185,7 +183,10 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
                 WsService.pendingReq[headers.id] = craftRequest(request, headers, payload, true);
 
-                pendingRequestBank[request].queue.push(WsService.pendingReq[headers.id]);
+                pendingRequestBank[request].queue.push({
+                    id: headers.id,
+                    promise: WsService.pendingReq[headers.id]
+                });
             } else {
 
                 pendingRequestBank[request] = {
@@ -199,8 +200,9 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
                 WsService.pendingReq[headers.id].defer.promise.then(function (response) {
                     for (var i in pendingRequestBank[request].queue) {
-                        var req = pendingRequestBank[request].queue[i];
-                        req.defer.resolve(response);
+                        var pendReq = pendingRequestBank[request].queue[i];
+                        pendReq.promise.defer.resolve(response);
+                        delete WsService.pendingReq[pendReq.id];
                     }
                     delete pendingRequestBank[request];
                 });
@@ -209,7 +211,6 @@ core.service("WsService", function ($interval, $q, AlertService) {
         }
 
         return WsService.pendingReq[headers.id].defer.promise;
-
     };
 
     /**
@@ -275,11 +276,11 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
         var now = new Date().getTime();
 
-        if (WsService.pendingReq.length > 0) {
+        if (Object.keys(WsService.pendingReq).length > 0) {
             console.warn(WsService.pendingReq);
         }
 
-        if (pendingRequestBank.length > 0) {
+        if (Object.keys(pendingRequestBank).length > 0) {
             console.warn(pendingRequestBank);
         }
 

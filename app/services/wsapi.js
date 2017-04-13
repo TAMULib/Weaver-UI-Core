@@ -4,13 +4,12 @@
  * @requires ng.$q
  * @requires ng.$http
  * @requires core.service:WsService
- * @requires core.service:AuthServiceApi
  *
  * @description
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $http, WsService, AuthServiceApi) {
+core.service("WsApi", function ($q, $http, WsService) {
 
     var WsApi = this;
 
@@ -36,17 +35,7 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi) {
             channel += "/" + apiReq.method;
         }
 
-        var subscriptionPromise;
-
-        var subscription = WsService.getSubscription(channel);
-
-        if (subscription) {
-            subscriptionPromise = subscription.defer.promise;
-        } else {
-            subscriptionPromise = WsService.subscribe(channel);
-        }
-
-        return subscriptionPromise;
+        return WsService.subscribe(channel, true).defer.promise;
     };
 
     WsApi.clearSubscriptions = function () {
@@ -91,26 +80,7 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi) {
                 JSON.stringify(apiReq.data) : '{}'
         };
 
-        var fetchPromise = WsService.send(request, headers, {}, channel);
-
-        fetchPromise.then(null, null, function (response) {
-
-            var meta = JSON.parse(response.body).meta;
-
-            if (meta.type == "REFRESH") {
-                if (sessionStorage.assumedUser) {
-                    AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
-                        WsService.getPendingRequest(meta.id).resend();
-                    });
-                } else {
-                    AuthServiceApi.getRefreshToken().then(function () {
-                        WsService.getPendingRequest(meta.id).resend();
-                    });
-                }
-            }
-        });
-
-        return fetchPromise;
+        return WsService.send(request, headers, {}, channel);
     };
 
     return WsApi;

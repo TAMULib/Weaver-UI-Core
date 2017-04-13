@@ -87,7 +87,7 @@ core.service("WsService", function ($interval, $q, AlertService) {
             defer: $q.defer(),
             persist: persist
         };
-
+        console.info('Subscribing:', channel);
         window.stompClient.subscribe(channel, function (response) {
             subscription.defer.notify(response);
             processResponse(channel, response);

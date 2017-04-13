@@ -43,7 +43,6 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi) {
         if (subscription) {
             subscriptionPromise = subscription.defer.promise;
         } else {
-            console.info('Subscribing:', [apiReq.endpoint, '/', apiReq.controller, apiReq.method ? '/' + apiReq.method : ''].join(''));
             subscriptionPromise = WsService.subscribe(channel);
         }
 

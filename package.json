@@ -2,7 +2,7 @@
   "name": "Weaver-UI-Core",
   "private": true,
   "version": "1.2.0-RC1",
-  "description": "TAMU AngularJS Core Module",
+  "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
   "devDependencies": {

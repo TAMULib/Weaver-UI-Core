@@ -116,6 +116,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                 console.info('Listen:', channel);
                 subscriptionCallback = function (response) {
                     subscription.defer.notify(response);
+                    response.ack();
                 };
             } else {
                 console.info('Request:', subscriptionId, channel);
@@ -124,10 +125,13 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                 AlertService.create(controller);
                 subscriptionCallback = function (response) {
                     processResponse(response);
+                    response.ack();
                 };
             }
 
-            window.stompClient.subscribe(channel, subscriptionCallback);
+            window.stompClient.subscribe(channel, subscriptionCallback, {
+                ack: "client"
+            });
 
             subscriptions[subscriptionId] = subscription;
 

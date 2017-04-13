@@ -11,6 +11,8 @@
  **/
 var core = angular.module('core', [
     'core.version',
+    'ngRoute',
+    'ngSanitize',
     'ngFileUpload'
 ]).constant('coreConfig', coreConfig);
 

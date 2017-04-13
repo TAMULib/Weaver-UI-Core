@@ -20,7 +20,7 @@
  * 	in its contructor.
  *
  */
-core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, SubscriptionService, ModelUpdateService, WsApi) {
+core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, ModelUpdateService, WsApi) {
 
     var AssumedControl = function () {
         return this;
@@ -86,8 +86,6 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                 locked = true;
 
-                logger.log("Assuming user");
-
                 StorageService.set('assumedUser', JSON.stringify(user));
 
                 StorageService.set('assuming', 'true');
@@ -105,7 +103,6 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                         }
 
                         ModelCache.clear();
-                        SubscriptionService.clear();
                         ModelUpdateService.clear();
 
                         UserService.fetchUser();
@@ -148,8 +145,6 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                 locked = true;
 
-                logger.log("Unassuming user");
-
                 StorageService.delete('assumedUser');
                 StorageService.set('assuming', 'false');
                 StorageService.set('token', StorageService.get("adminToken"));
@@ -163,7 +158,6 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
                 WsApi.clearSubscriptions();
 
                 ModelCache.clear();
-                SubscriptionService.clear();
                 ModelUpdateService.clear();
 
                 for (var i in callbacks) {

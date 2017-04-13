@@ -10,7 +10,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, SubscriptionService) {
+core.service("WsApi", function ($q, $http, WsService, AuthServiceApi) {
 
     var WsApi = this;
 
@@ -36,15 +36,18 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, Subscripti
             channel += "/" + apiReq.method;
         }
 
-        var subscription = SubscriptionService.get(angular.toJson(apiReq));
+        var subscriptionPromise;
 
-        if (!subscription) {
+        var subscription = WsService.getSubscription(channel);
+
+        if (subscription) {
+            subscriptionPromise = subscription.defer.promise;
+        } else {
             console.info('Subscribing:', [apiReq.endpoint, '/', apiReq.controller, apiReq.method ? '/' + apiReq.method : ''].join(''));
-            subscription = WsService.subscribe(channel);
-            SubscriptionService.set(angular.toJson(apiReq), subscription);
+            subscriptionPromise = WsService.subscribe(channel);
         }
 
-        return subscription
+        return subscriptionPromise;
     };
 
     WsApi.clearSubscriptions = function () {
@@ -70,7 +73,6 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, Subscripti
         var apiReq = angular.copy(initialReq);
 
         if (manifest && manifest.pathValues) {
-
             for (var key in manifest.pathValues) {
                 var value = manifest.pathValues[key];
                 apiReq.method = apiReq.method.replace(new RegExp(':' + key, 'g'), value);
@@ -92,18 +94,18 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, Subscripti
 
         var fetchPromise = WsService.send(request, headers, {}, channel);
 
-        fetchPromise.then(null, null, function (data) {
+        fetchPromise.then(null, null, function (response) {
 
-            var meta = JSON.parse(data.body).meta;
+            var meta = JSON.parse(response.body).meta;
 
             if (meta.type == "REFRESH") {
                 if (sessionStorage.assumedUser) {
                     AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
-                        WsService.pendingReq[meta.id].resend();
+                        WsService.getPendingRequest(meta.id).resend();
                     });
                 } else {
                     AuthServiceApi.getRefreshToken().then(function () {
-                        WsService.pendingReq[meta.id].resend();
+                        WsService.getPendingRequest(meta.id).resend();
                     });
                 }
             }
@@ -111,5 +113,7 @@ core.service("WsApi", function ($q, $http, WsService, AuthServiceApi, Subscripti
 
         return fetchPromise;
     };
+
+    return WsApi;
 
 });

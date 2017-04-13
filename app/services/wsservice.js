@@ -13,49 +13,13 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
     var WsService = this;
 
-    /**
-     * @ngdoc property
-     * @name  core.service:WsService#WsService.requestCount
-     * @propertyOf core.service:WsService
-     *
-     * @description
-     *  A count of all requests.
-     *
-     */
-    WsService.requestCount = 0;
+    var requestCount = 0;
 
-    /**
-     * @ngdoc property
-     * @name  core.service:WsService#WsService.pendingReq
-     * @propertyOf core.service:WsService
-     *
-     * @description
-     *  An object store for pending requests.
-     *
-     */
-    WsService.pendingReq = {};
+    var pendingRequests = {};
 
-    /**
-     * @ngdoc property
-     * @name  core.service:WsService#WsService.delinquentReq
-     * @propertyOf core.service:WsService
-     *
-     * @description
-     *  An object store for delinquent requests.
-     *
-     */
-    WsService.delinquentReq = {};
+    var delinquentRequests = {};
 
-    /**
-     * @ngdoc property
-     * @name  core.service:WsService#WsService.subscriptions
-     * @propertyOf core.service:WsService
-     *
-     * @description
-     *  An object store for subscriptions.
-     *
-     */
-    WsService.subscriptions = {};
+    var subscriptions = {};
 
     var pendingRequestBank = {};
 
@@ -77,8 +41,8 @@ core.service("WsService", function ($interval, $q, AlertService) {
 
     var completeRequest = function (channel, meta, requestId) {
         AlertService.add(meta, channel);
-        delete WsService.pendingReq[requestId];
-        delete WsService.delinquentReq[requestId];
+        delete pendingRequests[requestId];
+        delete delinquentRequests[requestId];
     };
 
     var processResponse = function (channel, response) {
@@ -88,17 +52,17 @@ core.service("WsService", function ($interval, $q, AlertService) {
         var requestId = meta.id ? meta.id : null;
         var status = meta.type;
 
-        if (WsService.pendingReq[requestId]) {
+        if (pendingRequests[requestId]) {
             if (status === "REFRESH") {
-                WsService.pendingReq[requestId].defer.notify(response);
+                pendingRequests[requestId].defer.notify(response);
             } else if (status === "ERROR") {
                 // lets reject the errors as the response body with channel added
                 responseBody.channel = channel;
-                WsService.pendingReq[requestId].defer.reject(responseBody);
+                pendingRequests[requestId].defer.reject(responseBody);
                 completeRequest(channel, meta, requestId);
             } else {
                 // if not refresh or error resolve to handle alternative notifications
-                WsService.pendingReq[requestId].defer.resolve(response);
+                pendingRequests[requestId].defer.resolve(response);
                 completeRequest(channel, meta, requestId);
             }
         }
@@ -118,34 +82,21 @@ core.service("WsService", function ($interval, $q, AlertService) {
      *
      */
     WsService.subscribe = function (channel, persist) {
-        var id = "sub-" + window.stompClient.counter;
-        var defer;
+        var subscription = {
+            channel: channel,
+            defer: $q.defer(),
+            persist: persist
+        };
 
-        if (!persist) persist = false;
+        window.stompClient.subscribe(channel, function (response) {
+            subscription.defer.notify(response);
+            processResponse(channel, response);
+        });
 
-        var subObj;
+        subscriptions["sub-" + window.stompClient.counter] = subscription;
 
-        if ((subObj = WsService.subExist(channel))) {
-            defer = subObj.defer;
-        } else {
-
-            defer = $q.defer();
-            subObj = {
-                channel: channel,
-                defer: defer
-            };
-
-            window.stompClient.subscribe(channel, function (response) {
-                processResponse(channel, response);
-                defer.notify(response);
-            });
-
-            WsService.subscriptions[id] = subObj;
-        }
-
-        return defer.promise;
+        return subscription.defer.promise;
     };
-
 
     /**
      * @ngdoc method
@@ -167,42 +118,41 @@ core.service("WsService", function ($interval, $q, AlertService) {
      */
     WsService.send = function (request, headers, payload, channel) {
 
-        if (!WsService.subExist(channel)) {
-            var endpoint = channel;
+        if (WsService.getSubscription(channel) === undefined) {
             var controller = channel.substr(0, channel.lastIndexOf("/"));
-            AlertService.create(endpoint);
+            AlertService.create(channel);
             AlertService.create(controller);
             WsService.subscribe(channel);
         }
 
-        headers.id = WsService.requestCount++;
+        headers.id = requestCount++;
 
         if (Object.keys(payload).length > 0) {
-            WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, false);
+            pendingRequests[headers.id] = sendRequest(request, headers, payload, false);
         } else {
 
             if (pendingRequestBank[request]) {
 
-                WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, true);
+                pendingRequests[headers.id] = sendRequest(request, headers, payload, true);
 
                 pendingRequestBank[request].queue.push({
                     id: headers.id,
-                    promise: WsService.pendingReq[headers.id]
+                    promise: pendingRequests[headers.id]
                 });
             } else {
 
-                WsService.pendingReq[headers.id] = sendRequest(request, headers, payload, false);
+                pendingRequests[headers.id] = sendRequest(request, headers, payload, false);
 
                 pendingRequestBank[request] = {
                     id: headers.id,
                     queue: []
                 };
 
-                WsService.pendingReq[headers.id].defer.promise.then(function (response) {
+                pendingRequests[headers.id].defer.promise.then(function (response) {
                     for (var i in pendingRequestBank[request].queue) {
                         var pendReq = pendingRequestBank[request].queue[i];
                         pendReq.promise.defer.resolve(response);
-                        delete WsService.pendingReq[pendReq.id];
+                        delete pendingRequests[pendReq.id];
                     }
                     delete pendingRequestBank[request];
                 });
@@ -210,12 +160,12 @@ core.service("WsService", function ($interval, $q, AlertService) {
             }
         }
 
-        return WsService.pendingReq[headers.id].defer.promise;
+        return pendingRequests[headers.id].defer.promise;
     };
 
     /**
      * @ngdoc method
-     * @name  core.service:WsService#WsService.subExist
+     * @name  core.service:WsService#WsService.getSubscription
      * @methodOf core.service:WsService
      * @param {string} channel
      *  The channel which is being confirmed.
@@ -227,12 +177,15 @@ core.service("WsService", function ($interval, $q, AlertService) {
      *  subscription.
      *
      */
-    WsService.subExist = function (channel) {
-        for (var key in WsService.subscriptions) {
-            var subObj = WsService.subscriptions[key];
-            if (subObj.channel == channel) return subObj;
+    WsService.getSubscription = function (channel) {
+        var subscription;
+        for (var key in subscriptions) {
+            if (subscriptions[key].channel === channel) {
+                subscription = subscriptions[key];
+                break;
+            }
         }
-        return false;
+        return subscription;
     };
 
     /**
@@ -248,9 +201,9 @@ core.service("WsService", function ($interval, $q, AlertService) {
      *
      */
     WsService.unsubscribe = function (sub) {
-        console.info("Unsubscribing: ", WsService.subscriptions[sub].channel);
+        console.info("Unsubscribing: ", subscriptions[sub].channel);
         window.stompClient.unsubscribe(sub);
-        delete WsService.subscriptions[sub];
+        delete subscriptions[sub];
     };
 
     /**
@@ -264,30 +217,34 @@ core.service("WsService", function ($interval, $q, AlertService) {
      *
      */
     WsService.unsubscribeAll = function () {
-        for (var key in WsService.subscriptions) {
-            var sub = WsService.subscriptions[key];
-            if (!sub.persist) {
+        for (var key in subscriptions) {
+            var subscription = subscriptions[key];
+            if (!subscription.persist) {
                 WsService.unsubscribe(key);
             }
         }
+    };
+
+    WsService.getPendingRequest = function (id) {
+        return pendingRequests[id];
     };
 
     $interval(function () {
 
         var now = new Date().getTime();
 
-        if (Object.keys(WsService.pendingReq).length > 0) {
-            console.warn(WsService.pendingReq);
+        if (Object.keys(pendingRequests).length > 0) {
+            console.warn(pendingRequests);
         }
 
         if (Object.keys(pendingRequestBank).length > 0) {
             console.warn(pendingRequestBank);
         }
 
-        for (var req in WsService.pendingReq) {
-            if (now - WsService.pendingReq[req].timestamp > 120000) {
-                if (WsService.delinquentReq[req] === undefined) {
-                    WsService.delinquentReq[req] = WsService.pendingReq[req];
+        for (var req in pendingRequests) {
+            if (now - pendingRequests[req].timestamp > 120000) {
+                if (delinquentRequests[req] === undefined) {
+                    delinquentRequests[req] = pendingRequests[req];
                     AlertService.add({
                         type: "WARNING",
                         message: "Web service is taking too long to respond. Please refresh. If this continues to appear you can email helpdesk@library.tamu.edu."
@@ -297,5 +254,7 @@ core.service("WsService", function ($interval, $q, AlertService) {
         }
 
     }, 10000);
+
+    return WsService;
 
 });

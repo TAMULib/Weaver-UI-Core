@@ -56,9 +56,9 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         }
     };
 
-    var processResponse = function (response) {
-        var responseBody = JSON.parse(response.body)
-        var meta = responseBody.meta
+    var processResponse = function (message) {
+        var messageContent = JSON.parse(message.body)
+        var meta = messageContent.meta
 
         var requestId = meta.id ? meta.id : null;
         var status = meta.type;
@@ -66,15 +66,18 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         if (pendingRequests[requestId]) {
             console.info("Response:", requestId, pendingRequests[requestId].request, status);
             if (status === "REFRESH") {
+                message.ack({
+                    refresh: pendingRequests[requestId].subscription.channel
+                });
                 refreshToken(requestId);
             } else if (status === "ERROR") {
                 // lets reject the errors as the response body with channel added
-                responseBody.channel = pendingRequests[requestId].subscription.channel;
-                pendingRequests[requestId].subscription.defer.reject(responseBody);
+                messageContent.channel = pendingRequests[requestId].subscription.channel;
+                pendingRequests[requestId].subscription.defer.reject(messageContent);
                 completeRequest(meta, requestId);
             } else {
                 // if not refresh or error resolve to handle alternative notifications
-                pendingRequests[requestId].subscription.defer.resolve(response);
+                pendingRequests[requestId].subscription.defer.resolve(message);
                 completeRequest(meta, requestId);
             }
         } else {
@@ -112,29 +115,30 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
             var subscriptionCallback;
 
+            var subscriptionHeaders;
+
             if (subscription.listen) {
                 console.info('Listen:', channel);
-                subscriptionCallback = function (response) {
-                    response.ack();
-                    subscription.defer.notify(response);
+                subscriptionCallback = function (message) {
+                    subscription.defer.notify(message);
                 };
+                subscriptionHeaders = {};
             } else {
                 console.info('Request:', subscriptionId, channel);
                 var controller = channel.substr(0, channel.lastIndexOf("/"));
                 AlertService.create(channel);
                 AlertService.create(controller);
-                subscriptionCallback = function (response) {
-                    response.ack();
-                    processResponse(response);
+                subscriptionCallback = function (message) {
+                    processResponse(message);
+                };
+                subscriptionHeaders = {
+                    ack: "client"
                 };
             }
 
-            window.stompClient.subscribe(channel, subscriptionCallback, {
-                ack: "client"
-            });
+            window.stompClient.subscribe(channel, subscriptionCallback, subscriptionHeaders);
 
             subscriptions[subscriptionId] = subscription;
-
         }
 
         return subscription;

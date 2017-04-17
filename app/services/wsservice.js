@@ -65,10 +65,10 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
         if (pendingRequests[requestId]) {
             console.info("Response:", requestId, pendingRequests[requestId].request, status);
+            message.ack({
+                channel: pendingRequests[requestId].subscription.channel
+            });
             if (status === "REFRESH") {
-                message.ack({
-                    refresh: pendingRequests[requestId].subscription.channel
-                });
                 refreshToken(requestId);
             } else if (status === "ERROR") {
                 // lets reject the errors as the response body with channel added

@@ -7,6 +7,7 @@ core.controller('LoginController', function ($controller, $location, $scope, $ti
 	    	email: '',
 	    	password: ''
 	    };
+	    angular.element('#loginModal').hide();
     };
     
     reset();

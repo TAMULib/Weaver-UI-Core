@@ -89,7 +89,7 @@ core.service("Utility",function() {
 										if(obj[properties[i]][o] != null) {
 											if(typeof obj[properties[i]][o] == 'object') {
 												for(var p in obj[properties[i]][o]) {
-													if(obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+													if(obj[properties[i]][o][p] !== null && obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) > -1) {
 														return true;
 													}
 												}

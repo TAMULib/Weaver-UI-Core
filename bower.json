@@ -1,7 +1,7 @@
 {
   "name": "core",
   "description": "AngularJS Core Module",
-  "version": "1.0.0-RC4",
+  "version": "1.0.0",
   "homepage": "https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
   "private": true,

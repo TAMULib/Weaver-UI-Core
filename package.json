@@ -27,6 +27,7 @@
     "time-grunt": "1.4.0"
   },
   "scripts": {
+    "preeinstall": "npm install -g bower",
     "postinstall": "bower install",
     "prestart": "npm install",
     "pretest": "npm install",

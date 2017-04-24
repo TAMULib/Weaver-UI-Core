@@ -221,7 +221,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
-            if (resObj.meta.type != 'ERROR') {
+            if (resObj.meta.type !== 'ERROR') {
                 angular.forEach(resObj.payload, function (datum) {
                     angular[combinationOperation](abstractModel, datum);
                 });

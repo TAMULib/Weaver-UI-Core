@@ -1,9 +1,5 @@
 core.controller('RegistrationController', function ($controller, $location, $scope, $timeout, AlertService) {
 
-    angular.extend(this, $controller('AbstractController', {
-        $scope: $scope
-    }));
-
     angular.extend(this, $controller('AuthenticationController', {
         $scope: $scope
     }));

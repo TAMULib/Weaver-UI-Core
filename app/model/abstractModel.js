@@ -124,7 +124,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                 }
             });
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type != "INVALID") {
+                if (angular.fromJson(res.body).meta.type !== "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                     shadow = angular.copy(abstractModel);
                 }
@@ -138,7 +138,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             });
             var promise = WsApi.fetch(mapping.remove);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type == "INVALID") {
+                if (angular.fromJson(res.body).meta.type === "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                 }
             });
@@ -204,7 +204,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             if (abstractModel && mapping.listen) {
                 if (abstractModel.id) {
                     angular.extend(mapping.listen, {
-                        method: "/" + abstractModel.id
+                        method: abstractModel.id
                     });
                 }
                 var notifyPromise = WsApi.listen(mapping.listen);
@@ -221,7 +221,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
-            if (resObj.meta.type != 'ERROR') {
+            if (resObj.meta.type !== 'ERROR') {
                 angular.forEach(resObj.payload, function (datum) {
                     angular[combinationOperation](abstractModel, datum);
                 });

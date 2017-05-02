@@ -127,10 +127,14 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                 }
             });
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type !== "INVALID") {
-                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+               if (message.meta.type === "INVALID") {
+                    angular.extend(abstractModel, message.payload);
+                } else {
+                    angular.extend(abstractModel, message.payload);
                     shadow = angular.copy(abstractModel);
                 }
+
             });
             return promise;
         };

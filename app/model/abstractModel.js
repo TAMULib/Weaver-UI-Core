@@ -149,6 +149,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             listenCallbacks.push(cb);
         };
 
+        this.clearListens = function () {
+            listenCallbacks.length = 0;
+        };
+
         this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };

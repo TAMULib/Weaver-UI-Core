@@ -76,8 +76,7 @@ core.service("WsApi", function ($q, $http, WsService) {
 
         var headers = {
             'jwt': sessionStorage.token,
-            'data': (typeof apiReq.data != 'undefined') ?
-                JSON.stringify(apiReq.data) : '{}'
+            'data': (typeof apiReq.data != 'undefined') ? JSON.stringify(apiReq.data) : '{}'
         };
 
         return WsService.send(request, headers, {}, channel);

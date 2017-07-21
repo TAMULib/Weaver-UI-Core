@@ -141,7 +141,11 @@ core.service("FileApi", function ($http, $q, $window, AuthServiceApi, Upload) {
                 }
 
             } else {
-                $window.location.replace(authservice + "/token?referer=" + window.location);
+                if (response.status == 302) {
+                    $window.location.replace(authservice + "/token?referer=" + window.location);
+                } else {
+                    defer.reject(response);
+                }
             }
 
         }, function (event) {

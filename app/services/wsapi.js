@@ -75,9 +75,12 @@ core.service("WsApi", function ($q, $http, WsService) {
         var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
 
         var headers = {
-            'jwt': sessionStorage.token,
-            'data': (typeof apiReq.data != 'undefined') ? JSON.stringify(apiReq.data) : '{}'
+            'jwt': sessionStorage.token
         };
+
+        if (apiReq.data !== undefined) {
+            headers.data = JSON.stringify(apiReq.data)
+        }
 
         return WsService.send(request, headers, {}, channel);
     };

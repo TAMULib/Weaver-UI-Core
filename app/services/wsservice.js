@@ -39,7 +39,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
     var completeRequest = function (meta, requestId) {
         AlertService.add(meta, pendingRequests[requestId].subscription.channel);
-        WsService.unsubscribe(pendingRequests[requestId].subscription.id);
+        WsService.unsubscribe(pendingRequests[requestId].subscription);
         delete pendingRequests[requestId];
         delete delinquentRequests[requestId];
     };
@@ -99,15 +99,14 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      */
     WsService.subscribe = function (channel, requestId, listen) {
 
-        var subscription = WsService.getSubscription(channel, requestId);
+        var id = "sub-" + window.stompClient.counter + "-" + requestId;
+
+        var subscription = subscriptions[id];
 
         if (subscription === undefined) {
 
-            var subscriptionId = "sub-" + window.stompClient.counter;
-
             var subscription = {
-                id: subscriptionId,
-                requestId: requestId,
+                id: id,
                 channel: channel,
                 defer: $q.defer(),
                 listen: listen
@@ -136,7 +135,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
             window.stompClient.subscribe(channel, subscriptionCallback, subscriptionHeaders);
 
-            subscriptions[subscriptionId] = subscription;
+            subscriptions[id] = subscription;
         }
 
         return subscription;
@@ -199,30 +198,6 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
     /**
      * @ngdoc method
-     * @name  core.service:WsService#WsService.getSubscription
-     * @methodOf core.service:WsService
-     * @param {string} channel
-     *  The channel which is being confirmed.
-     * @returns {object}
-     *  Returns either false, or the subscription object
-     *  associated with the indicated channel.
-     * @description
-     *  Requests a specific subscription.
-     *
-     */
-    WsService.getSubscription = function (channel, requestId) {
-        var subscription;
-        for (var id in subscriptions) {
-            if (subscriptions[id].channel === channel && subscriptions[id].requestId === requestId) {
-                subscription = subscriptions[id];
-                break;
-            }
-        }
-        return subscription;
-    };
-
-    /**
-     * @ngdoc method
      * @name  core.service:WsService#WsService.unsubscribe
      * @methodOf core.service:WsService
      * @param {object} sub
@@ -233,9 +208,9 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      *   Unsubscribes from the indicated subscription.
      *
      */
-    WsService.unsubscribe = function (id) {
-        window.stompClient.unsubscribe(id);
-        delete subscriptions[id];
+    WsService.unsubscribe = function (subscription) {
+        window.stompClient.unsubscribe(subscription.channel);
+        delete subscriptions[subscription.id];
     };
 
     /**
@@ -250,7 +225,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      */
     WsService.unsubscribeAll = function () {
         for (var id in subscriptions) {
-            WsService.unsubscribe(id);
+            WsService.unsubscribe(subscriptions[id]);
         }
     };
 

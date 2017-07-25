@@ -13,6 +13,8 @@ core.service("WsApi", function ($q, $http, WsService) {
 
     var WsApi = this;
 
+    var listenCount = 0;
+
     /**
      * @ngdoc method
      * @name  core.service:WsApi#WsApi.listen
@@ -35,11 +37,12 @@ core.service("WsApi", function ($q, $http, WsService) {
             channel += "/" + apiReq.method;
         }
 
-        return WsService.subscribe(channel, true).defer.promise;
+        return WsService.subscribe(channel, listenCount++, true).defer.promise;
     };
 
     WsApi.clearSubscriptions = function () {
         WsService.unsubscribeAll();
+        listenCount = 0;
     };
 
     /**

@@ -31,8 +31,7 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
                 headers: {
                     'X-Requested-With': undefined
                 }
-            }).
-            then(function (response) {
+            }).then(function (response) {
 
                 if (response.data.assumed) {
                     StorageService.set('token', response.data.assumed.tokenAsString);
@@ -41,7 +40,7 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
                     delete AuthServiceApi.pendingRefresh;
-                });
+                }, 50);
 
                 if (cb) cb();
                 return response;
@@ -62,46 +61,43 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
      *
      */
     AuthServiceApi.getRefreshToken = function (cb) {
-
-        var url = appConfig.authService + "/refresh";
-
-        if (typeof sessionStorage.token != null) {
-            url += "?token=" + sessionStorage.token;
-        } else {
-            if (appConfig.mockRole) {
-                url += "?mock=" + appConfig.mockRole;
-            }
-        }
-
         if (!AuthServiceApi.pendingRefresh) {
+
+            var url = appConfig.authService + "/refresh";
+
+            if (typeof sessionStorage.token != null) {
+                url += "?token=" + sessionStorage.token;
+            } else {
+                if (appConfig.mockRole) {
+                    url += "?mock=" + appConfig.mockRole;
+                }
+            }
 
             AuthServiceApi.pendingRefresh = $http.get(url, {
                 withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
                 }
-            }).
-            then(function (response) {
+            }).then(function (response) {
 
-                    StorageService.set('token', response.data.tokenAsString);
+                sessionStorage.token = response.data.tokenAsString;
 
-                    // This timeout ensures that pending request is not nulled to early
-                    $timeout(function () {
-                        delete AuthServiceApi.pendingRefresh;
-                    });
+                // This timeout ensures that pending request is not nulled to early
+                $timeout(function () {
+                    delete AuthServiceApi.pendingRefresh;
+                }, 50);
 
-                    if (cb) cb();
-                },
-                function (response) {
+                if (cb) cb();
+            }, function (response) {
 
-                    delete sessionStorage.token;
+                delete sessionStorage.token;
 
-                    if (appConfig.mockRole) {
-                        window.open(appConfig.authService + "/token?referer=" + location.href + "&mock=" + appConfig.mockRole, "_self");
-                    } else {
-                        window.open(appConfig.authService + "/token?referer=" + location.href, "_self");
-                    }
-                });
+                if (appConfig.mockRole) {
+                    window.open(appConfig.authService + "/token?referer=" + location.href + "&mock=" + appConfig.mockRole, "_self");
+                } else {
+                    window.open(appConfig.authService + "/token?referer=" + location.href, "_self");
+                }
+            });
         }
         return AuthServiceApi.pendingRefresh;
     };

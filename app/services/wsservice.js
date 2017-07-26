@@ -39,7 +39,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
     var completeRequest = function (meta, requestId) {
         AlertService.add(meta, pendingRequests[requestId].subscription.channel);
-        WsService.unsubscribe(pendingRequests[requestId].subscription.id);
+        WsService.unsubscribe(pendingRequests[requestId].subscription);
         delete pendingRequests[requestId];
         delete delinquentRequests[requestId];
     };
@@ -64,9 +64,9 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         var status = meta.type;
 
         if (pendingRequests[requestId]) {
-            console.info("Response:", requestId, pendingRequests[requestId].request, status);
             message.ack({
-                channel: pendingRequests[requestId].subscription.channel
+                channel: pendingRequests[requestId].subscription.channel,
+                id: requestId
             });
             if (status === "REFRESH") {
                 refreshToken(requestId);
@@ -80,9 +80,8 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                 pendingRequests[requestId].subscription.defer.resolve(message);
                 completeRequest(meta, requestId);
             }
-        } else {
-            console.warn("No pending request with id " + requestId);
         }
+        // messages on the same channel will be processed even after the pendingRequest has been processed
     };
 
     /**
@@ -98,16 +97,16 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      *  Registers a subscription to a stomp channel.
      *
      */
-    WsService.subscribe = function (channel, listen) {
+    WsService.subscribe = function (channel, requestId, listen) {
 
-        var subscription = WsService.getSubscription(channel);
+        var id = "sub-" + window.stompClient.counter + "-" + requestId;
+
+        var subscription = subscriptions[id];
 
         if (subscription === undefined) {
 
-            var subscriptionId = "sub-" + window.stompClient.counter;
-
             var subscription = {
-                id: subscriptionId,
+                id: id,
                 channel: channel,
                 defer: $q.defer(),
                 listen: listen
@@ -118,13 +117,11 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
             var subscriptionHeaders;
 
             if (subscription.listen) {
-                console.info('Listen:', channel);
                 subscriptionCallback = function (message) {
                     subscription.defer.notify(message);
                 };
                 subscriptionHeaders = {};
             } else {
-                console.info('Request:', subscriptionId, channel);
                 var controller = channel.substr(0, channel.lastIndexOf("/"));
                 AlertService.create(channel);
                 AlertService.create(controller);
@@ -138,7 +135,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
             window.stompClient.subscribe(channel, subscriptionCallback, subscriptionHeaders);
 
-            subscriptions[subscriptionId] = subscription;
+            subscriptions[id] = subscription;
         }
 
         return subscription;
@@ -164,33 +161,27 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      */
     WsService.send = function (request, headers, payload, channel) {
 
-        var subscription = WsService.subscribe(channel, false);
-
         headers.id = requestCount++;
 
-        if (Object.keys(payload).length > 0) {
+        var subscription = WsService.subscribe(channel, headers.id, false);
+
+        if (Object.keys(payload).length > 0 || headers.data !== undefined) {
             window.stompClient.send(request, headers, payload);
             pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, false);
         } else {
-
             if (pendingRequestBank[request]) {
-
                 pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, true);
-
                 pendingRequestBank[request].queue.push({
                     id: headers.id,
                     subscription: pendingRequests[headers.id].subscription
                 });
             } else {
-
                 window.stompClient.send(request, headers, payload);
                 pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, false);
-
                 pendingRequestBank[request] = {
                     id: headers.id,
                     queue: []
                 };
-
                 pendingRequests[headers.id].subscription.defer.promise.then(function (response) {
                     for (var i in pendingRequestBank[request].queue) {
                         var pendingRequest = pendingRequestBank[request].queue[i];
@@ -199,35 +190,10 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                     }
                     delete pendingRequestBank[request];
                 });
-
             }
         }
 
         return pendingRequests[headers.id].subscription.defer.promise;
-    };
-
-    /**
-     * @ngdoc method
-     * @name  core.service:WsService#WsService.getSubscription
-     * @methodOf core.service:WsService
-     * @param {string} channel
-     *  The channel which is being confirmed.
-     * @returns {object}
-     *  Returns either false, or the subscription object
-     *  associated with the indicated channel.
-     * @description
-     *  Requests a specific subscription.
-     *
-     */
-    WsService.getSubscription = function (channel) {
-        var subscription;
-        for (var id in subscriptions) {
-            if (subscriptions[id].channel === channel) {
-                subscription = subscriptions[id];
-                break;
-            }
-        }
-        return subscription;
     };
 
     /**
@@ -242,10 +208,9 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      *   Unsubscribes from the indicated subscription.
      *
      */
-    WsService.unsubscribe = function (id) {
-        console.info("Unsubscribe: ", subscriptions[id].channel);
-        window.stompClient.unsubscribe(id);
-        delete subscriptions[id];
+    WsService.unsubscribe = function (subscription) {
+        window.stompClient.unsubscribe(subscription.channel);
+        delete subscriptions[subscription.id];
     };
 
     /**
@@ -260,7 +225,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      */
     WsService.unsubscribeAll = function () {
         for (var id in subscriptions) {
-            WsService.unsubscribe(id);
+            WsService.unsubscribe(subscriptions[id]);
         }
     };
 

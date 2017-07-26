@@ -149,6 +149,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             listenCallbacks.push(cb);
         };
 
+        this.clearListens = function () {
+            listenCallbacks.length = 0;
+        };
+
         this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };
@@ -183,7 +187,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         var setData = function (data) {
             angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
-            if (!listening) {
+            if (!listening && mapping.modelListeners) {
                 listen();
             }
             if (mapping.caching) {

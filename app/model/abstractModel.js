@@ -70,10 +70,13 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                     this.fetch();
                 }
             }
-
+            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
+                beforeMethod();
+            });
             this.ready().then(function () {
                 ModelUpdateService.register(abstractModel);
             });
+
 
         };
 
@@ -202,9 +205,6 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                     // could possibly update cache here
                 }
             }
-            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
-                beforeMethod();
-            });
             defer.resolve(abstractModel);
         };
 

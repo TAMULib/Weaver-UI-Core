@@ -151,10 +151,14 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * @description
              * 	This method uses the $timeout service to invoke the 'AlertService' to remove 'alert' 'after the 'duration' provided.
              */
-            $scope.remove = function (alert) {
-                $timeout(function () {
+            $scope.remove = function (alert, immediate) {
+                var timer = $timeout(function () {
                     AlertService.remove(alert);
                 }, duration);
+                if(immediate) {
+                	delete timer;
+                	AlertService.remove(alert);
+                }
             };
 
             /**

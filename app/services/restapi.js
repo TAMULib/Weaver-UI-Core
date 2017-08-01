@@ -204,7 +204,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
             //success callback
             function (response) {
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService, ""));
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
 

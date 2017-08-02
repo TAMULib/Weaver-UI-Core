@@ -15,27 +15,6 @@
     "preprotractor": "npm run update-webdriver",
     "protractor": "protractor e2e-tests/protractor.conf.js"
   },
-  "devDependencies": {
-    "grunt": "1.0.1",
-    "grunt-cli": "1.2.0",
-    "grunt-contrib-compass": "1.1.1",
-    "grunt-contrib-concat": "1.0.1",
-    "grunt-contrib-jshint": "1.1.0",
-    "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "3.0.1",
-    "grunt-contrib-watch": "1.0.0",
-    "grunt-ngdocs": "0.2.10",
-    "grunt-usemin": "3.1.1",
-    "jshint-stylish": "2.2.1",
-    "karma": "1.7.0",
-    "karma-chrome-launcher": "2.2.0",
-    "karma-firefox-launcher": "1.0",
-    "karma-jasmine": "1.1.0",
-    "karma-junit-reporter": "1.2.0",
-    "load-grunt-tasks": "3.5.2",
-    "protractor": "5.1.2",
-    "time-grunt": "1.4.0"
-  },
   "dependencies": {
     "angular": "1.6.5",
     "angular-bootstrap": "0.12.2",
@@ -50,5 +29,26 @@
     "jquery": "3.2.1",
     "sockjs-client": "1.1.4",
     "stompjs": "2.3.3"
+  },
+  "devDependencies": {
+    "grunt": "1.0.1",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-compass": "1.1.1",
+    "grunt-contrib-concat": "1.0.1",
+    "grunt-contrib-jshint": "1.1.0",
+    "grunt-contrib-sass": "1.0.0",
+    "grunt-contrib-uglify": "3.0.1",
+    "grunt-contrib-watch": "1.0.0",
+    "grunt-ngdocs": "0.2.10",
+    "grunt-usemin": "3.1.1",
+    "jshint-stylish": "2.2.1",
+    "karma": "1.7.0",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-firefox-launcher": "1.0",
+    "karma-jasmine": "1.1.0",
+    "karma-junit-reporter": "1.2.0",
+    "load-grunt-tasks": "3.5.2",
+    "protractor": "5.1.2",
+    "time-grunt": "1.4.0"
   }
 }

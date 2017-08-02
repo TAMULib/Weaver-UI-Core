@@ -1,0 +1,36 @@
+<h1><code ng:non-bindable="">WsApi</code>
+<div><span class="hint">service in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-service-page core-service-wsapi-page"><p>A service wrapper for the webservices api.</p>
+</div></div>
+<h2 id="dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ng.$q">$q</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/ng.$http">$http</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/core.service:WsService">WsService</a></code>
+</li>
+</ul>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_wsapifetch">WsApi.fetch(apiReq)</h3>
+<div class="wsapifetch"><div class="core-service-page core-service-wsapi-wsapi-fetch-page"><p>This method gives a promise which is resolved by id upon
+websocket communication on the desired channel</p>
+</div><h5 id="methods_wsapifetch_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>apiReq</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-service-page core-service-wsapi-wsapi-fetch-page"><p>An apireq which containes the channel, controller and method
+which should be listened to.</p>
+</div></td></tr></tbody></table><h5 id="methods_wsapifetch_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promsie">Promsie</a></td><td><div class="core-service-page core-service-wsapi-wsapi-fetch-page"><p>A promise from the WsService send method</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_wsapilisten">WsApi.listen(apiReq)</h3>
+<div class="wsapilisten"><div class="core-service-page core-service-wsapi-wsapi-listen-page"><p>This method gives a promise which is notified upon
+websocket communication on the desired channel</p>
+</div><h5 id="methods_wsapilisten_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>apiReq</td><td><a href="" class="label type-hint type-hint-object">object</a></td><td><div class="core-service-page core-service-wsapi-wsapi-listen-page"><p>An apireq which containes the channel, controller and method
+which should be listened to.</p>
+</div></td></tr></tbody></table><h5 id="methods_wsapilisten_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promsie">Promsie</a></td><td><div class="core-service-page core-service-wsapi-wsapi-listen-page"><p>A promise from a websocket subscription subscription</p>
+</div></td></tr></table></div>
+</li>
+</ul>
+</div>
+</div>

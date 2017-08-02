@@ -1,0 +1,61 @@
+<h1><code ng:non-bindable="">StorageService</code>
+<div><span class="hint">service in module <code ng:non-bindable="">core</code>
+</span>
+</div>
+</h1>
+<div><h2 id="description">Description</h2>
+<div class="description"><div class="core-service-page core-service-storageservice-page"><p>An angular service wraper for local and session storage.</p>
+</div></div>
+<h2 id="dependencies">Dependencies</h2>
+<ul class="dependencies"><li><code ng:non-bindable=""><a href="#/api/ng.$q">$q</a></code>
+</li>
+<li><code ng:non-bindable=""><a href="#/api/core.service:AbstractModel">AbstractModel</a></code>
+</li>
+</ul>
+<div class="member method"><h2 id="methods">Methods</h2>
+<ul class="methods"><li><h3 id="methods_storageservicedelete">StorageService.delete(key, type)</h3>
+<div class="storageservicedelete"><div class="core-service-page core-service-storageservice-storageservice-delete-page"><p>Deletes a value from browser storage.</p>
+</div><h5 id="methods_storageservicedelete_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>key</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-delete-page"><p>The key for the value you wish to delete.</p>
+</div></td></tr><tr><td>type <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-delete-page"><p>An optional override to the default browser storage, which
+will be local or session.</p>
+</div></td></tr></tbody></table></div>
+</li>
+<li><h3 id="methods_storageserviceget">StorageService.get(key, type)</h3>
+<div class="storageserviceget"><div class="core-service-page core-service-storageservice-storageservice-get-page"><p>A getter for values browser storage.</p>
+</div><h5 id="methods_storageserviceget_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>key</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-get-page"><p>The key for the value you wish to return from browser storage.</p>
+</div></td></tr><tr><td>type <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-get-page"><p>An optional override to the default browser storage, which
+will be local or session.</p>
+</div></td></tr></tbody></table></div>
+</li>
+<li><h3 id="methods_storageservicelisten">StorageService.listen(key, type)</h3>
+<div class="storageservicelisten"><div class="core-service-page core-service-storageservice-storageservice-listen-page"><p>A listener which provides a promise for the updating
+of the designated browser storage value.</p>
+</div><h5 id="methods_storageservicelisten_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>key</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-listen-page"><p>The key for the value you wish to listen for.</p>
+</div></td></tr><tr><td>type <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-listen-page"><p>An optional override to the default browser storage, which
+will be local or session.</p>
+</div></td></tr></tbody></table><h5 id="methods_storageservicelisten_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-promise">Promise</a></td><td><div class="core-service-page core-service-storageservice-storageservice-listen-page"><p>returns a promise notified on the change
+of the indicated browser storage value.</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_storageserviceset">StorageService.set(key, value, type)</h3>
+<div class="storageserviceset"><div class="core-service-page core-service-storageservice-storageservice-set-page"><p>A setter for browser storage.</p>
+</div><h5 id="methods_storageserviceset_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>key</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-set-page"><p>The key which you would like to persist in browser storage.</p>
+</div></td></tr><tr><td>value</td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-set-page"><p>The value to persist in browser storage</p>
+</div></td></tr><tr><td>type <div><em>(optional)</em></div></td><td><a href="" class="label type-hint type-hint-string">string</a></td><td><div class="core-service-page core-service-storageservice-storageservice-set-page"><p>An optional override to the default browser storage, which
+will be local or session.</p>
+</div></td></tr></tbody></table></div>
+</li>
+</ul>
+</div>
+<div class="member property"><h2 id="properties">Properties</h2>
+<ul class="properties"><li><h3 id="properties_storageservicekeys">StorageService.keys</h3>
+<div class="storageservicekeys"><div class="core-service-page core-service-storageservice-storageservice-keys-page"><p>The in memory store of session and local storage key/value pares.</p>
+</div></div>
+</li>
+<li><h3 id="properties_storageservicestorage">StorageService.storage</h3>
+<div class="storageservicestorage"><div class="core-service-page core-service-storageservice-storageservice-storage-page"><p>An object store for both local and session storage.</p>
+</div></div>
+</li>
+</ul>
+</div>
+</div>

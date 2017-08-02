@@ -1,32 +1,27 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-	grunt.initConfig({
+    grunt.initConfig({
 
-		pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON('package.json'),
 
-		// Project settings
-		ngdocs: {
-			all: ['app/**/*.js', '!app/bower_components/**/*.js']
-		},
+        ngdocs: {
+            all: ['app/**/*.js', '!app/bower_components/**/*.js']
+        },
 
-		watch: {
-			scripts: {
-				files: ['app/**/*.js'],
-				tasks: ['ngdocs']
-			}
-		}
+        watch: {
+            scripts: {
+                files: ['app/**/*.js'],
+                tasks: ['ngdocs']
+            }
+        }
 
-	});	
+    });
 
-	//npm tasks
-	grunt.loadNpmTasks('grunt-ngdocs');
+    grunt.loadNpmTasks('grunt-ngdocs');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-	//tasks
-	grunt.registerTask('default', 'Default Task Alias', ['build']);
-	grunt.loadNpmTasks('grunt-contrib-watch');
-
-	grunt.registerTask('build', 'Build the application', [
-		'ngdocs'
-	]);
+    grunt.registerTask('default', 'Default Task Alias', ['docs']);
+    grunt.registerTask('docs', 'Build the application', ['ngdocs']);
+    grunt.registerTask('watch', 'Watch the application', ['watch']);
 
 }

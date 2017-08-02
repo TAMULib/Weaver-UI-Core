@@ -27,16 +27,15 @@
 </div></td></tr></tbody></table><h5 id="methods_$scoperemove_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-alerts-scope-remove-page"><p>returns void</p>
 </div></td></tr></table></div>
 </li>
-<li><h3 id="methods_alertindex">alertIndex(id)</h3>
-<div class="alertindex"><div class="core-directive-page core-directive-alerts-alertindex-page"><p>A method to return specific &#39;alert&#39; based on the &#39;id&#39; passed on the $scope.alerts object</p>
-</div><h5 id="methods_alertindex_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>id</td><td><a href="" class="label type-hint type-hint-alert">Alert</a></td><td><div class="core-directive-page core-directive-alerts-alertindex-page"><p>an alert object</p>
-</div></td></tr></tbody></table><h5 id="methods_alertindex_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-alerts-alertindex-page"><p>returns void</p>
-</div></td></tr></table></div>
-</li>
 <li><h3 id="methods_handle">handle(alert)</h3>
 <div class="handle"><div class="core-directive-page core-directive-alerts-handle-page"><p>A method to remove &#39;alert&#39; from a view.</p>
 </div><h5 id="methods_handle_parameters">Parameters</h5><table class="variables-matrix table table-bordered table-striped"><thead><tr><th>Param</th><th>Type</th><th>Details</th></tr></thead><tbody><tr><td>alert</td><td><a href="" class="label type-hint type-hint-alert">Alert</a></td><td><div class="core-directive-page core-directive-alerts-handle-page"><p>an Alert object</p>
 </div></td></tr></tbody></table><h5 id="methods_handle_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-void">void</a></td><td><div class="core-directive-page core-directive-alerts-handle-page"><p>returns void</p>
+</div></td></tr></table></div>
+</li>
+<li><h3 id="methods_hasalerts">hasAlerts()</h3>
+<div class="hasalerts"><div class="core-directive-page core-directive-alerts-hasalerts-page"><p>A method to return true if the number of alerts are greater than 0</p>
+</div><h5 id="methods_hasalerts_returns">Returns</h5><table class="variables-matrix"><tr><td><a href="" class="label type-hint type-hint-boolean">boolean</a></td><td><div class="core-directive-page core-directive-alerts-hasalerts-page"><p>returns whether directive has any alerts</p>
 </div></td></tr></table></div>
 </li>
 </ul>
@@ -58,12 +57,24 @@
 <div class="duration"><div class="core-directive-page core-directive-alerts-duration-page"><p>A variable to store the duration value either from the &#39;attr&#39; object or the coreConfig alerts &#39;duration&#39;</p>
 </div></div>
 </li>
+<li><h3 id="properties_exclusive">exclusive</h3>
+<div class="exclusive"><div class="core-directive-page core-directive-alerts-exclusive-page"><p>A boolean which determines if this alert will be the only one to recieve messages on the specified channel</p>
+</div></div>
+</li>
 <li><h3 id="properties_facets">facets</h3>
 <div class="facets"><div class="core-directive-page core-directive-alerts-facets-page"><p>An array variable to store the &#39;types&#39; and &#39;channel&#39; attributes from the &#39;attr&#39; object</p>
 </div></div>
 </li>
+<li><h3 id="properties_firstpass">firstPass</h3>
+<div class="firstpass"><div class="core-directive-page core-directive-alerts-firstpass-page"><p>A variable to allow time to initialize before adding to type stores.</p>
+</div></div>
+</li>
 <li><h3 id="properties_fixed">fixed</h3>
 <div class="fixed"><div class="core-directive-page core-directive-alerts-fixed-page"><p>A variable to store the boolean result if the element &#39;fixed&#39; is present in the attr object</p>
+</div></div>
+</li>
+<li><h3 id="properties_timers">timers</h3>
+<div class="timers"><div class="core-directive-page core-directive-alerts-timers-page"><p>An object variable to store current timers</p>
 </div></div>
 </li>
 <li><h3 id="properties_types">types</h3>

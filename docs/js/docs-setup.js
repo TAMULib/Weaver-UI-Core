@@ -27,8 +27,8 @@ NG_DOCS={
       "shortName": "AuthenticationController",
       "type": "controller",
       "moduleName": "core",
-      "shortDescription": "This authentication controller contains login and logout methods. These methods based on user credentials ",
-      "keywords": "$controller $location $scope $window abstractcontroller access api authentication authenticationcontroller based controller core credentials default delete deletes direct extends login logout method methods modify navigate ng-controller provide require returns role role_anonymous roles service session sessionstorage set specific storage token user void"
+      "shortDescription": "This authentication controller contains login and logout methods. These methods based on user credentials",
+      "keywords": "$controller $location $scope $window abstractcontroller access api appconfig authentication authenticationcontroller based controller core credentials default delete deletes direct extends login logout method methods modify navigate ng-controller provide require returns role roleanonymous roles service session sessionstorage set specific storage token user void"
     },
     {
       "section": "api",
@@ -45,7 +45,7 @@ NG_DOCS={
       "shortName": "accordion",
       "type": "directive",
       "moduleName": "core",
-      "shortDescription": "This accordion directive sets the tag &quot;single-expand&quot;=true which ensures that only one pane( one view) can be clicked open ",
+      "shortDescription": "This accordion directive sets the tag &quot;single-expand&quot;=true which ensures that only one pane( one view) can be clicked open",
       "keywords": "$scope accordion accordionservice allow api application atrribute clicked close closeall core directive element ensures indicated left method open pane panes property returns service set sets single-expand singleexpand tag time true view void"
     },
     {
@@ -55,7 +55,7 @@ NG_DOCS={
       "type": "directive",
       "moduleName": "core",
       "shortDescription": "The alerts element directive provides alert messages based on the alert types in your application. Extends &#39;AbstractController&#39;",
-      "keywords": "$controller $rootscope $scope $timeout abstractcontroller alert alertindex alertlist alerts alertservice api application array attr attributes based boolean channel channels class controller core coreconfig defaultalert directive duration element error extends facets fixed handle invoke list-unstyled messages method ng ngrepeat object passed points property provided remove result return returns service specific store stores type types variabble variable view void warning"
+      "keywords": "$controller $rootscope $scope $timeout abstractcontroller adding alert alertlist alerts alertservice allow api application array attr attributes based boolean channel channels class controller core coreconfig current defaultalert determines directive duration element error exclusive extends facets firstpass fixed greater handle hasalerts initialize invoke list-unstyled messages method ng ngrepeat number object points property provided recieve remove result return returns service store stores time timers true type types variabble variable view void warning"
     },
     {
       "section": "api",
@@ -72,7 +72,7 @@ NG_DOCS={
       "shortName": "pane",
       "type": "directive",
       "moduleName": "core",
-      "shortDescription": "This pane directive uses the &#39;AccordionService&#39; to open and close the pane based on ",
+      "shortDescription": "This pane directive uses the &#39;AccordionService&#39; to open and close the pane based on",
       "keywords": "$anchorscroll $location $scope $timeout accordion accordionservice api application assigns attr based boolean clicked close closes core directive duration execute existing expanded false function html loading method ng object open opened pane paneid panes path previous promise property query query_string_for_myview replaces returns service services set store stores string tag title toggle toggleexpanded url variable view views void"
     },
     {
@@ -90,7 +90,7 @@ NG_DOCS={
       "shortName": "tabs",
       "type": "directive",
       "moduleName": "core",
-      "shortDescription": "The tabs element directive uses the &#39;TabService&#39; to set the &#39;activeTab&#39; and the $location services to provide the ",
+      "shortDescription": "The tabs element directive uses the &#39;TabService&#39; to set the &#39;activeTab&#39; and the $location services to provide the",
       "keywords": "$location $routeparams $scope activetab api assigned attr based clicked core directive element function html link method myview paased parameters passed path property provide provided retrieves return returns route scope seetingview service services set setactive settab settingsview store stores string tab tabs tabservice target update url variable view views void"
     },
     {
@@ -126,7 +126,7 @@ NG_DOCS={
       "shortName": "tooltip",
       "type": "directive",
       "moduleName": "core",
-      "shortDescription": "The tooltip element directive uses $timeout and $compile services. It has showTip hideTip ",
+      "shortDescription": "The tooltip element directive uses $timeout and $compile services. It has showTip hideTip",
       "keywords": "$compile $event $scope $timeout aid api appended attr body boolean cancel compiles cordinate cordinates core depending directive display displayed duration element event execute executes false function hidden hidetip html inorder left linked message method mouse mousemove move object objects position positiontip produces property provided returns service services set showtimer showtip stored stores template text tipstyles tiptemplate tipvisible title toggle togglevisible tooltip top true values variable variables void"
     },
     {
@@ -167,15 +167,6 @@ NG_DOCS={
     },
     {
       "section": "api",
-      "id": "core.service:AbstractModel",
-      "shortName": "AbstractModel",
-      "type": "service",
-      "moduleName": "core",
-      "shortDescription": "This abstract model should be inherited by all models using",
-      "keywords": "absrtactmodel abstract abstracted abstractmodel angular api capabilites contructor core data exposes extend extended extending extends funciton future futuredata including inherited inheriting method methods model models mymethod object promise re-extends returns service tamu-ui-core unwrap unwrapping unwraps update void webservice"
-    },
-    {
-      "section": "api",
       "id": "core.service:AccordionService",
       "shortName": "AccordionService",
       "type": "service",
@@ -190,7 +181,7 @@ NG_DOCS={
       "type": "service",
       "moduleName": "core",
       "shortDescription": "Alert service which tracks responses from the web socket API.",
-      "keywords": "$interval $q add adds alert alerts alertservice api apploed appropriate array bew categorized channel check classes consists controller core coreconfig create creates current declared duplicates endpoint exists facet filter integers interval isnew list mapped message meta method ng object popped promise property recycled removal remove removed removes response responses returned returns service socket specific store stores tracks type types values web"
+      "keywords": "$interval $q add adds alert alerts alertservice api apploed appropriate array categorized channel channels check classes cleartypestores consists controller core coreconfig create current declared duplicates endpoint enqueue exclusive facet integers interval isnotqueued isnotstored list mapped message meta method ng object popped promise property queue queued queues recycled removal remove removeall removed removes response responses returned returns service socket store stores tracks type types values web"
     },
     {
       "section": "api",
@@ -217,7 +208,7 @@ NG_DOCS={
       "type": "service",
       "moduleName": "core",
       "shortDescription": "The RestApi Service facilitates all restful communication",
-      "keywords": "$http $window anonymousget api application authenticated authservice behalf boolean communication configuration configured core counterpart facilitates functionality http implementation initiates isurl method ng object post private promise property reference req request restapi restful returns role role_anonymous service spring tamu user web webservice websocket wsapi"
+      "keywords": "$http $window anonymousget anonymouspost api application authenticated authservice behalf boolean communication configuration configured core counterpart facilitates functionality http implementation initiates isurl method ng object post private promise property reference req request restapi restful returns role role_anonymous service spring tamu user web webservice websocket wsapi"
     },
     {
       "section": "api",
@@ -234,17 +225,8 @@ NG_DOCS={
       "shortName": "TabService",
       "type": "service",
       "moduleName": "core",
-      "shortDescription": "The TabService assists the tabs directive, tab directive and the tabview directive to set and retrieve the active tab and to render the specific html view based on the settingsView target.This uses the $q service to asynchronously execute the setTab and getTab methods and return the specific values",
+      "shortDescription": "The TabService assists the tabs directive, tab directive and the tabview directive to set and retrieve the active tab and to render the specific html view based on the settingsView target.",
       "keywords": "$q active api assists asynchronously based completed core directive execute file gettab html location method methods object passed private processing property render rendered retrieve return returns service set sets settab settingsview specific store string tab tabs tabservice tabview target values view void"
-    },
-    {
-      "section": "api",
-      "id": "core.service:User",
-      "shortName": "User",
-      "type": "service",
-      "moduleName": "core",
-      "shortDescription": "This User service must be injected into a controller class that require dependency on User model. This model provides",
-      "keywords": "$scope abstractmodel affiliation angular anonymous api check class completed controller contructor core credentials data dependency document event extend extended false function futuredata getaffiliation including injected load login method model models myapp mycontroller null object promise property ready refresh require return returns role role_anonymous service sessionstorage set store user void webservice"
     },
     {
       "section": "api",
@@ -253,7 +235,7 @@ NG_DOCS={
       "type": "service",
       "moduleName": "core",
       "shortDescription": "A utility service for custom implementations of common tasks.",
-      "keywords": "api argument binary common core custom facet filter filtered implementations list method object objects objlist optional ordered position properties property quicksort returns search searched searching service sort sorted specific target tasks utility"
+      "keywords": "api argument binary common core custom exact exactsearch facet filter filtered implementations list match method object objects objlist optional ordered position properties property propery quicksort return returns search searched searching service sort sorted specific target tasks utility"
     },
     {
       "section": "api",
@@ -266,12 +248,12 @@ NG_DOCS={
     },
     {
       "section": "api",
-      "id": "core.service:wsservice",
-      "shortName": "wsservice",
+      "id": "core.service:WsService",
+      "shortName": "WsService",
       "type": "service",
       "moduleName": "core",
       "shortDescription": "An angular service wrapper for stop communication over websockets.",
-      "keywords": "$interval $q angular api associated change channel chennel communicated communication confirmed confirms core count data desired destination existense false headers indicated indicates message method ng objecct object payload pending pendingreq pendingreqcounter persist property registers removed request requests reseponse returns send sends service specific stomp store subexist subscribe subscribed subscription subscriptions unresolved unsubscribe unsubscribeall unsubscribed unsubscribes view void websocket websockets wrapper wsservice"
+      "keywords": "$interval $q angular api change channel chennel communicated communication core data desired destination headers indicated indicates message method ng objecct object payload persist registers removed request reseponse returns send sends service stomp subscribe subscribed subscription subscriptions unsubscribe unsubscribeall unsubscribed unsubscribes view void websocket websockets wrapper wsservice"
     },
     {
       "section": "api",

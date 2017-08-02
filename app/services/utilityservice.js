@@ -201,7 +201,7 @@ core.service("Utility", function () {
      *	 the propery of the object to search against
      *	@param {string} target
      *	 the target searching for
-     *	@returns the target object
+     *	@returns {object} the target object
      *
      *	@description
      *	 An exact search utility.

@@ -16,7 +16,7 @@
  */
 core.directive('tamufooter', function ($controller) {
     return {
-        templateUrl: 'bower_components/core/app/views/footer.html',
+        templateUrl: 'node_modules/weaver-ui-core/app/views/footer.html',
         restrict: 'E',
         replace: false,
         transclude: true,

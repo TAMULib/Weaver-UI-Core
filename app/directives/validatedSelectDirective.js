@@ -16,7 +16,7 @@ core.directive("validatedselect", function () {
             "results": "="
         },
         link: function ($scope, element, attr) {
-            $scope.view = attr.view ? attr.view : "bower_components/core/app/views/directives/validatedSelect.html";
+            $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/directives/validatedSelect.html";
 
             $scope.blur = function ($event) {
                 if ($scope.blurEnabled && $scope.form.$valid) {

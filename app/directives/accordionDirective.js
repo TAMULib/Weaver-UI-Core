@@ -83,7 +83,7 @@ core.directive("accordion", function (AccordionService) {
 core.directive("pane", function ($location, $timeout, $anchorScroll, AccordionService) {
     var count = 0;
     return {
-        templateUrl: 'bower_components/core/app/views/directives/accordionPane.html',
+        templateUrl: 'node_modules/weaver-ui-core/app/views/directives/accordionPane.html',
         restrict: 'E',
         replace: false,
         transclude: true,

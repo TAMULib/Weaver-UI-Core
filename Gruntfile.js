@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         ngdocs: {
-            all: ['app/**/*.js', '!app/bower_components/**/*.js']
+            all: ['app/**/*.js', '!app/node_modules/**/*.js']
         },
 
         watch: {

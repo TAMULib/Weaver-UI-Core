@@ -129,7 +129,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * @description
              * 	A variable to store the 'attr' object 'view' property if present else it points to the 'defaultalert' view
              */
-            $scope.view = attr.view ? attr.view : "bower_components/core/app/views/alerts/defaultalert.html";
+            $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/alerts/defaultalert.html";
 
             /**
              * @ngdoc property
@@ -155,9 +155,9 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
                 var timer = $timeout(function () {
                     AlertService.remove(alert);
                 }, duration);
-                if(immediate) {
-                	delete timer;
-                	AlertService.remove(alert);
+                if (immediate) {
+                    delete timer;
+                    AlertService.remove(alert);
                 }
             };
 

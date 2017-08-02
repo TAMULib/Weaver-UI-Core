@@ -15,7 +15,7 @@
 * url path as per the tab provided. The $routeParams retrieves the route information of clicked tab.
 *
 */
-core.directive("tabs", function () {
+core.directive("wvrTabs", function () {
     return {
         template: '<div class="tabs"><span ng-transclude></span><hr></div>',
         restrict: 'E',
@@ -55,7 +55,6 @@ core.directive("tabs", function () {
             this.setActive = function (tab, html) {
                 var newPath = $location.$$path.replace($routeParams.tab, "");
                 $location.url(newPath + tab);
-
                 TabService.setTab($scope.target, html);
             }
 
@@ -103,13 +102,13 @@ core.directive("tabs", function () {
 *  the html view of the clicked tab  and is set as activeTab. The tab value is stored as '$scope.tab' variable.
 *
 */
-core.directive("tab", function (TabService) {
+core.directive("wvrTab", function (TabService) {
     return {
         template: '<span ng-class="{\'active\': activeTab(tab)}" ng-click="setActive(tab, html)" class="tab"><span ng-transclude></span></span>',
         restrict: 'E',
         replace: false,
         transclude: true,
-        require: '^tabs',
+        require: '^wvr-tabs',
         scope: true,
         link: function ($scope, element, attr, parent) {
 
@@ -127,7 +126,7 @@ core.directive("tab", function (TabService) {
             $scope.tab = $scope.path;
 
             if ($scope.activeTab($scope.tab)) {
-                TabService.setTab($scope.target, $scope.html);
+                TabService.setTab($scope.target, $scope.view);
             }
 
         }
@@ -155,7 +154,7 @@ core.directive("tab", function (TabService) {
 *  and store it on the '$scope.path' variable
 *
 */
-core.directive("tabview", function (TabService) {
+core.directive("wvrTabview", function (TabService) {
 
     return {
         template: '<span ng-include="path"></span>',

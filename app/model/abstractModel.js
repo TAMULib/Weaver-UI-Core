@@ -128,10 +128,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             });
             promise.then(function (res) {
                 var message = angular.fromJson(res.body);
-               if (message.meta.type === "INVALID") {
-                    angular.extend(abstractModel, message.payload);
+                if (message.meta.type === "INVALID") {
+                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
                 } else {
-                    angular.extend(abstractModel, message.payload);
+                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
                     shadow = angular.copy(abstractModel);
                 }
 

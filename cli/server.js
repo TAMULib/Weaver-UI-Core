@@ -1,23 +1,35 @@
-var fs = require('fs');
-var process = require('process');
+const fs = require('fs');
+const process = require('process');
 const path = require('path');
 
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
+const router = express.Router();
 
+
+// The run command
 function run(args) {
   if(!args["-h"]) {
     
-    var root = process.cwd() + path.sep+'app';
-    app.use(express.static('app'));
-    app.all("/*", function (req, res) {
-      res.sendFile("index.html", { root: root});
+    const port = args["-p"] ? args["-p"] : 8080;
+    const base = args["-b"] ? args["-b"] : '/';
+
+    const root = process.cwd() + path.sep + 'app';
+
+    router.use(express.static('app'));
+
+    router.use(function(req, res, next) {
+      if(req.get("X-Requested-With")) {
+        res.status(404).send('Not found');
+      } else {
+        res.sendFile("index.html", { root: root });
+      }
     });
 
-    var port = args["-p"] ? args["-p"] : 8080;
+    app.use(base, router);
     
-    var server = app.listen(port, function () {
-      console.log('listening on port', server.address().port);
+    app.listen(port, function () {
+      console.log('listening on port ' + port + ' at ' + base);
     });
 
   } else {
@@ -25,8 +37,9 @@ function run(args) {
   }
 }
 
+// The help text
 function help() {
-  console.log("Server help text.");
+  console.log("wrv server [-h, -p [port], -b [base url]]");
 }
 
 exports.run = run;

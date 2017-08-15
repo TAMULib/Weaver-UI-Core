@@ -74,7 +74,7 @@ function startServer(args) {
 
 // The help text
 function help() {
-  console.log("wrv server [-h, -p [port], -b [base url]]");
+    console.log("wrv server [-h, -p [port], -b [base url]]");
 }
 
 function getTime() {

@@ -185,6 +185,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * 	A method to remove 'alert' from a view.
              */
             var handle = function (alert) {
+                alert.fixed = fixed;
                 if (alert.remove) {
                     alert.fade = true;
                     $timeout(function () {

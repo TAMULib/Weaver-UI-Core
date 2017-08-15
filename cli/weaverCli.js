@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const command = process.argv[2];
 
-const commandArgsArr = process.argv.slice(3, process.argv.length);
+const commandArgsArr = process.argv.slice(2, process.argv.length);
 const commandArgs = {};
 
 for(var i = 0; i < commandArgsArr.length; i++) {
@@ -41,3 +41,4 @@ if(commands[command]) {
   console.log('ERROR: '+ command +' not found.');
   console.log('-h for help');
 }
+

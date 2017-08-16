@@ -36,7 +36,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * @description
              * A variable to store the boolean result if the element 'fixed' is present in the attr object
              */
-            var fixed = typeof attr.fixed != 'undefined';
+            var fixed = attr.fixed !== undefined;
 
             /**
              * @ngdoc property
@@ -56,7 +56,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * @description
              * A boolean which determines if this alert will be the only one to recieve messages on the specified channel
              */
-            var exclusive = typeof attr.exclusive != 'undefined';
+            var exclusive = attr.exclusive !== undefined;
 
             /**
              * @ngdoc property
@@ -94,7 +94,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
                 }
             }
 
-            if (types.length == 0) {
+            if (types.length === 0) {
                 types.push("ERROR");
             }
 
@@ -185,6 +185,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * 	A method to remove 'alert' from a view.
              */
             var handle = function (alert) {
+                alert.fixed = fixed;
                 if (alert.remove) {
                     alert.fade = true;
                     $timeout(function () {
@@ -194,7 +195,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
                     if (types.indexOf(alert.type) > -1) {
                         $scope.alerts[alert.id] = alert;
                         if (!fixed) {
-                            if (alert.type != "ERROR") {
+                            if (alert.type !== "ERROR") {
                                 $scope.remove(alert);
                             }
                         }
@@ -205,7 +206,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
             for (var i in facets) {
                 if (channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
                 var alerts = AlertService.get(facets[i]);
-                if (typeof alerts == 'undefined') break;
+                if (alerts === undefined) break;
                 if (alerts.defer) {
                     for (var j in alerts.list) {
                         handle(alerts.list[j]);

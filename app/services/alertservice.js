@@ -117,7 +117,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         this.type = type ? type : 'UNKNOWN';
         this.channel = channel ? channel : 'unassigned';
         this.time = new Date().getTime();
-        if (typeof classes[type] == 'undefined') {
+        if (classes[type] === undefined) {
             this.class = classes['DEFAULT'];
         } else {
             this.class = classes[type];
@@ -137,7 +137,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     AlertService.create = function (facet, exclusion) {
-        if (typeof store[facet] != 'undefined') return;
+        if (store[facet] !== undefined) return;
         store[facet] = {
             defer: $q.defer(),
             list: []
@@ -146,7 +146,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             AlertService.clearTypeStores();
             exclusive.push(facet);
         }
-        if (typeof queue[facet] != 'undefined') {
+        if (queue[facet] !== undefined) {
             for (var i in queue[facet]) {
                 AlertService.add(queue[facet][i].meta, queue[facet][i].channel);
             }
@@ -169,7 +169,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     AlertService.get = function (facet) {
-        if (typeof facet == 'undefined') return [];
+        if (facet === undefined) return [];
         return store[facet];
     };
 
@@ -200,11 +200,11 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *  or add to the queue
      *
      */
-     var add = function (facet, meta, channel) {
+    var add = function (facet, meta, channel) {
 
         var alert = new Alert(meta.message, meta.type, channel);
 
-        if (typeof store[facet] != 'undefined') {
+        if (store[facet] !== undefined) {
             // add alert to store by facet
             if (isNotStored(facet, meta, channel)) {
                 store[facet].list.push(alert);
@@ -238,7 +238,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
 
         var alert;
 
-        if (typeof channel != 'undefined') {
+        if (channel !== undefined) {
             var endpoint = channel;
 
             // add alert to store by endpoint
@@ -289,9 +289,9 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     var remove = function (facet, alert) {
-        if (typeof store[facet] != 'undefined') {
+        if (store[facet] !== undefined) {
             for (var i in store[facet].list) {
-                if (store[facet].list[i].id == alert.id) {
+                if (store[facet].list[i].id === alert.id) {
                     store[facet].defer.notify(alert);
                     store[facet].list.splice(i, 1);
                     break;
@@ -345,7 +345,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     AlertService.removeAll = function (facet) {
-        if (typeof store[facet] != 'undefined') {
+        if (store[facet] !== undefined) {
             for (var i = store[facet].list.length - 1; i >= 0; i--) {
                 AlertService.remove(store[facet].list[i]);
             }
@@ -411,16 +411,16 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     var isNotQueued = function (facet, meta, channel) {
-        if (typeof queue[facet] == 'undefined') {
+        if (queue[facet] === undefined) {
             queue[facet] = [];
             return true;
         }
         var queued = queue[facet].filter(function (alert) {
-            return alert.meta.type == meta.type &&
-                alert.meta.message == meta.message &&
-                alert.channel == channel;
+            return alert.meta.type === meta.type &&
+                alert.meta.message === meta.message &&
+                alert.channel === channel;
         });
-        return queued.length == 0;
+        return queued.length === 0;
     }
 
     /**
@@ -442,12 +442,12 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     var isNotStored = function (facet, meta, channel) {
         var list = store[facet].list.filter(function (alert) {
-            var channelMatch = typeof channel != 'undefined' ? alert.channel == channel : true;
-            return alert.type == meta.type &&
-                alert.message == meta.message &&
+            var channelMatch = channel !== undefined ? alert.channel === channel : true;
+            return alert.type === meta.type &&
+                alert.message === meta.message &&
                 channelMatch;
         });
-        return list.length == 0;
+        return list.length === 0;
     };
 
     // remove old alerts and recycle keys
@@ -459,13 +459,12 @@ core.service("AlertService", function ($q, $interval, $timeout) {
 
         for (var t in store) {
             // do not flush errors
-            if (t != 'ERROR') {
+            if (t !== 'ERROR') {
                 for (var j = store[t].list.length - 1; j >= 0; j--) {
 
                     var alert = store[t].list[j];
 
-                    if (alert.time < now - (coreConfig.alerts.flush / 2)) {
-
+                    if (alert.time < now - (coreConfig.alerts.flush / 2) && !alert.fixed) {
                         alert.remove = true;
 
                         store[t].defer.notify(alert);

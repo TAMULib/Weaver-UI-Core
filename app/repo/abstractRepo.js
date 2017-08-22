@@ -66,6 +66,10 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
 
         abstractRepo.ValidationResults = {};
 
+        abstractRepo.unshift = function (modelJson) {
+            list.unshift(new model(modelJson));
+        };
+
         abstractRepo.add = function (modelJson) {
             list.push(new model(modelJson));
         };

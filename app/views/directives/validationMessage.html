@@ -10,7 +10,13 @@
     	<div class="alert alert-wrapper alert-danger" ng-repeat="message in results.messages.business">
     		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     		{{ message }}
-		</div>
+		  </div>
+    </div>
+		<div ng-repeat="message in results.messages">
+    	<div class="alert alert-wrapper alert-danger" ng-repeat="(key, value) in message">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    		{{ value }}
+    	</div>
     </div>
 	</div>
 </span>

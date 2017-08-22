@@ -84,6 +84,16 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         // messages on the same channel will be processed even after the pendingRequest has been processed
     };
 
+    var hasPayload = function (obj) {
+        var count = 0;
+        for (var i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                ++count;
+            }
+        }
+        return count > 0;
+    }
+
     /**
      * @ngdoc method
      * @name  core.service:WsService#WsService.subscribe
@@ -165,7 +175,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
         var subscription = WsService.subscribe(channel, headers.id, false);
 
-        if (Object.keys(payload).length > 0 || headers.data !== undefined) {
+        if (hasPayload(payload) || headers.data !== undefined) {
             window.stompClient.send(request, headers, payload);
             pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, false);
         } else {

@@ -9,6 +9,7 @@
 	<div ng-if="isMocking() == false">
 		<form>
 			<div class="input-group">
+				<label for="assumeNetid" class="hidden">NetId</label>
 				<input id="assumeNetid" ng-disabled="isAssuming() == 'true' || isAssumed() == 'true'" type="netid" class="form-control" placeholder="Enter netid" ng-model="assumedControl.netid" ng-pattern="word" ng-trim="false" />
 		    <span class="input-group-btn" ng-if="isAssuming() == 'false' || isAssumed() == 'true'"><button class="btn btn-primary" type="submit" ng-click="assumeUser(assumedControl)">{{assumedControl.button}}</button></span>
 		    <span class="input-group-addon" ng-if="isAssuming() == 'true' && isAssumed() == 'false'"><img class="modalLoadingWheel" src="resources/images/ajax-loader.gif" /></span>

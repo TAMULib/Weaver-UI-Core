@@ -266,7 +266,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             var emptyAlert = {};
             $timeout(function () {
                 initializing = false;
-                Object.assign(emptyAlert, AlertService.add(meta, channel));
+                angular.extend(emptyAlert, AlertService.add(meta, channel));
             });
             return emptyAlert;
         }

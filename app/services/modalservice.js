@@ -9,8 +9,10 @@ core.service("ModalService", function () {
         angular.element(id).modal('show');
     };
 
-    ModalService.closeModal = function () {
+     ModalService.closeModal = function () {
         angular.element(ModalService.openModalId).modal('hide');
+        angular.element('body').removeClass('modal-open');
+        angular.element('.modal-backdrop').remove();
     };
 
     return ModalService;

@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "angular": "1.6.5",
-    "angular-bootstrap": "0.12.2",
     "angular-loader": "1.6.5",
     "angular-messages": "1.6.5",
     "angular-mocks": "1.6.5",

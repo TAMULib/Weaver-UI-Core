@@ -11,7 +11,7 @@
 				placeholder="{{placeholder}}"
 				aria-describedby="{{label}}"
 				autocomplete="{{autocomplete}}"
-				uib-typeahead="data as data[typeaheadproperty] for data in typeahead | filter:$viewValue"
+				uib-typeahead="data as data[typeaheadproperty] for data in wvrTypeahead | filter:$viewValue"
 				ng-model="model[property]"
 				ng-keydown="keydown($event)"
 				ng-blur="blur($event)"

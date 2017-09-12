@@ -252,7 +252,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         }
 
         for (var req in pendingRequests) {
-            if (now - pendingRequests[req].timestamp > 120000) {
+            if (now - pendingRequests[req].timestamp > 240000) {
                 if (delinquentRequests[req] === undefined) {
                     delinquentRequests[req] = pendingRequests[req];
                     AlertService.add({

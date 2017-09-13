@@ -24,6 +24,10 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
 
     var pendingRequestBank = {};
 
+    var refreshingToken = false;
+
+    var waitingRequests = [];
+
     var craftPendingRequest = function (subscription, request, headers, payload, queued) {
         return {
             request: request,
@@ -45,15 +49,26 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
     };
 
     var refreshToken = function (requestId) {
+        refreshingToken = true;
         if (sessionStorage.assumedUser) {
             AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                 pendingRequests[requestId].resend();
+                sendWaitingRequests();
             });
         } else {
             AuthServiceApi.getRefreshToken().then(function () {
                 pendingRequests[requestId].resend();
+                sendWaitingRequests();
             });
         }
+    };
+
+    var sendWaitingRequests = function () {
+        refreshingToken = false;
+        for (var i in waitingRequests) {
+            pendingRequests[waitingRequests[i]].resend();
+        }
+        waitingRequests.length = 0;
     };
 
     var processResponse = function (message) {
@@ -92,7 +107,15 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
             }
         }
         return count > 0;
-    }
+    };
+
+    var send = function (request, headers, payload) {
+        if (refreshingToken) {
+            waitingRequests.push(headers.id);
+        } else {
+            window.stompClient.send(request, headers, payload);
+        }
+    };
 
     /**
      * @ngdoc method
@@ -170,14 +193,14 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
      *
      */
     WsService.send = function (request, headers, payload, channel) {
-
         headers.id = requestCount++;
 
         var subscription = WsService.subscribe(channel, headers.id, false);
 
         if (hasPayload(payload) || headers.data !== undefined) {
-            window.stompClient.send(request, headers, payload);
+            send(request, headers, payload);
             pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, false);
+
         } else {
             if (pendingRequestBank[request]) {
                 pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, true);
@@ -186,7 +209,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                     subscription: pendingRequests[headers.id].subscription
                 });
             } else {
-                window.stompClient.send(request, headers, payload);
+                send(request, headers, payload);
                 pendingRequests[headers.id] = craftPendingRequest(subscription, request, headers, payload, false);
                 pendingRequestBank[request] = {
                     id: headers.id,
@@ -200,6 +223,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
                     }
                     delete pendingRequestBank[request];
                 });
+
             }
         }
 

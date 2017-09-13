@@ -59,7 +59,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
             entityName = abstractModel.constructor.getName();
 
-            if (mapping.validations) {
+            if (mapping.validations && entityName !== undefined && entityName !== null && entityName.length > 0) {
                 validations = ValidationStore.getValidations(entityName);
             }
 

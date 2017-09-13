@@ -14,7 +14,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
 
         var validations = {};
 
-        if (abstractRepo.mapping.validations) {
+        if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
             validations = ValidationStore.getValidations(modelName);
         }
 

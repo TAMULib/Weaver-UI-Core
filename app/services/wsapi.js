@@ -74,8 +74,6 @@ core.service("WsApi", function ($q, RestApi, WsService) {
             apiReq.data = manifest.data;
         }
 
-        var restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : RestApi.get;
-
         if (apiReq.useWebSockets) {
             var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
             var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
@@ -89,9 +87,10 @@ core.service("WsApi", function ($q, RestApi, WsService) {
             return WsService.send(request, headers, payload, channel);
         }
 
+        var restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : RestApi.get;
+
         return $q(function (resolve, reject) {
             restSend(apiReq).then(function (res) {
-                console.log(res);
                 resolve({
                     body: angular.toJson(res)
                 });

@@ -121,14 +121,11 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
         var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
-
         var restObj = {
             method: 'GET',
             url: url,
             headers: {
                 'jwt': sessionStorage.token,
-                'data': data,
                 'X-Requested-With': undefined
             }
         };
@@ -184,19 +181,15 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
         var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
 
-        var headers = req.file === undefined ? {
+        var headers = {
             'jwt': sessionStorage.token,
             'X-Requested-With': undefined
-        } : {
-            'jwt': sessionStorage.token,
-            'X-Requested-With': undefined,
-            'data': data
         };
 
         var restObj = {
             method: 'POST',
             url: url,
-            data: req.file !== undefined ? req.file : data,
+            data: data,
             headers: headers
         };
 

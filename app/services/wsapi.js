@@ -2,14 +2,14 @@
  * @ngdoc service
  * @name  core.service:WsApi
  * @requires ng.$q
- * @requires ng.$http
+ * @requires core.service:RestApi
  * @requires core.service:WsService
  *
  * @description
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $http, WsService) {
+core.service("WsApi", function ($q, RestApi, WsService) {
 
     var WsApi = this;
 
@@ -73,17 +73,15 @@ core.service("WsApi", function ($q, $http, WsService) {
         if (manifest && manifest.data) {
             apiReq.data = manifest.data;
         }
+        var restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : RestApi.get;
 
-        var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
-        var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
-
-        var headers = {
-            'jwt': sessionStorage.token
-        };
-
-        var payload = apiReq.data !== undefined && apiReq.data !== null ? JSON.stringify(apiReq.data) : JSON.stringify({});
-
-        return WsService.send(request, headers, payload, channel);
+        return $q(function (resolve, reject) {
+            restSend(apiReq).then(function (res) {
+                resolve({
+                    body: angular.toJson(res)
+                });
+            });
+        });
     };
 
     return WsApi;

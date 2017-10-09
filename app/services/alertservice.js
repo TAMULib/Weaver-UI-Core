@@ -202,7 +202,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     var add = function (facet, meta, channel) {
 
-        var alert = new Alert(meta.message, meta.type, channel);
+        var alert = new Alert(meta.message, meta.status, channel);
 
         if (store[facet] !== undefined) {
             // add alert to store by facet
@@ -272,7 +272,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         }
 
         // add alert to store by type
-        return add(meta.type, meta, channel);
+        return add(meta.status, meta, channel);
     };
 
     /**
@@ -416,7 +416,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             return true;
         }
         var queued = queue[facet].filter(function (alert) {
-            return alert.meta.type === meta.type &&
+            return alert.meta.status === meta.status &&
                 alert.meta.message === meta.message &&
                 alert.channel === channel;
         });
@@ -443,7 +443,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
     var isNotStored = function (facet, meta, channel) {
         var list = store[facet].list.filter(function (alert) {
             var channelMatch = channel !== undefined ? alert.channel === channel : true;
-            return alert.type === meta.type &&
+            return alert.type === meta.status &&
                 alert.message === meta.message &&
                 channelMatch;
         });

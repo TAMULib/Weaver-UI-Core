@@ -143,7 +143,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             abstractRepo.clearValidationResults();
             var promise = model.delete();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                 }
             });
@@ -154,7 +154,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             abstractRepo.clearValidationResults();
             var promise = abstractRepo.findById(id).delete();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                 }
             });
@@ -168,7 +168,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.create);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                 }
             });
@@ -180,7 +180,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             abstractRepo.clearValidationResults();
             var promise = model.save();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                 }
             });
@@ -201,7 +201,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.sort);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                     console.log(abstractRepo);
                 }
@@ -216,7 +216,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.reorder);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractRepo, angular.fromJson(res.body).payload);
                 }
             });

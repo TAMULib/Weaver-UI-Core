@@ -23,7 +23,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                 method: 'register?email=' + email
             }).then(function (data) {
 
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     deferred.resolve(data);
@@ -43,7 +43,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                 'data': registration
             }).then(function (data) {
 
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     deferred.resolve(data);
@@ -67,7 +67,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                     StorageService.set("token", data.payload.Jwt.tokenAsString);
                 }
 
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     deferred.resolve(data);

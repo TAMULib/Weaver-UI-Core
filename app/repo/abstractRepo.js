@@ -61,42 +61,37 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
         });
 
         if(abstractRepo.mapping.channel) {
-          console.log(`Listening to ${abstractRepo.mapping.channel}`);
+
           WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
             
             var resObj = angular.fromJson(res.body);
             
             switch(resObj.meta.action) {
               case ApiResponseActions.CREATE:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
                 abstractRepo.add(unwrap(res));
                 break;
               case ApiResponseActions.UPDATE:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
-                var model = abstractRepo.findById(unwrap(res).id);
-                angular.extend(model, model);
+                var modelObj = unwrap(res);
+                var foundModel = abstractRepo.findById(modelObj.id);
+                angular.extend(foundModel, modelObj);
                 break;
               case ApiResponseActions.DELETE:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
-                var model = unwrap(res);
-
+                var modelObj = unwrap(res);
                 for(var i in list) {
                   var existingModel = list[i];
-                  if(existingModel.id === model.id) {
+                  if(existingModel.id === modelObj.id) {
                     list.splice(i, 1);
                     break;
                   }
                 }
-
                 break;
               case ApiResponseActions.REMOVE:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
-                break;
               case ApiResponseActions.REORDER:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
-                break;
               case ApiResponseActions.SORT:
-                console.log(`${resObj.meta.action} ${Object.keys(resObj.payload)[0]}`);
+                list.length = 0;
+                angular.forEach(unwrap(res), function (modelObj) {
+                  list.push(new model(modelObj));
+                });
                 break;
               default:
                 console.log("No action");

@@ -104,7 +104,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             return defer.promise;
         };
 
-        this.save = function () {
+        this.save = function (model) {
             var promise = $q(function (resolve) {
                 if (abstractModel.dirty()) {
                     angular.extend(mapping.update, {
@@ -129,12 +129,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             promise.then(function (res) {
                 var message = angular.fromJson(res.body);
                 if (message.meta.status === "INVALID") {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
+                  angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
                 } else {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
-                    shadow = angular.copy(abstractModel);
-                }
-
+                  shadow = angular.copy(abstractModel);
+                }   
             });
             return promise;
         };

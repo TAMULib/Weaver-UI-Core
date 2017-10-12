@@ -30,13 +30,16 @@ core.service("WsApi", function ($q, RestApi, WsService) {
      *
      */
     WsApi.listen = function (apiReq) {
-        var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
-        var channel = apiReq.endpoint + "/" + apiReq.controller;
-
-        if (apiReq.method) {
-            channel += "/" + apiReq.method;
+        var channel;
+        if(typeof apiReq === 'string') {
+          channel = apiReq;
+        } else {
+          channel = apiReq.endpoint + "/" + apiReq.controller;
+          if (apiReq.method) {
+              channel += "/" + apiReq.method;
+          }
         }
-
+        
         return WsService.subscribe(channel, listenCount++, true).defer.promise;
     };
 

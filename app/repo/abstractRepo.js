@@ -257,7 +257,7 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
 
         abstractRepo.update = function (model) {
             abstractRepo.clearValidationResults();
-            var promise = abstractRepo.save();
+            var promise = abstractRepo.save(model);
             promise.then(function (res) {
                 var message = angular.fromJson(res.body);
                 if (message.meta.type === "INVALID") {

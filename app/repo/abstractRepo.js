@@ -1,4 +1,4 @@
-core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, ApiResponseActions) {
+core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, ValidationStore, WsApi) {
 
     return function AbstractRepo(modelName, model, mapping) {
 

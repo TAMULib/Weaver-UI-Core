@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($injector, $q, $rootScope, WsApi, ValidationStore, ModelCache, ModelUpdateService) {
+core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
     return function AbstractModel(repoName) {
 

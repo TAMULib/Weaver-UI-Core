@@ -192,7 +192,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
         abstractRepo.saveAll = function () {
             abstractRepo.clearValidationResults();
             angular.forEach(list, function (model) {
-                abstractRepo.save();
+                abstractRepo.save(model);
             });
         };
 

@@ -63,9 +63,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
         if(abstractRepo.mapping.channel) {
 
           WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
-            
+
             var resObj = angular.fromJson(res.body);
-            
+
             switch(resObj.meta.action) {
               case ApiResponseActions.CREATE:
                 abstractRepo.add(unwrap(res));

@@ -309,9 +309,7 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
         };
 
         abstractRepo.clearValidationResults = function () {
-            if (abstractRepo.ValidationResults.messages !== undefined) {
-                delete abstractRepo.ValidationResults.messages;
-            }
+            delete abstractRepo.ValidationResults.messages;
         };
 
         return abstractRepo;

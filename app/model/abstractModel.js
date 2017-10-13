@@ -143,9 +143,7 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.clearValidationResults = function () {
-            if (validationResults.messages !== undefined) {
-                delete validationResults.messages;
-            }
+            delete validationResults.messages;
         };
 
         this.update = function (data) {

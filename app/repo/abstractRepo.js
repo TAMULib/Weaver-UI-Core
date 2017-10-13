@@ -52,13 +52,15 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             }
         };
 
-        WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
-            build(unwrap(res)).then(function () {
-                angular.forEach(listenCallbacks, function (cb) {
-                    cb(res);
+        if(abstractRepo.mapping.listen) {
+            WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
+                build(unwrap(res)).then(function () {
+                    angular.forEach(listenCallbacks, function (cb) {
+                        cb(res);
+                    });
                 });
             });
-        });
+        }
 
         if (!mapping.lazy) {
             fetch();

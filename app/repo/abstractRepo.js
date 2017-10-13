@@ -34,7 +34,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
 
         var unwrap = function (res) {
             var repoObj = {};
-            var payload = angular.fromJson(res.body).payload;
+            var payload = message.payload;
             var keys = Object.keys(payload);
             angular.forEach(keys, function (key) {
                 angular.extend(repoObj, payload[key]);
@@ -52,7 +52,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             }
         };
 
-        if(abstractRepo.mapping.listen) {
+        if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {
                     angular.forEach(listenCallbacks, function (cb) {
@@ -62,41 +62,41 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             });
         }
 
-        if(abstractRepo.mapping.channel) {
+        if (abstractRepo.mapping.channel) {
 
-          WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
-            
-            var resObj = angular.fromJson(res.body);
-            var modelObj = unwrap(res);
-            
-            switch(resObj.meta.action) {
-              case ApiResponseActions.CREATE:
-                abstractRepo.add(modelObj);
-                break;
-              case ApiResponseActions.UPDATE:
-                var foundModel = abstractRepo.findById(modelObj.id);
-                angular.extend(foundModel, modelObj);
-                foundModel._syncShadow();
-                break;
-              case ApiResponseActions.DELETE:
-                for(var i in list) {
-                  var existingModel = list[i];
-                  if(existingModel.id === modelObj.id) {
-                    list.splice(i, 1);
+            WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
+
+                var resObj = angular.fromJson(res.body);
+                var modelObj = unwrap(res);
+
+                switch (resObj.meta.action) {
+                case ApiResponseActions.CREATE:
+                    abstractRepo.add(modelObj);
                     break;
-                  }
+                case ApiResponseActions.UPDATE:
+                    var foundModel = abstractRepo.findById(modelObj.id);
+                    angular.extend(foundModel, modelObj);
+                    foundModel._syncShadow();
+                    break;
+                case ApiResponseActions.DELETE:
+                    for (var i in list) {
+                        var existingModel = list[i];
+                        if (existingModel.id === modelObj.id) {
+                            list.splice(i, 1);
+                            break;
+                        }
+                    }
+                    break;
+                case ApiResponseActions.REMOVE:
+                case ApiResponseActions.REORDER:
+                case ApiResponseActions.SORT:
+                    list.length = 0;
+                    angular.forEach(unwrap(res), function (modelObj) {
+                        list.push(new model(modelObj));
+                    });
+                    break;
                 }
-                break;
-              case ApiResponseActions.REMOVE:
-              case ApiResponseActions.REORDER:
-              case ApiResponseActions.SORT:
-                list.length = 0;
-                angular.forEach(unwrap(res), function (modelObj) {
-                  list.push(new model(modelObj));
-                });
-                break;
-            }
-          });
+            });
         }
 
         if (!mapping.lazy) {
@@ -155,9 +155,44 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             return list;
         };
 
+        abstractRepo.save = function (model) {
+            abstractRepo.clearValidationResults();
+            var promise = $q(function (resolve) {
+                if (model.dirty()) {
+                    angular.extend(mapping.update, {
+                        data: model
+                    });
+                    WsApi.fetch(mapping.update).then(function (res) {
+                        resolve(res);
+                    });
+                } else {
+                    var payload = {};
+                    payload[model.constructor.name] = model;
+                    resolve({
+                        body: angular.toJson({
+                            payload: payload,
+                            meta: {
+                                type: "SUCCESS"
+                            }
+                        })
+                    });
+                }
+            });
+            promise.then(function (res) {
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
+                } else {
+                    model._syncShadow();
+                }
+            });
+            return promise;
+        };
+
         abstractRepo.saveAll = function () {
+            abstractRepo.clearValidationResults();
             angular.forEach(list, function (model) {
-                model.save();
+                abstractRepo.save();
             });
         };
 
@@ -180,10 +215,14 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
 
         abstractRepo.delete = function (model) {
             abstractRepo.clearValidationResults();
-            var promise = model.delete();
+            angular.extend(mapping.remove, {
+                data: model
+            });
+            var promise = WsApi.fetch(mapping.remove);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.status === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -193,8 +232,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             abstractRepo.clearValidationResults();
             var promise = abstractRepo.findById(id).delete();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.status === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -207,8 +247,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             });
             var promise = WsApi.fetch(abstractRepo.mapping.create);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.status === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -217,10 +258,11 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
         // TODO: remove
         abstractRepo.update = function (model) {
             abstractRepo.clearValidationResults();
-            var promise = model.save();
+            var promise = abstractRepo.save();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.type === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -240,8 +282,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             });
             var promise = WsApi.fetch(abstractRepo.mapping.sort);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.status === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -254,8 +297,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             });
             var promise = WsApi.fetch(abstractRepo.mapping.reorder);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.status === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;

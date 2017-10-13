@@ -63,20 +63,19 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
         if(abstractRepo.mapping.channel) {
 
           WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
-
+            
             var resObj = angular.fromJson(res.body);
-
+            var modelObj = unwrap(res);
+            
             switch(resObj.meta.action) {
               case ApiResponseActions.CREATE:
-                abstractRepo.add(unwrap(res));
+                abstractRepo.add(modelObj);
                 break;
               case ApiResponseActions.UPDATE:
-                var modelObj = unwrap(res);
                 var foundModel = abstractRepo.findById(modelObj.id);
                 angular.extend(foundModel, modelObj);
                 break;
               case ApiResponseActions.DELETE:
-                var modelObj = unwrap(res);
                 for(var i in list) {
                   var existingModel = list[i];
                   if(existingModel.id === modelObj.id) {

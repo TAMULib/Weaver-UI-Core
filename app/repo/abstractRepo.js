@@ -34,7 +34,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
 
         var unwrap = function (res) {
             var repoObj = {};
-            var payload = message.payload;
+            var payload = angular.fromJson(res.body).payload;
             var keys = Object.keys(payload);
             angular.forEach(keys, function (key) {
                 angular.extend(repoObj, payload[key]);
@@ -255,7 +255,6 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
             return promise;
         };
 
-        // TODO: remove
         abstractRepo.update = function (model) {
             abstractRepo.clearValidationResults();
             var promise = abstractRepo.save();

@@ -26,6 +26,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
 
         var repo;
 
+        $rootScope.$on("$locationChangeSuccess", function () {
+            listenCallbacks.length = 0;
+        });
+
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
         }
@@ -151,10 +155,6 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             abstractModel._syncShadow();
         };
 
-        $rootScope.$on("$locationChangeSuccess", function () {
-            listenCallbacks.length = 0;
-        });
-
         var injectRepo = function () {
             if (repo === undefined) {
                 repo = $injector.get(repoName);
@@ -212,7 +212,6 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         // additional core level model methods and variables
 
         return this;
-
     };
 
 });

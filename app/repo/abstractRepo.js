@@ -4,8 +4,6 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
 
         var abstractRepo = this;
 
-        abstractRepo.mapping = mapping;
-
         var list = [];
 
         var defer = $q.defer();
@@ -14,94 +12,11 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
 
         var validations = {};
 
-        if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
-            validations = ValidationStore.getValidations(modelName);
-        }
-
         $rootScope.$on("$locationChangeSuccess", function () {
             listenCallbacks.length = 0;
         });
 
-        var build = function (data) {
-            return $q(function (resolve) {
-                list.length = 0;
-                angular.forEach(data, function (modelJson) {
-                    abstractRepo.add(modelJson);
-                });
-                resolve();
-            });
-        };
-
-        var unwrap = function (res) {
-            var repoObj = {};
-            var payload = angular.fromJson(res.body).payload;
-            var keys = Object.keys(payload);
-            angular.forEach(keys, function (key) {
-                angular.extend(repoObj, payload[key]);
-            });
-            return repoObj;
-        };
-
-        var fetch = function () {
-            if (abstractRepo.mapping.all !== undefined) {
-                WsApi.fetch(abstractRepo.mapping.all).then(function (res) {
-                    build(unwrap(res)).then(function () {
-                        defer.resolve(res);
-                    });
-                });
-            }
-        };
-
-        if (abstractRepo.mapping.listen) {
-            WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
-                build(unwrap(res)).then(function () {
-                    angular.forEach(listenCallbacks, function (cb) {
-                        cb(res);
-                    });
-                });
-            });
-        }
-
-        if (abstractRepo.mapping.channel) {
-
-            WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
-
-                var resObj = angular.fromJson(res.body);
-                var modelObj = unwrap(res);
-
-                switch (resObj.meta.action) {
-                case ApiResponseActions.CREATE:
-                    abstractRepo.add(modelObj);
-                    break;
-                case ApiResponseActions.UPDATE:
-                    var foundModel = abstractRepo.findById(modelObj.id);
-                    angular.extend(foundModel, modelObj);
-                    foundModel._syncShadow();
-                    break;
-                case ApiResponseActions.DELETE:
-                    for (var i in list) {
-                        var existingModel = list[i];
-                        if (existingModel.id === modelObj.id) {
-                            list.splice(i, 1);
-                            break;
-                        }
-                    }
-                    break;
-                case ApiResponseActions.REMOVE:
-                case ApiResponseActions.REORDER:
-                case ApiResponseActions.SORT:
-                    list.length = 0;
-                    angular.forEach(unwrap(res), function (modelObj) {
-                        list.push(new model(modelObj));
-                    });
-                    break;
-                }
-            });
-        }
-
-        if (!mapping.lazy) {
-            fetch();
-        }
+        abstractRepo.mapping = mapping;
 
         abstractRepo.ValidationResults = {};
 
@@ -312,7 +227,92 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
             delete abstractRepo.ValidationResults.messages;
         };
 
+        var build = function (data) {
+            return $q(function (resolve) {
+                list.length = 0;
+                angular.forEach(data, function (modelJson) {
+                    abstractRepo.add(modelJson);
+                });
+                resolve();
+            });
+        };
+
+        var unwrap = function (res) {
+            var repoObj = {};
+            var payload = angular.fromJson(res.body).payload;
+            var keys = Object.keys(payload);
+            angular.forEach(keys, function (key) {
+                angular.extend(repoObj, payload[key]);
+            });
+            return repoObj;
+        };
+
+        var fetch = function () {
+            if (abstractRepo.mapping.all !== undefined) {
+                WsApi.fetch(abstractRepo.mapping.all).then(function (res) {
+                    build(unwrap(res)).then(function () {
+                        defer.resolve(res);
+                    });
+                });
+            }
+        };
+
+        if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
+            validations = ValidationStore.getValidations(modelName);
+        }
+
+        if (abstractRepo.mapping.listen) {
+            WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
+                build(unwrap(res)).then(function () {
+                    angular.forEach(listenCallbacks, function (cb) {
+                        cb(res);
+                    });
+                });
+            });
+        }
+
+        if (abstractRepo.mapping.channel) {
+
+            WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
+
+                var resObj = angular.fromJson(res.body);
+                var modelObj = unwrap(res);
+
+                switch (resObj.meta.action) {
+                case ApiResponseActions.CREATE:
+                    abstractRepo.add(modelObj);
+                    break;
+                case ApiResponseActions.UPDATE:
+                    var foundModel = abstractRepo.findById(modelObj.id);
+                    angular.extend(foundModel, modelObj);
+                    foundModel._syncShadow();
+                    break;
+                case ApiResponseActions.DELETE:
+                    for (var i in list) {
+                        var existingModel = list[i];
+                        if (existingModel.id === modelObj.id) {
+                            list.splice(i, 1);
+                            break;
+                        }
+                    }
+                    break;
+                case ApiResponseActions.REMOVE:
+                case ApiResponseActions.REORDER:
+                case ApiResponseActions.SORT:
+                    list.length = 0;
+                    angular.forEach(unwrap(res), function (modelObj) {
+                        list.push(new model(modelObj));
+                    });
+                    break;
+                }
+            });
+        }
+
+        if (!mapping.lazy) {
+            fetch();
+        }
+
         return abstractRepo;
-    }
+    };
 
 });

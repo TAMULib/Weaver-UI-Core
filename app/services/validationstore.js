@@ -13,7 +13,7 @@ core.service("ValidationStore", function (WsApi) {
                 'method': entityName
             }).then(function (res) {
                 var resObj = angular.fromJson(res.body);
-                if (resObj.meta.type == 'SUCCESS') {
+                if (resObj.meta.status === 'SUCCESS') {
                     angular.extend(ValidationStore.validations[entityName], resObj.payload.HashMap);
                 } else {
                     console.info(entityName + ' is not a server side entity');

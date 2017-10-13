@@ -8,16 +8,10 @@
  * @returns {service} AssumedControl returns AssumedControl
  *
  * @example
- * The following must be added to a model for it to extending this AbstractModel
- * <pre>
- *  angular.extend(self, AbstractModel);
- * </pre>
+ * TODO
  *
  * @description
- *	This abstract model should be inherited by all models using
- * 	the TAMU-UI-Core. It exposes unwrapping capabilites. All abstracted methods can go here: (e.g. AbstractModel.myMethod = funciton() {} )
- *	A model can then extend this my including "self = this;" and "angular.extend(self, AbstractModel);"
- * 	in its contructor.
+ *	TODO
  *
  */
 core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, ModelUpdateService, WsApi) {

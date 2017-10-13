@@ -104,7 +104,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             return defer.promise;
         };
 
-        this.save = function () {
+        this.save = function (model) {
             var promise = $q(function (resolve) {
                 if (abstractModel.dirty()) {
                     angular.extend(mapping.update, {
@@ -128,13 +128,11 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             });
             promise.then(function (res) {
                 var message = angular.fromJson(res.body);
-                if (message.meta.type === "INVALID") {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
+                if (message.meta.status === "INVALID") {
+                  angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
                 } else {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
-                    shadow = angular.copy(abstractModel);
-                }
-
+                  shadow = angular.copy(abstractModel);
+                }   
             });
             return promise;
         };
@@ -145,7 +143,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             });
             var promise = WsApi.fetch(mapping.remove);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
+                if (angular.fromJson(res.body).meta.status === "INVALID") {
                     angular.extend(abstractModel, angular.fromJson(res.body).payload);
                 }
             });
@@ -229,7 +227,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
-            if (resObj.meta.type !== 'ERROR') {
+            if (resObj.meta.status !== 'ERROR') {
                 angular.forEach(resObj.payload, function (datum) {
                     angular[combinationOperation](abstractModel, datum);
                 });

@@ -76,7 +76,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
         var meta = messageContent.meta
 
         var requestId = meta.id ? meta.id : null;
-        var status = meta.type;
+        var status = meta.status
 
         if (pendingRequests[requestId]) {
             message.ack({

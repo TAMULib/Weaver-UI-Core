@@ -42,6 +42,7 @@ core.repo = function (delegateName, delegateFunction) {
 };
 
 core.model = function (delegateName, delegateFunction) {
+    var repoName = delegateName + 'Repo';
     return core.factory(delegateName, function ($injector, AbstractModel, AbstractAppModel, api) {
         return function (data) {
 
@@ -49,7 +50,7 @@ core.model = function (delegateName, delegateFunction) {
 
             var model = $injector.invoke(delegateFunction, delegateFunction.prototype);
 
-            var abstractModel = new AbstractModel();
+            var abstractModel = new AbstractModel(repoName);
 
             var abstractAppModel = new AbstractAppModel();
 

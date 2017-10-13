@@ -76,6 +76,7 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
               case ApiResponseActions.UPDATE:
                 var foundModel = abstractRepo.findById(modelObj.id);
                 angular.extend(foundModel, modelObj);
+                foundModel._syncShadow();
                 break;
               case ApiResponseActions.DELETE:
                 for(var i in list) {
@@ -94,8 +95,6 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore, A
                   list.push(new model(modelObj));
                 });
                 break;
-              default:
-                console.log("No action");
             }
           });
         }

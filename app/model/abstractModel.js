@@ -76,8 +76,6 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             this.ready().then(function () {
                 ModelUpdateService.register(abstractModel);
             });
-
-
         };
 
         this.enableMergeCombinationOperation = function () {
@@ -131,7 +129,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                 if (message.meta.status === "INVALID") {
                   angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
                 } else {
-                  shadow = angular.copy(abstractModel);
+                  abstractModel._syncShadow();
                 }   
             });
             return promise;
@@ -158,6 +156,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             listenCallbacks.length = 0;
         };
 
+        this._syncShadow = function() {
+          shadow = angular.copy(abstractModel);
+        };
+
         this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };
@@ -182,7 +184,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         this.update = function (data) {
             angular[combinationOperation](abstractModel, data);
-            shadow = angular.copy(abstractModel);
+            abstractModel._syncShadow();
         };
 
         $rootScope.$on("$locationChangeSuccess", function () {
@@ -191,7 +193,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         var setData = function (data) {
             angular[combinationOperation](abstractModel, data);
-            shadow = angular.copy(abstractModel);
+            abstractModel._syncShadow();
             if (!listening && mapping.modelListeners) {
                 listen();
             }

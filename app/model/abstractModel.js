@@ -147,7 +147,9 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.setValidationResults = function (results) {
+            injectRepo();
             angular.extend(validationResults, results);
+            angular.extend(repo.ValidationResults, results);
         };
 
         this.getValidationResults = function () {

@@ -30,6 +30,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             listenCallbacks.length = 0;
         });
 
+        this.updatePending = false;
+
+        this.deletePending = false;
+
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
         }
@@ -130,6 +134,14 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             shadow = angular.copy(abstractModel);
         };
 
+        this.acceptPendingUpdate = function() {
+            console.warn("No update pending!");
+        };
+
+        this.acceptPendingDelete = function() {
+            console.warn("No delete pending!");
+        };
+
         this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };
@@ -139,7 +151,9 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.setValidationResults = function (results) {
+            injectRepo();
             angular.extend(validationResults, results);
+            angular.extend(repo.ValidationResults, results);
         };
 
         this.getValidationResults = function () {

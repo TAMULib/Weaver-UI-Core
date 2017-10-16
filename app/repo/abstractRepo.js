@@ -1,4 +1,4 @@
-core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, ValidationStore, WsApi) {
+core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActions, ValidationStore, WsApi) {
 
     return function AbstractRepo(modelName, model, mapping) {
 
@@ -11,6 +11,8 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
         var listenCallbacks = [];
 
         var validations = {};
+
+        var pendingChanges;
 
         $rootScope.$on("$locationChangeSuccess", function () {
             listenCallbacks.length = 0;
@@ -186,6 +188,18 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
             listenCallbacks.push(cb);
         };
 
+        abstractRepo.acceptPendingChanges = function() {
+            list.length = 0;
+            angular.forEach(pendingChanges, function (modelObj) {
+                list.push(new model(modelObj));
+            });
+            delete pendingChanges;
+        };
+
+        abstractRepo.changesPending = function() {
+            return pendingChanges !== undefined;
+        };
+
         // additiona core level repo methods and variables
 
         // these should be added through decoration
@@ -257,6 +271,23 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
             }
         };
 
+        var acceptPendingModelUpdate = function(model, pending) {
+            angular.extend(model, pending);
+            model._syncShadow();
+            model.updatePending = false;
+            model.acceptPendingUpdate = function() {
+                console.warn("No update pending!");
+            };
+        };
+
+        var acceptPendingModelDelete = function(model, i) {
+            list.splice(i, 1);
+            model.deletePending = false;
+            model.acceptPendingDelete = function() {
+                console.warn("No delete pending!");
+            };
+        };
+
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
             validations = ValidationStore.getValidations(modelName);
         }
@@ -283,15 +314,30 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
                     abstractRepo.add(modelObj);
                     break;
                 case ApiResponseActions.UPDATE:
-                    var foundModel = abstractRepo.findById(modelObj.id);
-                    angular.extend(foundModel, modelObj);
-                    foundModel._syncShadow();
+                    var existingModel = abstractRepo.findById(modelObj.id);
+                    if(!existingModel.dirty()) {
+                      acceptPendingModelUpdate(foundModel, modelObj);
+                    } else {
+                      model.updatePending = true;
+                      existingModel.acceptPendingUpdate = function() {
+                        acceptPendingModelUpdate(foundModel, modelObj);
+                      };
+                      console.warn("Update attempted on dirty model", existingModel);
+                    }
                     break;
                 case ApiResponseActions.DELETE:
                     for (var i in list) {
                         var existingModel = list[i];
                         if (existingModel.id === modelObj.id) {
-                            list.splice(i, 1);
+                            if(!existingModel.dirty()) {
+                              acceptPendingModelDelete(i);
+                            } else {
+                              model.deletePending = true;
+                              existingModel.acceptPendingDelete = function() {
+                                acceptPendingModelDelete(i);
+                              };
+                              console.warn("Delete attempted on dirty model", existingModel);
+                            }
                             break;
                         }
                     }
@@ -299,10 +345,17 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
                 case ApiResponseActions.REMOVE:
                 case ApiResponseActions.REORDER:
                 case ApiResponseActions.SORT:
-                    list.length = 0;
-                    angular.forEach(unwrap(res), function (modelObj) {
-                        list.push(new model(modelObj));
-                    });
+                    var repoDirty = false;
+                    for(var j in list) {
+                      repoDirty = list[j].dirty();
+                      if(repoDirty) break;
+                    }
+                    pendingChanges = unwrap(res);
+                    if(!repoDirty) {
+                      abstractRepo.acceptPendingChanges();
+                    } else {
+                      console.warn(resObj.meta.action + " attempted on dirty repo");
+                    }
                     break;
                 }
             });

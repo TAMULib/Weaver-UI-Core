@@ -274,11 +274,18 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var acceptPendingModelUpdate = function(model, pending) {
             angular.extend(model, pending);
             model._syncShadow();
-            delete model.acceptPendingUpdate;
+            model.updatePending = false;
+            model.acceptPendingUpdate = function() {
+                console.warn("No update pending!");
+            };
         };
 
-        var acceptPendingModelDelete = function(i) {
+        var acceptPendingModelDelete = function(model, i) {
             list.splice(i, 1);
+            model.deletePending = false;
+            model.acceptPendingDelete = function() {
+                console.warn("No delete pending!");
+            };
         };
 
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
@@ -311,6 +318,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     if(!existingModel.dirty()) {
                       acceptPendingModelUpdate(foundModel, modelObj);
                     } else {
+                      model.updatePending = true;
                       existingModel.acceptPendingUpdate = function() {
                         acceptPendingModelUpdate(foundModel, modelObj);
                       };
@@ -324,6 +332,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                             if(!existingModel.dirty()) {
                               acceptPendingModelDelete(i);
                             } else {
+                              model.deletePending = true;
                               existingModel.acceptPendingDelete = function() {
                                 acceptPendingModelDelete(i);
                               };

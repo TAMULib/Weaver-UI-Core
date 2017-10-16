@@ -130,12 +130,16 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             shadow = angular.copy(abstractModel);
         };
 
-        this.updatePending = function() {
-            return this.acceptPendingUpdate !== undefined;
+        this.updatePending = false;
+
+        this.acceptPendingUpdate = function() {
+            console.warn("No update pending!");
         };
 
-        this.deletePending = function() {
-            return this.acceptPendingDelete !== undefined;
+        this.deletePending = false;
+
+        this.acceptPendingDelete = function() {
+            console.warn("No delete pending!");
         };
 
         this.refresh = function () {

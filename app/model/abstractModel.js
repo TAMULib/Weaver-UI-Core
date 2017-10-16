@@ -30,6 +30,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             listenCallbacks.length = 0;
         });
 
+        this.updatePending = false;
+
+        this.deletePending = false;
+
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
         }
@@ -130,13 +134,9 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             shadow = angular.copy(abstractModel);
         };
 
-        this.updatePending = false;
-
         this.acceptPendingUpdate = function() {
             console.warn("No update pending!");
         };
-
-        this.deletePending = false;
 
         this.acceptPendingDelete = function() {
             console.warn("No delete pending!");

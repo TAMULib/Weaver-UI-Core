@@ -1,4 +1,4 @@
-core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, ValidationStore, WsApi) {
+core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActions, ValidationStore, WsApi) {
 
     return function AbstractRepo(modelName, model, mapping) {
 
@@ -11,6 +11,8 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
         var listenCallbacks = [];
 
         var validations = {};
+
+        var pendingChanges;
 
         $rootScope.$on("$locationChangeSuccess", function () {
             listenCallbacks.length = 0;
@@ -186,6 +188,18 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
             listenCallbacks.push(cb);
         };
 
+        abstractRepo.acceptPendingChanges = function() {
+          list.length = 0;
+          angular.forEach(pendingChanges, function (modelObj) {
+              list.push(new model(modelObj));
+          });
+          delete pendingChanges;
+        };
+
+        abstractRepo.changesPending = function() {
+          return pendingChanges !== undefined;
+        };
+
         // additiona core level repo methods and variables
 
         // these should be added through decoration
@@ -284,14 +298,22 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
                     break;
                 case ApiResponseActions.UPDATE:
                     var foundModel = abstractRepo.findById(modelObj.id);
-                    angular.extend(foundModel, modelObj);
-                    foundModel._syncShadow();
+                    if(!foundModel.dirty()) {
+                      angular.extend(foundModel, modelObj);
+                      foundModel._syncShadow();
+                    } else {
+                      console.warn("Update attempted on dirty model.");
+                    }
                     break;
                 case ApiResponseActions.DELETE:
                     for (var i in list) {
                         var existingModel = list[i];
                         if (existingModel.id === modelObj.id) {
-                            list.splice(i, 1);
+                            if(!existingModel.dirty()) {
+                              list.splice(i, 1);
+                            } else {
+                              console.warn("Update attempted on dirty model.");
+                            }
                             break;
                         }
                     }
@@ -299,10 +321,22 @@ core.service("AbstractRepo", function ($q, $rootScope, ApiResponseActions, Valid
                 case ApiResponseActions.REMOVE:
                 case ApiResponseActions.REORDER:
                 case ApiResponseActions.SORT:
-                    list.length = 0;
-                    angular.forEach(unwrap(res), function (modelObj) {
-                        list.push(new model(modelObj));
-                    });
+
+                    var repoDirty = false;
+
+                    for(var j in list) {
+                      repoDirty = list[j].dirty();
+                      if(repoDirty) break;
+                    }
+
+                    pendingChanges = unwrap(res);
+
+                    if(!repoDirty) {
+                      abstractRepo.acceptPendingChanges();
+                    } else {
+                      console.warn("Update attempted on dirty repo.");
+                    }   
+                    
                     break;
                 }
             });

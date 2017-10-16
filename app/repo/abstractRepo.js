@@ -8,14 +8,20 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var defer = $q.defer();
 
-        var listenCallbacks = [];
+        var actionCbs = {};
+
+        angular.forEach(ApiResponseActions, function(action) {
+          actionCbs[action] = [];
+        });
 
         var validations = {};
 
         var pendingChanges;
 
         $rootScope.$on("$locationChangeSuccess", function () {
-            listenCallbacks.length = 0;
+          angular.forEach(actionCbs, function(actionCbs) {
+            actionCbs.length = 0;
+          });
         });
 
         abstractRepo.mapping = mapping;
@@ -184,8 +190,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             return promise;
         };
 
-        abstractRepo.listen = function (cb) {
-            listenCallbacks.push(cb);
+        abstractRepo.listen = function (cbOrAction, cb) {
+            if(typeof cbOrAction === "function") {
+              actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            } else {
+              actionCbs[cbOrAction].push(cb);
+            }
         };
 
         abstractRepo.acceptPendingChanges = function() {
@@ -288,6 +298,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             };
         };
 
+        var runActionCBs = function(action, resObj) {
+          angular.forEach(actionCbs[action], function(cb) {
+            cb(resObj);
+          }); 
+        };
+
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
             validations = ValidationStore.getValidations(modelName);
         }
@@ -295,7 +311,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {
-                    angular.forEach(listenCallbacks, function (cb) {
+                    angular.forEach(allActionCbs, function (cb) {
                         cb(res);
                     });
                 });
@@ -358,6 +374,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     }
                     break;
                 }
+                runActionCBs(resObj.meta.action, resObj);
+                runActionCBs(ApiResponseActions.ANY, resObj);
             });
         }
 

@@ -4,5 +4,6 @@ core.constant("ApiResponseActions", {
   DELETE: "DELETE",
   REORDER: "REORDER",
   REMOVE: "REMOVE",
-  SORT: "SORT"
+  SORT: "SORT",
+  ANY: "ANY"
 });

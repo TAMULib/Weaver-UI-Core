@@ -189,15 +189,15 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.acceptPendingChanges = function() {
-          list.length = 0;
-          angular.forEach(pendingChanges, function (modelObj) {
-              list.push(new model(modelObj));
-          });
-          delete pendingChanges;
+            list.length = 0;
+            angular.forEach(pendingChanges, function (modelObj) {
+                list.push(new model(modelObj));
+            });
+            delete pendingChanges;
         };
 
         abstractRepo.changesPending = function() {
-          return pendingChanges !== undefined;
+            return pendingChanges !== undefined;
         };
 
         // additiona core level repo methods and variables
@@ -271,6 +271,16 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
+        var acceptPendingModelUpdate = function(model, pending) {
+            angular.extend(model, pending);
+            model._syncShadow();
+            delete model.acceptPendingUpdate;
+        };
+
+        var acceptPendingModelDelete = function(i) {
+            list.splice(i, 1);
+        };
+
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
             validations = ValidationStore.getValidations(modelName);
         }
@@ -297,12 +307,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     abstractRepo.add(modelObj);
                     break;
                 case ApiResponseActions.UPDATE:
-                    var foundModel = abstractRepo.findById(modelObj.id);
-                    if(!foundModel.dirty()) {
-                      angular.extend(foundModel, modelObj);
-                      foundModel._syncShadow();
+                    var existingModel = abstractRepo.findById(modelObj.id);
+                    if(!existingModel.dirty()) {
+                      acceptPendingModelUpdate(foundModel, modelObj);
                     } else {
-                      console.warn("Update attempted on dirty model.");
+                      existingModel.acceptPendingUpdate = function() {
+                        acceptPendingModelUpdate(foundModel, modelObj);
+                      };
+                      console.warn("Update attempted on dirty model", existingModel);
                     }
                     break;
                 case ApiResponseActions.DELETE:
@@ -310,9 +322,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         var existingModel = list[i];
                         if (existingModel.id === modelObj.id) {
                             if(!existingModel.dirty()) {
-                              list.splice(i, 1);
+                              acceptPendingModelDelete(i);
                             } else {
-                              console.warn("Update attempted on dirty model.");
+                              existingModel.acceptPendingDelete = function() {
+                                acceptPendingModelDelete(i);
+                              };
+                              console.warn("Delete attempted on dirty model", existingModel);
                             }
                             break;
                         }
@@ -321,22 +336,17 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.REMOVE:
                 case ApiResponseActions.REORDER:
                 case ApiResponseActions.SORT:
-
                     var repoDirty = false;
-
                     for(var j in list) {
                       repoDirty = list[j].dirty();
                       if(repoDirty) break;
                     }
-
                     pendingChanges = unwrap(res);
-
                     if(!repoDirty) {
                       abstractRepo.acceptPendingChanges();
                     } else {
-                      console.warn("Update attempted on dirty repo.");
-                    }   
-                    
+                      console.warn(resObj.meta.action + " attempted on dirty repo");
+                    }
                     break;
                 }
             });

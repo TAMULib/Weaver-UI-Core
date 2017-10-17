@@ -1,5 +1,6 @@
 core.constant("ApiResponseActions", {
   CREATE: "CREATE",
+  READ: "READ",
   UPDATE: "UPDATE",
   DELETE: "DELETE",
   REORDER: "REORDER",

@@ -329,6 +329,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.CREATE:
                     abstractRepo.add(modelObj);
                     break;
+                case ApiResponseActions.READ:
                 case ApiResponseActions.UPDATE:
                     var existingModel = abstractRepo.findById(modelObj.id);
                     if(!existingModel.dirty()) {

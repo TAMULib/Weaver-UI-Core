@@ -82,6 +82,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             abstractRepo.clearValidationResults();
             var promise = $q(function (resolve) {
                 if (model.dirty()) {
+                    model.updateRequested = true;
+                    model._syncShadow();
                     angular.extend(mapping.update, {
                         data: model
                     });
@@ -138,6 +140,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         abstractRepo.delete = function (model) {
             abstractRepo.clearValidationResults();
+            model.deleteRequested = true;
+            model._syncShadow();
             angular.extend(mapping.remove, {
                 data: model
             });
@@ -286,6 +290,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var acceptPendingModelUpdate = function(model, pending) {
             angular.extend(model, pending);
             model.updatePending = false;
+            model.updateRequested = false;
             model.acceptPendingUpdate = function() {
                 console.warn("No update pending!");
             };
@@ -295,6 +300,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var acceptPendingModelDelete = function(model, i) {
             list.splice(i, 1);
             model.deletePending = false;
+            model.deleteRequested = false;
             model.acceptPendingDelete = function() {
                 console.warn("No delete pending!");
             };
@@ -332,7 +338,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.READ:
                 case ApiResponseActions.UPDATE:
                     var existingModelToUpdate = abstractRepo.findById(modelObj.id);
-                    if(!existingModelToUpdate.dirty()) {
+                    if(existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
                         acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                     } else {
                         existingModelToUpdate.updatePending = true;
@@ -346,7 +352,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     for (var i in list) {
                         var existingModelToDelete = list[i];
                         if (existingModelToDelete.id === modelObj.id) {
-                            if(!existingModelToDelete.dirty()) {
+                            if(existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
                                 acceptPendingModelDelete(i);
                             } else {
                                 existingModelToDelete.deletePending = true;

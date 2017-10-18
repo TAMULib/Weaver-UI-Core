@@ -169,6 +169,11 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             abstractModel._syncShadow();
         };
 
+        this.extend = function (changes) {
+          angular.extend(abstractModel, changes);
+          abstractModel._syncShadow();
+        };
+
         var injectRepo = function () {
             if (repo === undefined) {
                 repo = $injector.get(repoName);

@@ -82,6 +82,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             abstractRepo.clearValidationResults();
             var promise = $q(function (resolve) {
                 if (model.dirty()) {
+                    model.updateRequested = true;
+                    model._syncShadow();
                     angular.extend(mapping.update, {
                         data: model
                     });
@@ -106,7 +108,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 if (message.meta.status === "INVALID") {
                     angular.extend(abstractRepo, message.payload);
                 } else {
-                    model._syncShadow();
+                    model.acceptPendingUpdate();
                 }
             });
             return promise;
@@ -138,6 +140,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         abstractRepo.delete = function (model) {
             abstractRepo.clearValidationResults();
+            model.deleteRequested = true;
+            model._syncShadow();
             angular.extend(mapping.remove, {
                 data: model
             });
@@ -146,6 +150,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 var message = angular.fromJson(res.body);
                 if (message.meta.status === "INVALID") {
                     angular.extend(abstractRepo, message.payload);
+                } else {
+                    model.acceptPendingDelete();
                 }
             });
             return promise;
@@ -283,16 +289,18 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var acceptPendingModelUpdate = function(model, pending) {
             angular.extend(model, pending);
-            model._syncShadow();
             model.updatePending = false;
+            model.updateRequested = false;
             model.acceptPendingUpdate = function() {
                 console.warn("No update pending!");
             };
+            model._syncShadow();
         };
 
         var acceptPendingModelDelete = function(model, i) {
             list.splice(i, 1);
             model.deletePending = false;
+            model.deleteRequested = false;
             model.acceptPendingDelete = function() {
                 console.warn("No delete pending!");
             };
@@ -301,7 +309,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var runActionCBs = function(action, resObj) {
           angular.forEach(actionCbs[action], function(cb) {
             cb(resObj);
-          }); 
+          });
         };
 
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
@@ -311,9 +319,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {
-                    angular.forEach(allActionCbs, function (cb) {
-                        cb(res);
-                    });
+                    runActionCBs(ApiResponseActions.ANY, angular.fromJson(res.body));
                 });
             });
         }
@@ -329,30 +335,32 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.CREATE:
                     abstractRepo.add(modelObj);
                     break;
+                case ApiResponseActions.READ:
                 case ApiResponseActions.UPDATE:
-                    var existingModel = abstractRepo.findById(modelObj.id);
-                    if(!existingModel.dirty()) {
-                      acceptPendingModelUpdate(foundModel, modelObj);
+                    var existingModelToUpdate = abstractRepo.findById(modelObj.id);
+                    if(existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
+                        acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                     } else {
-                      model.updatePending = true;
-                      existingModel.acceptPendingUpdate = function() {
-                        acceptPendingModelUpdate(foundModel, modelObj);
-                      };
-                      console.warn("Update attempted on dirty model", existingModel);
+                        existingModelToUpdate.updatePending = true;
+                        existingModelToUpdate.acceptPendingUpdate = function() {
+                            acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                        };
+                        console.warn("Update attempted on dirty model", existingModelToUpdate);
                     }
                     break;
                 case ApiResponseActions.DELETE:
                     for (var i in list) {
-                        var existingModel = list[i];
-                        if (existingModel.id === modelObj.id) {
-                            if(!existingModel.dirty()) {
-                              acceptPendingModelDelete(i);
-                            } else {
-                              model.deletePending = true;
-                              existingModel.acceptPendingDelete = function() {
+                        var existingModelToDelete = list[i];
+                        if (existingModelToDelete.id === modelObj.id) {
+                            if(existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
                                 acceptPendingModelDelete(i);
-                              };
-                              console.warn("Delete attempted on dirty model", existingModel);
+                            } else {
+                                existingModelToDelete.deletePending = true;
+                                /*jshint loopfunc: true */
+                                existingModelToDelete.acceptPendingDelete = function() {
+                                    acceptPendingModelDelete(i);
+                                };
+                                console.warn("Delete attempted on dirty model", existingModelToDelete);
                             }
                             break;
                         }
@@ -361,16 +369,17 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.REMOVE:
                 case ApiResponseActions.REORDER:
                 case ApiResponseActions.SORT:
+                case ApiResponseActions.BROADCAST:
                     var repoDirty = false;
                     for(var j in list) {
-                      repoDirty = list[j].dirty();
-                      if(repoDirty) break;
+                        repoDirty = list[j].dirty();
+                        if(repoDirty) break;
                     }
                     pendingChanges = unwrap(res);
                     if(!repoDirty) {
-                      abstractRepo.acceptPendingChanges();
+                        abstractRepo.acceptPendingChanges();
                     } else {
-                      console.warn(resObj.meta.action + " attempted on dirty repo");
+                        console.warn(resObj.meta.action + " attempted on dirty repo");
                     }
                     break;
                 }

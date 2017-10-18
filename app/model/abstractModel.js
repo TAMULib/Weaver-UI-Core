@@ -34,6 +34,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
 
         this.deletePending = false;
 
+        this.updateRequested = false;
+
+        this.deleteRequested = false;
+
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
         }
@@ -147,6 +151,13 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.dirty = function () {
+            if(entityName === 'Organization') {
+                console.log('model', abstractModel.emails);
+                console.log('shadow', shadow.emails);
+                console.log('---------------------');
+                console.log('model', abstractModel.name);
+                console.log('shadow', shadow.name);
+            }
             return angular.toJson(abstractModel) !== angular.toJson(shadow);
         };
 
@@ -167,6 +178,11 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         this.update = function (data) {
             angular[combinationOperation](abstractModel, data);
             abstractModel._syncShadow();
+        };
+
+        this.extend = function (changes) {
+          angular.extend(abstractModel, changes);
+          abstractModel._syncShadow();
         };
 
         var injectRepo = function () {

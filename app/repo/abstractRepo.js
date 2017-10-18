@@ -106,7 +106,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 if (message.meta.status === "INVALID") {
                     angular.extend(abstractRepo, message.payload);
                 } else {
-                    model._syncShadow();
+                    model.acceptPendingUpdate();
                 }
             });
             return promise;
@@ -146,6 +146,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 var message = angular.fromJson(res.body);
                 if (message.meta.status === "INVALID") {
                     angular.extend(abstractRepo, message.payload);
+                } else {
+                    model.acceptPendingDelete();
                 }
             });
             return promise;
@@ -301,7 +303,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var runActionCBs = function(action, resObj) {
           angular.forEach(actionCbs[action], function(cb) {
             cb(resObj);
-          }); 
+          });
         };
 
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
@@ -311,9 +313,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {
-                    angular.forEach(allActionCbs, function (cb) {
-                        cb(res);
-                    });
+                    runActionCBs(ApiResponseActions.ANY, angular.fromJson(res.body));
                 });
             });
         }
@@ -321,8 +321,6 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         if (abstractRepo.mapping.channel) {
 
             WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
-
-                
 
                 var resObj = angular.fromJson(res.body);
                 var modelObj = unwrap(res);
@@ -341,13 +339,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                       existingModelToUpdate.acceptPendingUpdate = function() {
                         acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                       };
-                      console.warn("Update attempted on dirty model", existingModelToUpdate);
+                      if(!existingModelToUpdate.updatePending) {
+                        console.warn("Update attempted on dirty model", existingModelToUpdate);
+                      }
                     }
                     break;
                 case ApiResponseActions.DELETE:
                     for (var i in list) {
                         var existingModelToDelete = list[i];
-                        console.log(existingModelToDelete);
                         if (existingModelToDelete.id === modelObj.id) {
                             if(!existingModelToDelete.dirty()) {
                               acceptPendingModelDelete(i);
@@ -357,7 +356,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                               existingModelToDelete.acceptPendingDelete = function() {
                                 acceptPendingModelDelete(i);
                               };
-                              console.warn("Delete attempted on dirty model", existingModelToDelete);
+                              if(!existingModelToUpdate.deletePending) {
+                                console.warn("Delete attempted on dirty model", existingModelToDelete);
+                              }
                             }
                             break;
                         }

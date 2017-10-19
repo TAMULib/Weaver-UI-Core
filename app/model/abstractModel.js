@@ -151,13 +151,6 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.dirty = function () {
-            if(entityName === 'Organization') {
-                console.log('model', abstractModel.emails);
-                console.log('shadow', shadow.emails);
-                console.log('---------------------');
-                console.log('model', abstractModel.name);
-                console.log('shadow', shadow.name);
-            }
             return angular.toJson(abstractModel) !== angular.toJson(shadow);
         };
 

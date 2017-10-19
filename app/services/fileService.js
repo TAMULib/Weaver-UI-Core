@@ -1,4 +1,4 @@
-core.service("FileApi", function ($http, $q, $window, AuthServiceApi, Upload) {
+core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
 
     var webservice = appConfig.webService;
 
@@ -77,7 +77,7 @@ core.service("FileApi", function ($http, $q, $window, AuthServiceApi, Upload) {
 
                     if (sessionStorage.assumedUser) {
 
-                        return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                        return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -86,7 +86,7 @@ core.service("FileApi", function ($http, $q, $window, AuthServiceApi, Upload) {
 
                     } else {
 
-                        return AuthServiceApi.getRefreshToken().then(function () {
+                        return AuthService.getRefreshToken().then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -126,14 +126,14 @@ core.service("FileApi", function ($http, $q, $window, AuthServiceApi, Upload) {
 
                 if (sessionStorage.assumedUser) {
 
-                    return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                    return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
 
                 } else {
 
-                    return AuthServiceApi.getRefreshToken().then(function () {
+                    return AuthService.getRefreshToken().then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });

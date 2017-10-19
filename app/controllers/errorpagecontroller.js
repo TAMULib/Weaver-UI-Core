@@ -1,5 +1,5 @@
-core.controller("ErrorPageController", function ($scope, AccessControllService) {
+core.controller("ErrorPageController", function ($scope, AccessControlService) {
 
-    $scope.lastRoute = AccessControllService.getLastRoutePath();
+    $scope.lastRoute = AccessControlService.getLastRoutePath();
 
 });

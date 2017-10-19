@@ -14,7 +14,7 @@
  *	TODO
  *
  */
-core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, UserService, ModelCache, ModelUpdateService, WsApi) {
+core.service("AssumedControl", function ($q, AuthService, StorageService, UserService, ModelCache, ModelUpdateService, WsApi) {
 
     var AssumedControl = function () {
         return this;
@@ -86,7 +86,7 @@ core.service("AssumedControl", function ($q, AuthServiceApi, StorageService, Use
 
                 StorageService.set('adminToken', StorageService.get("token"));
 
-                AuthServiceApi.getAssumedUser(user).then(function (response) {
+                AuthService.getAssumedUser(user).then(function (response) {
 
                     if (response.data.assumed) {
 

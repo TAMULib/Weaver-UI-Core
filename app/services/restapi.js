@@ -3,7 +3,7 @@
  * @name  core.service:RestApi
  * @requires ng.$http
  * @requires ng.$window
- * @requires core.service:AuthServiceApi
+ * @requires core.service:AuthService
  *
  * @description
  * 	The RestApi Service facilitates all restful communication
@@ -12,7 +12,7 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) {
+core.service("RestApi", function ($http, $window, AlertService, AuthService) {
 
     /**
      * @ngdoc property
@@ -141,7 +141,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
                     if (sessionStorage.assumedUser) {
 
-                        return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                        return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -150,7 +150,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
                     } else {
 
-                        return AuthServiceApi.getRefreshToken().then(function () {
+                        return AuthService.getRefreshToken().then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -207,7 +207,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
                     if (sessionStorage.assumedUser) {
 
-                        return AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                        return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -216,7 +216,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) 
 
                     } else {
 
-                        return AuthServiceApi.getRefreshToken().then(function () {
+                        return AuthService.getRefreshToken().then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;

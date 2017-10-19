@@ -4,13 +4,13 @@
  * @requires ng.$interval
  * @requires ng.$q
  * @requires core.service:AlertService
- * @requires core.service:AuthServiceApi
+ * @requires core.service:AuthService
  *
  * @description
  *  An angular service wrapper for stop communication over websockets.
  *
  */
-core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi) {
+core.service("WsService", function ($interval, $q, AlertService, AuthService) {
 
     var WsService = this;
 
@@ -51,12 +51,12 @@ core.service("WsService", function ($interval, $q, AlertService, AuthServiceApi)
     var refreshToken = function (requestId) {
         refreshingToken = true;
         if (sessionStorage.assumedUser) {
-            AuthServiceApi.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+            AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
                 pendingRequests[requestId].resend();
                 sendWaitingRequests();
             });
         } else {
-            AuthServiceApi.getRefreshToken().then(function () {
+            AuthService.getRefreshToken().then(function () {
                 pendingRequests[requestId].resend();
                 sendWaitingRequests();
             });

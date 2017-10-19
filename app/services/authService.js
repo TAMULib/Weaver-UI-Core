@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name  core.service:AuthServiceApi
+ * @name  core.service:AuthService
  * @requires ng.$http
  * @requires ng.$timeout
  * @requires core.service:StorageService
@@ -9,14 +9,14 @@
  *  The service which handles all communication with the Authorization webservice.
  *
  */
-core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
+core.service("AuthService", function ($http, $timeout, StorageService) {
 
-    var AuthServiceApi = this;
+    var AuthService = this;
 
     /**
      * @ngdoc method
-     * @name core.service:AuthServiceApi#getAssumedUser
-     * @methodOf core.service:AuthServiceApi
+     * @name core.service:AuthService#getAssumedUser
+     * @methodOf core.service:AuthService
      * @param {object} assume
      *  Object containing information about the assumed user.
      *
@@ -24,9 +24,9 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
      *  A request to the Auth webservice for an assumed user.
      *
      */
-    AuthServiceApi.getAssumedUser = function (assume, cb) {
-        if (!AuthServiceApi.pendingRefresh) {
-            AuthServiceApi.pendingRefresh = $http.get(appConfig.authService + "/admin?netid=" + assume.netid, {
+    AuthService.getAssumedUser = function (assume, cb) {
+        if (!AuthService.pendingRefresh) {
+            AuthService.pendingRefresh = $http.get(appConfig.authService + "/admin?netid=" + assume.netid, {
                 withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
@@ -39,20 +39,20 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
-                    delete AuthServiceApi.pendingRefresh;
+                    delete AuthService.pendingRefresh;
                 }, 50);
 
                 if (cb) cb();
                 return response;
             });
         }
-        return AuthServiceApi.pendingRefresh;
+        return AuthService.pendingRefresh;
     };
 
     /**
      * @ngdoc method
-     * @name core.service:AuthServiceApi#getRefreshToken
-     * @methodOf core.service:AuthServiceApi
+     * @name core.service:AuthService#getRefreshToken
+     * @methodOf core.service:AuthService
      * @param {function} cb
      *  A callback
      *
@@ -60,8 +60,8 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
      *  A request for a refresh token.
      *
      */
-    AuthServiceApi.getRefreshToken = function (cb) {
-        if (!AuthServiceApi.pendingRefresh) {
+    AuthService.getRefreshToken = function (cb) {
+        if (!AuthService.pendingRefresh) {
 
             var url = appConfig.authService + "/refresh";
 
@@ -73,7 +73,7 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
                 }
             }
 
-            AuthServiceApi.pendingRefresh = $http.get(url, {
+            AuthService.pendingRefresh = $http.get(url, {
                 withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
@@ -84,7 +84,7 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
-                    delete AuthServiceApi.pendingRefresh;
+                    delete AuthService.pendingRefresh;
                 }, 50);
 
                 if (cb) cb();
@@ -99,7 +99,7 @@ core.service("AuthServiceApi", function ($http, $timeout, StorageService) {
                 }
             });
         }
-        return AuthServiceApi.pendingRefresh;
+        return AuthService.pendingRefresh;
     };
 
 });

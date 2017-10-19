@@ -32,8 +32,20 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             list.unshift(new model(modelJson));
         };
 
+        abstractRepo.contains = function (model) {
+            var contains = false;
+            for(var i in list) {
+                if(list[i].id === model.id) {
+                    contains = true;
+                }
+            }
+            return contains;
+        };
+
         abstractRepo.add = function (modelJson) {
-            list.push(new model(modelJson));
+            if(!abstractRepo.contains(modelJson)) {
+                list.push(new model(modelJson));
+            }
         };
 
         abstractRepo.addAll = function (modelJsons) {

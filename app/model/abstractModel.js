@@ -248,9 +248,11 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
             if (resObj.meta.status !== 'ERROR') {
-                angular.forEach(resObj.payload, function (datum) {
-                    angular[combinationOperation](abstractModel, datum);
-                });
+                if(combinationOperation === 'extend') {
+                  angular.forEach(resObj.payload, function (datum) {
+                      angular[combinationOperation](abstractModel, datum);
+                  });
+                }
                 setData(abstractModel);
             } else {
                 abstractModel.refresh();

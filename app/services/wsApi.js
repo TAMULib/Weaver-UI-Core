@@ -9,13 +9,29 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, RestApi, WsService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
     var WsApi = this;
 
     var listenCount = 0;
 
     var subscriptions = {};
+
+    var routeBasedSubscriptions = {};
+
+    $rootScope.$on("$routeChangeStart", function (evt, next, current) {
+        WsService.unsubscribeAll();
+    });
+
+    $rootScope.$on("$routeChangeSuccess", function (evt, next, current) {
+        var path = $location.path();
+        var channels = routeBasedSubscriptions[path];
+        if(channels) {
+            for(var i in channels) {
+                WsApi.listen(channels[i]);
+            }
+        }
+    });
 
     /**
      * @ngdoc method
@@ -41,13 +57,19 @@ core.service("WsApi", function ($q, RestApi, WsService) {
               channel += "/" + apiReq.method;
           }
         }
-        console.log('listening', channel);
         if(subscriptions[channel] === undefined) {
           subscriptions[channel] = WsService.subscribe(channel, listenCount++, true, function() {
             console.log('deleting', channel);
             delete subscriptions[channel];
             listenCount--;
           }).defer.promise;
+
+          var path = $location.path();
+          var channels = routeBasedSubscriptions[path];
+          if(channels === undefined) {
+            routeBasedSubscriptions[path] = channels = [];
+          }
+          channels.push(channel);
         }
         return subscriptions[channel]
     };

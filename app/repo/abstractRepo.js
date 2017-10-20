@@ -300,7 +300,13 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         var acceptPendingModelUpdate = function(model, pending) {
-            angular.extend(model, pending);
+            var combinationOperation = model.getCombinationOperation();
+            if(combinationOperation === 'extend') {
+              angular.forEach(pending, function (datum) {
+                  angular[combinationOperation](model, pending);
+              });
+            }
+            angular[combinationOperation](model, pending);
             model.updatePending = false;
             model.updateRequested = false;
             model.acceptPendingUpdate = function() {

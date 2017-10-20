@@ -100,6 +100,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             combinationOperation = 'extend';
         };
 
+        this.getCombinationOperation = function() {
+          return combinationOperation;
+        };
+
         this.getEntityName = function () {
             return entityName;
         };
@@ -210,7 +214,9 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         var setData = function (data) {
+
             angular[combinationOperation](abstractModel, data);
+
             abstractModel._syncShadow();
             if (!listening && mapping.modelListeners) {
                 listen();

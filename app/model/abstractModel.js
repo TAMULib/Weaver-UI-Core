@@ -151,7 +151,8 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.dirty = function () {
-            return angular.toJson(abstractModel) !== angular.toJson(shadow);
+            // return angular.toJson(abstractModel) !== angular.toJson(shadow);
+            return compare(abstractModel, shadow);
         };
 
         this.setValidationResults = function (results) {
@@ -176,6 +177,30 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         this.extend = function (changes) {
           angular.extend(abstractModel, changes);
           abstractModel._syncShadow();
+        };
+
+        var compare = function(m, s) {
+            if (typeof m === 'object') {
+                if (typeof s === 'object') {
+                    var diff = false;
+                    for (var i in m) {
+                        if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
+                            diff = compare(m[i], s[i]);
+                            if (diff) {
+                                break;
+                            }
+                        }
+                    }
+                    return diff;
+                } else {
+                    return false;
+                }
+            } else if (typeof m === 'function') {
+                return false;
+            } else {
+                // console.log(m !== s, m, s);
+                return m !== s;
+            }
         };
 
         var injectRepo = function () {

@@ -130,7 +130,7 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
      *  Registers a subscription to a stomp channel.
      *
      */
-    WsService.subscribe = function (channel, requestId, listen) {
+    WsService.subscribe = function (channel, requestId, listen, unsubscribeCb) {
 
         var id = "sub-" + window.stompClient.counter + "-" + requestId;
 
@@ -144,6 +144,10 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
                 defer: $q.defer(),
                 listen: listen
             };
+
+            if(listen) {
+              subscription.unsubscribeCb = unsubscribeCb;
+            }
 
             var subscriptionCallback;
 
@@ -244,6 +248,9 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
      */
     WsService.unsubscribe = function (subscription) {
         window.stompClient.unsubscribe(subscription.channel);
+        if(subscriptions[subscription.id].listen) {
+          subscriptions[subscription.id].unsubscribeCb();
+        }
         delete subscriptions[subscription.id];
     };
 

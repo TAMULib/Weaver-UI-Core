@@ -328,6 +328,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             validations = ValidationStore.getValidations(modelName);
         }
 
+        // TODO: remove when all repos upgraded!!!
         if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {

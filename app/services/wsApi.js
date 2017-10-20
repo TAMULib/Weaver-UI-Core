@@ -15,6 +15,8 @@ core.service("WsApi", function ($q, RestApi, WsService) {
 
     var listenCount = 0;
 
+    var subscriptions = {};
+
     /**
      * @ngdoc method
      * @name  core.service:WsApi#WsApi.listen
@@ -39,8 +41,15 @@ core.service("WsApi", function ($q, RestApi, WsService) {
               channel += "/" + apiReq.method;
           }
         }
-        
-        return WsService.subscribe(channel, listenCount++, true).defer.promise;
+        console.log('listening', channel);
+        if(subscriptions[channel] === undefined) {
+          subscriptions[channel] = WsService.subscribe(channel, listenCount++, true, function() {
+            console.log('deleting', channel);
+            delete subscriptions[channel];
+            listenCount--;
+          }).defer.promise;
+        }
+        return subscriptions[channel]
     };
 
     WsApi.clearSubscriptions = function () {

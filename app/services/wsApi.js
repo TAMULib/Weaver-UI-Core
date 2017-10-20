@@ -17,7 +17,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
     var subscriptions = {};
 
-    var routeBasedSubscriptions = {};
+    var routeBasedChannels = {};
 
     $rootScope.$on("$routeChangeStart", function (evt, next, current) {
         WsService.unsubscribeAll();
@@ -25,7 +25,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
     $rootScope.$on("$routeChangeSuccess", function (evt, next, current) {
         var path = $location.path();
-        var channels = routeBasedSubscriptions[path];
+        var channels = routeBasedChannels[path];
         if(channels) {
             for(var i in channels) {
                 WsApi.listen(channels[i]);
@@ -65,9 +65,9 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
           }).defer.promise;
 
           var path = $location.path();
-          var channels = routeBasedSubscriptions[path];
+          var channels = routeBasedChannels[path];
           if(channels === undefined) {
-            routeBasedSubscriptions[path] = channels = [];
+            routeBasedChannels[path] = channels = [];
           }
           channels.push(channel);
         }

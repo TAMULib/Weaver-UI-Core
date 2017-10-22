@@ -27,10 +27,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
     AuthService.getAssumedUser = function (assume, cb) {
         if (!AuthService.pendingRefresh) {
             AuthService.pendingRefresh = $http.get(appConfig.authService + "/admin?netid=" + assume.netid, {
-                withCredentials: true,
-                headers: {
-                    'X-Requested-With': undefined
-                }
+                withCredentials: true
             }).then(function (response) {
 
                 if (response.data.assumed) {
@@ -65,7 +62,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
 
             var url = appConfig.authService + "/refresh";
 
-            if (typeof sessionStorage.token != null) {
+            if (sessionStorage.token !== undefined) {
                 url += "?token=" + sessionStorage.token;
             } else {
                 if (appConfig.mockRole) {
@@ -74,10 +71,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             }
 
             AuthService.pendingRefresh = $http.get(url, {
-                withCredentials: true,
-                headers: {
-                    'X-Requested-With': undefined
-                }
+                withCredentials: true
             }).then(function (response) {
 
                 sessionStorage.token = response.data.tokenAsString;

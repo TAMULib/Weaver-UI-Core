@@ -70,8 +70,6 @@ core.controller('AuthenticationController', function ($controller, $location, $s
             $window.open(appConfig.authService + "/token?referer=" + location.origin + path, "_self");
         }
 
-        UserService.fetchUser();
-
     };
 
     /**
@@ -85,18 +83,11 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      *  direct to the default home page
      */
     $scope.logout = function () {
-
         delete sessionStorage.token;
         sessionStorage.role = appConfig.anonymousRole;
-
         $scope.user.logout();
-
-        UserService.fetchUser();
-
         angular.element(".dropdown").dropdown("toggle");
-
         $location.path('/');
-
     };
 
 });

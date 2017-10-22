@@ -30,4 +30,8 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
         return currentUser;
     };
 
+    if (sessionStorage.token) {
+        UserService.fetchUser();
+    }
+
 });

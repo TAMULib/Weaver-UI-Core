@@ -26,8 +26,8 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
     $rootScope.$on("$routeChangeSuccess", function (evt, next, current) {
         var path = $location.path();
         var channels = routeBasedChannels[path];
-        if(channels) {
-            for(var i in channels) {
+        if (channels) {
+            for (var i in channels) {
                 WsApi.listen(channels[i]);
             }
         }
@@ -49,27 +49,28 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
      */
     WsApi.listen = function (apiReq) {
         var channel;
-        if(typeof apiReq === 'string') {
-          channel = apiReq;
+        if (typeof apiReq === 'string') {
+            channel = apiReq;
         } else {
-          channel = apiReq.endpoint + "/" + apiReq.controller;
-          if (apiReq.method) {
-              channel += "/" + apiReq.method;
-          }
+            channel = apiReq.endpoint + "/" + apiReq.controller;
+            if (apiReq.method) {
+                channel += "/" + apiReq.method;
+            }
         }
-        if(subscriptions[channel] === undefined) {
-          subscriptions[channel] = WsService.subscribe(channel, listenCount++, true, function() {
-            console.log('deleting', channel);
-            delete subscriptions[channel];
-            listenCount--;
-          }).defer.promise;
+        if (subscriptions[channel] === undefined) {
+            console.log('subscribed', channel);
+            subscriptions[channel] = WsService.subscribe(channel, listenCount++, true, function () {
+                console.log('unsubscribed', channel);
+                delete subscriptions[channel];
+                listenCount--;
+            }).defer.promise;
 
-          var path = $location.path();
-          var channels = routeBasedChannels[path];
-          if(channels === undefined) {
-            routeBasedChannels[path] = channels = [];
-          }
-          channels.push(channel);
+            var path = $location.path();
+            var channels = routeBasedChannels[path];
+            if (channels === undefined) {
+                routeBasedChannels[path] = channels = [];
+            }
+            channels.push(channel);
         }
         return subscriptions[channel]
     };

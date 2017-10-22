@@ -145,7 +145,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             url: url,
             headers: headers
         };
-        console.log('before', sessionStorage.token);
 
         return $http(restObj).then(
             //success callback
@@ -160,7 +159,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
                         });
                     } else {
                         return AuthService.getRefreshToken().then(function () {
-                            console.log('after', sessionStorage.token);
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -168,7 +166,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
                         });
                     }
                 }
-                console.log(response.data.meta.status, response.config.url, response);
                 AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
@@ -210,8 +207,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             headers: headers
         };
 
-        console.log('before', sessionStorage.token);
-
         return $http(restObj).then(
             //success callback
             function (response) {
@@ -225,7 +220,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
                         });
                     } else {
                         return AuthService.getRefreshToken().then(function () {
-                            console.log('after', sessionStorage.token);
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
@@ -233,7 +227,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
                         });
                     }
                 }
-                console.log(response.data.meta.status, response.config.url, response);
                 AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },

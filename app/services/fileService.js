@@ -8,14 +8,12 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var headers = req.data !== undefined ? req.data : {};
 
         return $http({
             method: 'GET',
             url: url,
-            headers: {
-                'data': data
-            },
+            headers: headers,
             responseType: 'arraybuffer'
         }).then(
             //success callback
@@ -23,8 +21,8 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                 return response.data;
             },
             //error callback
-            function (response) {
-                return response.data;
+            function (error) {
+                return error.data;
             });
     };
 
@@ -49,55 +47,49 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         return defer.promise;
     }
 
-    this.download = function (req, isUrl) {
+    this.download = function (req) {
 
-        var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
+        var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var headers = req.data !== undefined ? req.data : {};
+
+        if (sessionStorage.token) {
+            headers.jwt = sessionStorage.token;
+        }
 
         var restObj = {
             method: 'GET',
             url: url,
-            headers: {
-                'jwt': sessionStorage.token,
-                'data': data,
-                'X-Requested-With': undefined
-            },
+            headers: headers,
             responseType: 'arraybuffer'
         };
 
         return $http(restObj).then(
             //success callback
             function (response) {
-                return response.data;
-            },
-            //error callback
-            function (response) {
-                if (response.data.code == "EXPIRED_JWT") {
-
+                if (response.data.meta !== undefined && response.data.meta.status === 'REFRESH') {
                     if (sessionStorage.assumedUser) {
-
-                        return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                        return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
                             });
                         });
-
                     } else {
-
                         return AuthService.getRefreshToken().then(function () {
                             restObj.headers.jwt = sessionStorage.token;
                             return $http(restObj).then(function (response) {
                                 return response.data;
                             });
                         });
-
                     }
-
-                } else {
-                    $window.location.replace(authservice + "/token?referer=" + window.location);
                 }
+                return response.data;
+            },
+            //error callback
+            function (error) {
+                console.log(error);
+                return error.data;
             });
     };
 
@@ -105,28 +97,28 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
+        var headers = {};
+
+        if (sessionStorage.token) {
+            headers.jwt = sessionStorage.token;
+        }
+
         return attemptUpload({
             url: url,
             data: {
                 file: req.file
             },
-            headers: {
-                'jwt': sessionStorage.token,
-                'X-Requested-With': undefined
-            }
+            headers: headers
         }, $q.defer());
     };
 
     var attemptUpload = function (uploadObj, defer) {
 
         Upload.upload(uploadObj).then(function (response) {
-            defer.resolve(response);
-        }, function (response) {
-            if (response.data.code == "EXPIRED_JWT") {
-
+            if (response.data.meta.status === 'REFRESH') {
                 if (sessionStorage.assumedUser) {
 
-                    return AuthService.getAssumedUser(JSON.parse(sessionStorage.assumedUser)).then(function () {
+                    return AuthService.getAssumedUser(angular.toJson(sessionStorage.assumedUser)).then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
@@ -139,15 +131,11 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                     });
 
                 }
-
-            } else {
-                if (response.status == 302) {
-                    $window.location.replace(authservice + "/token?referer=" + window.location);
-                } else {
-                    defer.reject(response);
-                }
             }
-
+            defer.resolve(response);
+        }, function (error) {
+            console.log(error);
+            defer.reject(error);
         }, function (event) {
             defer.notify(parseInt(100.0 * event.loaded / event.total));
         });

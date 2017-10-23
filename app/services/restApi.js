@@ -54,7 +54,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
+        var data = req.data !== undefined ? req.data : {};
 
         return $http({
             method: 'GET',
@@ -71,6 +71,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             },
             // error callback
             function (error) {
+                console.log(error);
                 return error.data;
             });
     };
@@ -111,6 +112,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             },
             // error callback
             function (error) {
+                console.log(error);
                 return error.data;
             });
     };
@@ -172,6 +174,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             //error callback
             function (error) {
                 console.log(error);
+                return error.data;
             });
     };
 
@@ -233,6 +236,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
             //error callback
             function (error) {
                 console.log(error);
+                return error.data;
             });
     };
 

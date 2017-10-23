@@ -31,7 +31,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             }).then(function (response) {
 
                 if (response.data.assumed) {
-                    StorageService.set('token', response.data.assumed.tokenAsString);
+                    StorageService.set('token', response.data.assumed);
                 }
 
                 // This timeout ensures that pending request is not nulled to early
@@ -74,7 +74,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 withCredentials: true
             }).then(function (response) {
 
-                sessionStorage.token = response.data.tokenAsString;
+                sessionStorage.token = response.data;
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
@@ -82,7 +82,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 }, 50);
 
                 if (cb) cb();
-            }, function (response) {
+            }, function (error) {
 
                 delete sessionStorage.token;
 

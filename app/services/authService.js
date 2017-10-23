@@ -64,10 +64,6 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
 
             if (sessionStorage.token !== undefined) {
                 url += "?token=" + sessionStorage.token;
-            } else {
-                if (appConfig.mockRole) {
-                    url += "?mock=" + appConfig.mockRole;
-                }
             }
 
             AuthService.pendingRefresh = $http.get(url, {

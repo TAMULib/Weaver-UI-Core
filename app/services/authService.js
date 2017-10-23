@@ -27,14 +27,11 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
     AuthService.getAssumedUser = function (assume, cb) {
         if (!AuthService.pendingRefresh) {
             AuthService.pendingRefresh = $http.get(appConfig.authService + "/admin?netid=" + assume.netid, {
-                withCredentials: true,
-                headers: {
-                    'X-Requested-With': undefined
-                }
+                withCredentials: true
             }).then(function (response) {
 
                 if (response.data.assumed) {
-                    StorageService.set('token', response.data.assumed.tokenAsString);
+                    StorageService.set('token', response.data.assumed);
                 }
 
                 // This timeout ensures that pending request is not nulled to early
@@ -65,22 +62,15 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
 
             var url = appConfig.authService + "/refresh";
 
-            if (typeof sessionStorage.token != null) {
+            if (sessionStorage.token !== undefined) {
                 url += "?token=" + sessionStorage.token;
-            } else {
-                if (appConfig.mockRole) {
-                    url += "?mock=" + appConfig.mockRole;
-                }
             }
 
             AuthService.pendingRefresh = $http.get(url, {
-                withCredentials: true,
-                headers: {
-                    'X-Requested-With': undefined
-                }
+                withCredentials: true
             }).then(function (response) {
 
-                sessionStorage.token = response.data.tokenAsString;
+                sessionStorage.token = response.data;
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
@@ -88,7 +78,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 }, 50);
 
                 if (cb) cb();
-            }, function (response) {
+            }, function (error) {
 
                 delete sessionStorage.token;
 

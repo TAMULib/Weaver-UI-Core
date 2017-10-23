@@ -300,7 +300,13 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         var acceptPendingModelUpdate = function(model, pending) {
-            angular.extend(model, pending);
+            var combinationOperation = model.getCombinationOperation();
+            if(combinationOperation === 'extend') {
+              angular.forEach(pending, function (datum) {
+                  angular[combinationOperation](model, pending);
+              });
+            }
+            angular[combinationOperation](model, pending);
             model.updatePending = false;
             model.updateRequested = false;
             model.acceptPendingUpdate = function() {
@@ -328,6 +334,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             validations = ValidationStore.getValidations(modelName);
         }
 
+        // TODO: remove when all repos upgraded!!!
         if (abstractRepo.mapping.listen) {
             WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
                 build(unwrap(res)).then(function () {

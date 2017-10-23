@@ -9,11 +9,29 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, RestApi, WsService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
     var WsApi = this;
 
     var listenCount = 0;
+
+    var subscriptions = {};
+
+    var routeBasedChannels = {};
+
+    $rootScope.$on("$routeChangeStart", function (evt, next, current) {
+        WsService.unsubscribeAll();
+    });
+
+    $rootScope.$on("$routeChangeSuccess", function (evt, next, current) {
+        var path = $location.path();
+        var channels = routeBasedChannels[path];
+        if (channels) {
+            for (var i in channels) {
+                WsApi.listen(channels[i]);
+            }
+        }
+    });
 
     /**
      * @ngdoc method
@@ -31,16 +49,30 @@ core.service("WsApi", function ($q, RestApi, WsService) {
      */
     WsApi.listen = function (apiReq) {
         var channel;
-        if(typeof apiReq === 'string') {
-          channel = apiReq;
+        if (typeof apiReq === 'string') {
+            channel = apiReq;
         } else {
-          channel = apiReq.endpoint + "/" + apiReq.controller;
-          if (apiReq.method) {
-              channel += "/" + apiReq.method;
-          }
+            channel = apiReq.endpoint + "/" + apiReq.controller;
+            if (apiReq.method) {
+                channel += "/" + apiReq.method;
+            }
         }
-        
-        return WsService.subscribe(channel, listenCount++, true).defer.promise;
+        if (subscriptions[channel] === undefined) {
+            console.log('subscribed', channel);
+            subscriptions[channel] = WsService.subscribe(channel, listenCount++, true, function () {
+                console.log('unsubscribed', channel);
+                delete subscriptions[channel];
+                listenCount--;
+            }).defer.promise;
+
+            var path = $location.path();
+            var channels = routeBasedChannels[path];
+            if (channels === undefined) {
+                routeBasedChannels[path] = channels = [];
+            }
+            channels.push(channel);
+        }
+        return subscriptions[channel]
     };
 
     WsApi.clearSubscriptions = function () {

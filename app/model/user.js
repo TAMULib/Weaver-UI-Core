@@ -6,7 +6,7 @@ core.model("User", function ($q, RestApi, StorageService) {
 
         // additional model methods and variables
 
-        this.anonymous = (sessionStorage.role == appConfig.anonymousRole);
+        this.anonymous = (sessionStorage.role === appConfig.anonymousRole);
 
         this.authDefer = $q.defer();
 
@@ -63,8 +63,8 @@ core.model("User", function ($q, RestApi, StorageService) {
                 data: account
             }).then(function (data) {
 
-                if (data.payload.Jwt !== undefined) {
-                    StorageService.set("token", data.payload.Jwt.tokenAsString);
+                if (data.payload.String !== undefined) {
+                    StorageService.set("token", data.payload.String);
                 }
 
                 if (data.meta.status === 'INVALID') {

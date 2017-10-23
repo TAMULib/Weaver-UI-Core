@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
+core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
     return function AbstractModel(repoName) {
 
@@ -100,6 +100,10 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             combinationOperation = 'extend';
         };
 
+        this.getCombinationOperation = function () {
+            return combinationOperation;
+        };
+
         this.getEntityName = function () {
             return entityName;
         };
@@ -117,13 +121,58 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.save = function () {
-            injectRepo();
-            return repo.save(this);
+            if (injectRepo()) {
+                return repo.save(this);
+            } else {
+                var model = this;
+                var promise = $q(function (resolve) {
+                    if (model.dirty()) {
+                        angular.extend(mapping.update, {
+                            data: model
+                        });
+                        WsApi.fetch(mapping.update).then(function (res) {
+                            resolve(res);
+                        });
+                    } else {
+                        var payload = {};
+                        payload[model.constructor.name] = model;
+                        resolve({
+                            body: angular.toJson({
+                                payload: payload,
+                                meta: {
+                                    type: "SUCCESS"
+                                }
+                            })
+                        });
+                    }
+                });
+                promise.then(function (res) {
+                    var message = angular.fromJson(res.body);
+                    if (message.meta.status === "INVALID") {
+                        angular.extend(abstractRepo, message.payload);
+                    }
+                });
+                return promise;
+            }
         };
 
         this.delete = function () {
-            injectRepo();
-            return repo.delete(this);
+            if (injectRepo()) {
+                return repo.delete(this);
+            } else {
+                var model = this;
+                angular.extend(mapping.remove, {
+                    data: model
+                });
+                var promise = WsApi.fetch(mapping.remove);
+                promise.then(function (res) {
+                    var message = angular.fromJson(res.body);
+                    if (message.meta.status === "INVALID") {
+                        angular.extend(abstractRepo, message.payload);
+                    }
+                });
+                return promise;
+            }
         };
 
         this.listen = function (cb) {
@@ -138,11 +187,11 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
             shadow = angular.copy(abstractModel);
         };
 
-        this.acceptPendingUpdate = function() {
+        this.acceptPendingUpdate = function () {
             console.warn("No update pending!");
         };
 
-        this.acceptPendingDelete = function() {
+        this.acceptPendingDelete = function () {
             console.warn("No delete pending!");
         };
 
@@ -151,13 +200,14 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.dirty = function () {
-            return angular.toJson(abstractModel) !== angular.toJson(shadow);
+            return compare(abstractModel, shadow);
         };
 
         this.setValidationResults = function (results) {
-            injectRepo();
             angular.extend(validationResults, results);
-            angular.extend(repo.ValidationResults, results);
+            if (injectRepo()) {
+                angular.extend(repo.ValidationResults, results);
+            }
         };
 
         this.getValidationResults = function () {
@@ -174,18 +224,53 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         };
 
         this.extend = function (changes) {
-          angular.extend(abstractModel, changes);
-          abstractModel._syncShadow();
+            angular.extend(abstractModel, changes);
+            abstractModel._syncShadow();
+        };
+
+        var compare = function (m, s) {
+            if (typeof m === 'object') {
+                if (typeof s === 'object') {
+                    var diff = false;
+                    for (var i in m) {
+                        if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
+                            diff = compare(m[i], s[i]);
+                            if (diff) {
+                                // console.log(i)
+                                break;
+                            }
+                        }
+                    }
+                    return diff;
+                } else {
+                    return false;
+                }
+            } else if (typeof m === 'function') {
+                return false;
+            } else {
+                // console.log(m != s, m, s);
+                return m != s;
+            }
         };
 
         var injectRepo = function () {
             if (repo === undefined) {
-                repo = $injector.get(repoName);
+                try {
+                    repo = $injector.get(repoName);
+                } catch (e) {
+                    console.warn('Unable to inject ' + repoName);
+                    return false;
+                }
+                return true;
+            } else {
+                return true;
             }
         };
 
         var setData = function (data) {
+
             angular[combinationOperation](abstractModel, data);
+
             abstractModel._syncShadow();
             if (!listening && mapping.modelListeners) {
                 listen();
@@ -223,9 +308,11 @@ core.factory("AbstractModel", function ($injector, $q, $rootScope, ModelCache, M
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
             if (resObj.meta.status !== 'ERROR') {
-                angular.forEach(resObj.payload, function (datum) {
-                    angular[combinationOperation](abstractModel, datum);
-                });
+                if (combinationOperation === 'extend') {
+                    angular.forEach(resObj.payload, function (datum) {
+                        angular[combinationOperation](abstractModel, datum);
+                    });
+                }
                 setData(abstractModel);
             } else {
                 abstractModel.refresh();

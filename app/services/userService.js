@@ -11,7 +11,7 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
         WsApi.fetch(currentUser.getMapping().instantiate).then(function (res) {
             delete sessionStorage.role;
             var credentials = angular.fromJson(res.body).payload.Credentials;
-            currentUser.anonymous = credentials.role == appConfig.anonymousRole ? true : false;
+            currentUser.anonymous = credentials.role === appConfig.anonymousRole ? true : false;
             angular.extend(currentUser, credentials);
             StorageService.set("role", currentUser.role);
             userEvents.notify('RECEIVED');
@@ -29,5 +29,9 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
     UserService.getCurrentUser = function () {
         return currentUser;
     };
+
+    if (sessionStorage.token) {
+        UserService.fetchUser();
+    }
 
 });

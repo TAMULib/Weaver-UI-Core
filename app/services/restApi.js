@@ -54,7 +54,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = req.data !== undefined ? req.data : {};
+        var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
 
         return $http({
             method: 'GET',

@@ -236,7 +236,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
                         if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
                             diff = compare(m[i], s[i]);
                             if (diff) {
-                                // console.log(i)
+                                // console.log(i);
                                 break;
                             }
                         }
@@ -249,7 +249,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
                 return false;
             } else {
                 // console.log(m != s, m, s);
-                return m != s;
+                return m != s && s !== undefined;
             }
         };
 

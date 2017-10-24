@@ -10,8 +10,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var actionCbs = {};
 
-        angular.forEach(ApiResponseActions, function(action) {
-          actionCbs[action] = [];
+        angular.forEach(ApiResponseActions, function (action) {
+            actionCbs[action] = [];
         });
 
         var validations = {};
@@ -19,9 +19,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var pendingChanges;
 
         $rootScope.$on("$locationChangeSuccess", function () {
-          angular.forEach(actionCbs, function(actionCbs) {
-            actionCbs.length = 0;
-          });
+            angular.forEach(actionCbs, function (actionCbs) {
+                actionCbs.length = 0;
+            });
         });
 
         abstractRepo.mapping = mapping;
@@ -34,8 +34,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         abstractRepo.contains = function (model) {
             var contains = false;
-            for(var i in list) {
-                if(list[i].id === model.id) {
+            for (var i in list) {
+                if (list[i].id === model.id) {
                     contains = true;
                 }
             }
@@ -43,7 +43,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.add = function (modelJson) {
-            if(!abstractRepo.contains(modelJson)) {
+            if (!abstractRepo.contains(modelJson)) {
                 list.push(new model(modelJson));
             }
         };
@@ -209,14 +209,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.listen = function (cbOrAction, cb) {
-            if(typeof cbOrAction === "function") {
-              actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            if (typeof cbOrAction === "function") {
+                actionCbs[ApiResponseActions.ANY].push(cbOrAction);
             } else {
-              actionCbs[cbOrAction].push(cb);
+                actionCbs[cbOrAction].push(cb);
             }
         };
 
-        abstractRepo.acceptPendingChanges = function() {
+        abstractRepo.acceptPendingChanges = function () {
             list.length = 0;
             angular.forEach(pendingChanges, function (modelObj) {
                 list.push(new model(modelObj));
@@ -224,7 +224,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             delete pendingChanges;
         };
 
-        abstractRepo.changesPending = function() {
+        abstractRepo.changesPending = function () {
             return pendingChanges !== undefined;
         };
 
@@ -299,35 +299,35 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
-        var acceptPendingModelUpdate = function(model, pending) {
+        var acceptPendingModelUpdate = function (model, pending) {
             var combinationOperation = model.getCombinationOperation();
-            if(combinationOperation === 'extend') {
-              angular.forEach(pending, function (datum) {
-                  angular[combinationOperation](model, pending);
-              });
+            if (combinationOperation === 'extend') {
+                angular.forEach(pending, function (datum) {
+                    angular[combinationOperation](model, pending);
+                });
             }
             angular[combinationOperation](model, pending);
             model.updatePending = false;
             model.updateRequested = false;
-            model.acceptPendingUpdate = function() {
+            model.acceptPendingUpdate = function () {
                 console.warn("No update pending!");
             };
             model._syncShadow();
         };
 
-        var acceptPendingModelDelete = function(model, i) {
+        var acceptPendingModelDelete = function (model, i) {
             list.splice(i, 1);
             model.deletePending = false;
             model.deleteRequested = false;
-            model.acceptPendingDelete = function() {
+            model.acceptPendingDelete = function () {
                 console.warn("No delete pending!");
             };
         };
 
-        var runActionCBs = function(action, resObj) {
-          angular.forEach(actionCbs[action], function(cb) {
-            cb(resObj);
-          });
+        var runActionCBs = function (action, resObj) {
+            angular.forEach(actionCbs[action], function (cb) {
+                cb(resObj);
+            });
         };
 
         if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
@@ -357,11 +357,11 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.READ:
                 case ApiResponseActions.UPDATE:
                     var existingModelToUpdate = abstractRepo.findById(modelObj.id);
-                    if(existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
+                    if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
                         acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                     } else {
                         existingModelToUpdate.updatePending = true;
-                        existingModelToUpdate.acceptPendingUpdate = function() {
+                        existingModelToUpdate.acceptPendingUpdate = function () {
                             acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                         };
                         console.warn("Update attempted on dirty model", existingModelToUpdate);
@@ -371,13 +371,13 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     for (var i in list) {
                         var existingModelToDelete = list[i];
                         if (existingModelToDelete.id === modelObj.id) {
-                            if(existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
-                                acceptPendingModelDelete(i);
+                            if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
+                                acceptPendingModelDelete(existingModelToDelete, i);
                             } else {
                                 existingModelToDelete.deletePending = true;
                                 /*jshint loopfunc: true */
-                                existingModelToDelete.acceptPendingDelete = function() {
-                                    acceptPendingModelDelete(i);
+                                existingModelToDelete.acceptPendingDelete = function () {
+                                    acceptPendingModelDelete(existingModelToDelete, i);
                                 };
                                 console.warn("Delete attempted on dirty model", existingModelToDelete);
                             }
@@ -390,12 +390,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.SORT:
                 case ApiResponseActions.BROADCAST:
                     var repoDirty = false;
-                    for(var j in list) {
+                    for (var j in list) {
                         repoDirty = list[j].dirty();
-                        if(repoDirty) break;
+                        if (repoDirty) break;
                     }
                     pendingChanges = unwrap(res);
-                    if(!repoDirty) {
+                    if (!repoDirty) {
                         abstractRepo.acceptPendingChanges();
                     } else {
                         console.warn(resObj.meta.action + " attempted on dirty repo");

@@ -7,5 +7,6 @@ core.constant("ApiResponseActions", {
   REMOVE: "REMOVE",
   SORT: "SORT",
   BROADCAST: "BROADCAST",
+  CHANGE: "CHANGE",
   ANY: "ANY"
 });

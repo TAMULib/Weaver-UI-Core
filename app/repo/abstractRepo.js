@@ -90,12 +90,16 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             return list;
         };
 
+        abstractRepo.setToUpdate = function(id) {
+            var modelToUpdate = abstractRepo.findById(id);
+            setToUpdate(modelToUpdate);
+        };
+
         abstractRepo.save = function (model) {
             abstractRepo.clearValidationResults();
             var promise = $q(function (resolve) {
                 if (model.dirty()) {
-                    model.updateRequested = true;
-                    model._syncShadow();
+                    setToUpdate(model);
                     angular.extend(mapping.update, {
                         data: model
                     });
@@ -150,10 +154,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
+        abstractRepo.setToDelete = function(id) {
+            var modelToDelete = abstractRepo.findById(id);
+            setToDelete(modelToDelete);
+        };
+
         abstractRepo.delete = function (model) {
             abstractRepo.clearValidationResults();
-            model.deleteRequested = true;
-            model._syncShadow();
+            setToDelete(model);
             angular.extend(mapping.remove, {
                 data: model
             });
@@ -299,6 +307,18 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
+        var setToUpdate = function(model) {
+            console.log('update', model);
+            model.updateRequested = true;
+            model._syncShadow();
+        };
+
+        var setToDelete = function(model) {
+            console.log('delete', model);
+            model.updateDelete = true;
+            model._syncShadow();
+        };
+
         var acceptPendingModelUpdate = function (model, pending) {
             var combinationOperation = model.getCombinationOperation();
             if (combinationOperation === 'extend') {
@@ -364,7 +384,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         existingModelToUpdate.acceptPendingUpdate = function () {
                             acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                         };
-                        console.warn("Update attempted on dirty model", existingModelToUpdate);
+                        console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
                     }
                     break;
                 case ApiResponseActions.DELETE:
@@ -379,7 +399,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                                 existingModelToDelete.acceptPendingDelete = function () {
                                     acceptPendingModelDelete(existingModelToDelete, i);
                                 };
-                                console.warn("Delete attempted on dirty model", existingModelToDelete);
+                                console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
                             }
                             break;
                         }
@@ -394,7 +414,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         repoDirty = list[j].dirty();
                         if (repoDirty) break;
                     }
-                    pendingChanges = unwrap(res);
+                    pendingChanges = modelObj;
                     if (!repoDirty) {
                         abstractRepo.acceptPendingChanges();
                     } else {

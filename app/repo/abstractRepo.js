@@ -18,7 +18,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var pendingChanges;
 
-        $rootScope.$on("$locationChangeSuccess", function () {
+        $rootScope.$on("$routeChangeSuccess", function () {
             angular.forEach(actionCbs, function (actionCbs) {
                 actionCbs.length = 0;
             });
@@ -90,7 +90,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             return list;
         };
 
-        abstractRepo.setToUpdate = function(id) {
+        abstractRepo.setToUpdate = function (id) {
             var modelToUpdate = abstractRepo.findById(id);
             setToUpdate(modelToUpdate);
         };
@@ -154,7 +154,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
-        abstractRepo.setToDelete = function(id) {
+        abstractRepo.setToDelete = function (id) {
             var modelToDelete = abstractRepo.findById(id);
             setToDelete(modelToDelete);
         };
@@ -307,14 +307,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
         };
 
-        var setToUpdate = function(model) {
-            console.log('update', model);
+        var setToUpdate = function (model) {
             model.updateRequested = true;
             model._syncShadow();
         };
 
-        var setToDelete = function(model) {
-            console.log('delete', model);
+        var setToDelete = function (model) {
             model.updateDelete = true;
             model._syncShadow();
         };
@@ -412,7 +410,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     var repoDirty = false;
                     for (var j in list) {
                         repoDirty = list[j].dirty();
-                        if (repoDirty) break;
+                        if (repoDirty) {
+                            break;
+                        }
                     }
                     pendingChanges = modelObj;
                     if (!repoDirty) {
@@ -422,6 +422,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     }
                     break;
                 }
+
                 runActionCBs(resObj.meta.action, resObj);
                 runActionCBs(ApiResponseActions.ANY, resObj);
             });

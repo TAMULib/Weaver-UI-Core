@@ -409,7 +409,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.BROADCAST:
                     var repoDirty = false;
                     for (var j in list) {
-                        repoDirty = list[j].dirty();
+                        repoDirty = !list[j].updateRequested && list[j].dirty();
                         if (repoDirty) {
                             break;
                         }

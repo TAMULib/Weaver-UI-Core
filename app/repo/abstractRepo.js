@@ -411,6 +411,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     for (var j in list) {
                         repoDirty = !list[j].updateRequested && list[j].dirty();
                         if (repoDirty) {
+                            console.log(list[j])
                             break;
                         }
                     }

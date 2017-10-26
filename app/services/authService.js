@@ -30,7 +30,11 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             AuthService.pendingRefresh = $http.get(url, {
                 'Accept': 'application/json, text/plain'
             }).then(function (response) {
-                sessionStorage.token = response.data.payload.String;
+                if (response.data.meta.status === 'SUCCESS') {
+                    sessionStorage.token = response.data.payload.String;
+                } else {
+                    console.log(response.data);
+                }
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
@@ -66,7 +70,12 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             AuthService.pendingRefresh = $http.get(url, {
                 'Accept': 'application/json, text/plain'
             }).then(function (response) {
-                sessionStorage.token = response.data.payload.String;
+
+                if (response.data.meta.status === 'SUCCESS') {
+                    sessionStorage.token = response.data.payload.String;
+                } else {
+                    console.log(response.data);
+                }
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {

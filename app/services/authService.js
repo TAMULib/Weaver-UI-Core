@@ -26,13 +26,11 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
      */
     AuthService.getAssumedUser = function (assume, cb) {
         if (!AuthService.pendingRefresh) {
-            AuthService.pendingRefresh = $http.get(appConfig.authService + "/admin?netid=" + assume.netid, {
-                withCredentials: true
+            var url = appConfig.authService + "/admin?netid=" + assume.netid;
+            AuthService.pendingRefresh = $http.get(url, {
+                'Accept': 'application/json, text/plain'
             }).then(function (response) {
-
-                if (response.data.assumed) {
-                    StorageService.set('token', response.data.assumed);
-                }
+                sessionStorage.token = response.data.payload.String;
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
@@ -59,7 +57,6 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
      */
     AuthService.getRefreshToken = function (cb) {
         if (!AuthService.pendingRefresh) {
-
             var url = appConfig.authService + "/refresh";
 
             if (sessionStorage.token !== undefined) {
@@ -67,10 +64,9 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             }
 
             AuthService.pendingRefresh = $http.get(url, {
-                withCredentials: true
+                'Accept': 'application/json, text/plain'
             }).then(function (response) {
-
-                sessionStorage.token = response.data;
+                sessionStorage.token = response.data.payload.String;
 
                 // This timeout ensures that pending request is not nulled to early
                 $timeout(function () {
@@ -79,7 +75,7 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
 
                 if (cb) cb();
             }, function (error) {
-
+                console.log(error);
                 delete sessionStorage.token;
 
                 if (appConfig.mockRole) {

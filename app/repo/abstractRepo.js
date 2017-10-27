@@ -107,6 +107,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         resolve(res);
                     });
                 } else {
+                    console.log('Not processing reauest. No changes to model.', model)
                     var payload = {};
                     payload[model.constructor.name] = model;
                     resolve({

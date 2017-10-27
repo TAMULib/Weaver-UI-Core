@@ -247,8 +247,8 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
             } else if (typeof m === 'function') {
                 return false;
             } else {
-                // console.log((m != s && s !== undefined), m, s);
-                return m != s && s !== undefined;
+                // console.log((m != s), m, s);
+                return m != s;
             }
         };
 

@@ -63,13 +63,12 @@ core.model("User", function ($q, RestApi, StorageService) {
                 data: account
             }).then(function (data) {
 
-                if (data.payload.String !== undefined) {
-                    StorageService.set("token", data.payload.String);
-                }
-
                 if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
+                    if (data.meta.status === 'SUCCESS') {
+                        sessionStorage.token = data.payload.String
+                    }
                     deferred.resolve(data);
                 }
 

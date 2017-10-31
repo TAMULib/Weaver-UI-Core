@@ -6,7 +6,7 @@ core.model("User", function ($q, RestApi, StorageService) {
 
         // additional model methods and variables
 
-        this.anonymous = (sessionStorage.role == appConfig.anonymousRole);
+        this.anonymous = (sessionStorage.role === appConfig.anonymousRole);
 
         this.authDefer = $q.defer();
 
@@ -23,7 +23,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                 method: 'register?email=' + email
             }).then(function (data) {
 
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     deferred.resolve(data);
@@ -43,7 +43,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                 'data': registration
             }).then(function (data) {
 
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     deferred.resolve(data);
@@ -63,13 +63,12 @@ core.model("User", function ($q, RestApi, StorageService) {
                 data: account
             }).then(function (data) {
 
-                if (data.payload.Jwt !== undefined) {
-                    StorageService.set("token", data.payload.Jwt.tokenAsString);
-                }
-
-                if (data.meta.type === 'INVALID') {
+                if (data.meta.status === 'INVALID') {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
+                    if (data.meta.status === 'SUCCESS') {
+                        sessionStorage.token = data.payload.String
+                    }
                     deferred.resolve(data);
                 }
 

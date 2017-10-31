@@ -16,7 +16,7 @@ function setUpApp(bootstrapApp) {
             delete sessionStorage.role;
         }
         connect({
-            "jwt": sessionStorage.token
+            jwt: sessionStorage.token
         });
 
     } else {
@@ -75,7 +75,7 @@ function setUpApp(bootstrapApp) {
 
         var queriesString = location.search;
 
-        if (typeof (queriesString) === "undefined") {
+        if (queriesString === undefined) {
             return null;
         }
 

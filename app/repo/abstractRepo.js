@@ -1,68 +1,30 @@
-core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
+core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActions, ValidationStore, WsApi) {
 
     return function AbstractRepo(modelName, model, mapping) {
 
         var abstractRepo = this;
 
-        abstractRepo.mapping = mapping;
-
         var list = [];
 
         var defer = $q.defer();
 
-        var listenCallbacks = [];
+        var actionCbs = {};
+
+        angular.forEach(ApiResponseActions, function (action) {
+            actionCbs[action] = [];
+        });
 
         var validations = {};
 
-        if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
-            validations = ValidationStore.getValidations(modelName);
-        }
+        var pendingChanges;
 
-        $rootScope.$on("$locationChangeSuccess", function () {
-            listenCallbacks.length = 0;
-        });
-
-        var build = function (data) {
-            return $q(function (resolve) {
-                list.length = 0;
-                angular.forEach(data, function (modelJson) {
-                    abstractRepo.add(modelJson);
-                });
-                resolve();
-            });
-        };
-
-        var unwrap = function (res) {
-            var repoObj = {};
-            var payload = angular.fromJson(res.body).payload;
-            var keys = Object.keys(payload);
-            angular.forEach(keys, function (key) {
-                angular.extend(repoObj, payload[key]);
-            });
-            return repoObj;
-        };
-
-        var fetch = function () {
-            if (abstractRepo.mapping.all !== undefined) {
-                WsApi.fetch(abstractRepo.mapping.all).then(function (res) {
-                    build(unwrap(res)).then(function () {
-                        defer.resolve(res);
-                    });
-                });
-            }
-        };
-
-        WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
-            build(unwrap(res)).then(function () {
-                angular.forEach(listenCallbacks, function (cb) {
-                    cb(res);
-                });
+        $rootScope.$on("$routeChangeSuccess", function () {
+            angular.forEach(actionCbs, function (actionCbs) {
+                actionCbs.length = 0;
             });
         });
 
-        if (!mapping.lazy) {
-            fetch();
-        }
+        abstractRepo.mapping = mapping;
 
         abstractRepo.ValidationResults = {};
 
@@ -70,8 +32,20 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             list.unshift(new model(modelJson));
         };
 
+        abstractRepo.contains = function (model) {
+            var contains = false;
+            for (var i in list) {
+                if (list[i].id === model.id) {
+                    contains = true;
+                }
+            }
+            return contains;
+        };
+
         abstractRepo.add = function (modelJson) {
-            list.push(new model(modelJson));
+            if (!abstractRepo.contains(modelJson)) {
+                list.push(new model(modelJson));
+            }
         };
 
         abstractRepo.addAll = function (modelJsons) {
@@ -116,9 +90,51 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             return list;
         };
 
+        abstractRepo.setToUpdate = function (id) {
+            var modelToUpdate = abstractRepo.findById(id);
+            setToUpdate(modelToUpdate);
+        };
+
+        abstractRepo.save = function (model) {
+            abstractRepo.clearValidationResults();
+            var promise = $q(function (resolve) {
+                if (model.dirty()) {
+                    setToUpdate(model);
+                    angular.extend(mapping.update, {
+                        data: model
+                    });
+                    WsApi.fetch(mapping.update).then(function (res) {
+                        resolve(res);
+                    });
+                } else {
+                    console.log('Not processing reauest. No changes to model.', model)
+                    var payload = {};
+                    payload[model.constructor.name] = model;
+                    resolve({
+                        body: angular.toJson({
+                            payload: payload,
+                            meta: {
+                                type: "SUCCESS"
+                            }
+                        })
+                    });
+                }
+            });
+            promise.then(function (res) {
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
+                } else {
+                    model.acceptPendingUpdate();
+                }
+            });
+            return promise;
+        };
+
         abstractRepo.saveAll = function () {
+            abstractRepo.clearValidationResults();
             angular.forEach(list, function (model) {
-                model.save();
+                abstractRepo.save(model);
             });
         };
 
@@ -139,12 +155,24 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             }
         };
 
+        abstractRepo.setToDelete = function (id) {
+            var modelToDelete = abstractRepo.findById(id);
+            setToDelete(modelToDelete);
+        };
+
         abstractRepo.delete = function (model) {
             abstractRepo.clearValidationResults();
-            var promise = model.delete();
+            setToDelete(model);
+            angular.extend(mapping.remove, {
+                data: model
+            });
+            var promise = WsApi.fetch(mapping.remove);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
+                } else {
+                    model.acceptPendingDelete();
                 }
             });
             return promise;
@@ -154,8 +182,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             abstractRepo.clearValidationResults();
             var promise = abstractRepo.findById(id).delete();
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -168,27 +197,44 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.create);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
         };
 
-        // TODO: remove
         abstractRepo.update = function (model) {
             abstractRepo.clearValidationResults();
-            var promise = model.save();
+            var promise = abstractRepo.save(model);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.type === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
         };
 
-        abstractRepo.listen = function (cb) {
-            listenCallbacks.push(cb);
+        abstractRepo.listen = function (cbOrAction, cb) {
+            if (typeof cbOrAction === "function") {
+                actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            } else {
+                actionCbs[cbOrAction].push(cb);
+            }
+        };
+
+        abstractRepo.acceptPendingChanges = function () {
+            list.length = 0;
+            angular.forEach(pendingChanges, function (modelObj) {
+                list.push(new model(modelObj));
+            });
+            delete pendingChanges;
+        };
+
+        abstractRepo.changesPending = function () {
+            return pendingChanges !== undefined;
         };
 
         // additiona core level repo methods and variables
@@ -201,9 +247,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.sort);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
-                    console.log(abstractRepo);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -216,8 +262,9 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
             });
             var promise = WsApi.fetch(abstractRepo.mapping.reorder);
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractRepo, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+                if (message.meta.status === "INVALID") {
+                    angular.extend(abstractRepo, message.payload);
                 }
             });
             return promise;
@@ -228,12 +275,166 @@ core.service("AbstractRepo", function ($rootScope, $q, WsApi, ValidationStore) {
         };
 
         abstractRepo.clearValidationResults = function () {
-            if (abstractRepo.ValidationResults.messages !== undefined) {
-                delete abstractRepo.ValidationResults.messages;
+            delete abstractRepo.ValidationResults.messages;
+        };
+
+        var build = function (data) {
+            return $q(function (resolve) {
+                list.length = 0;
+                angular.forEach(data, function (modelJson) {
+                    abstractRepo.add(modelJson);
+                });
+                resolve();
+            });
+        };
+
+        var unwrap = function (res) {
+            var repoObj = {};
+            var payload = angular.fromJson(res.body).payload;
+            var keys = Object.keys(payload);
+            angular.forEach(keys, function (key) {
+                angular.extend(repoObj, payload[key]);
+            });
+            return repoObj;
+        };
+
+        var fetch = function () {
+            if (abstractRepo.mapping.all !== undefined) {
+                WsApi.fetch(abstractRepo.mapping.all).then(function (res) {
+                    build(unwrap(res)).then(function () {
+                        defer.resolve(res);
+                    });
+                });
             }
         };
 
+        var setToUpdate = function (model) {
+            model.updateRequested = true;
+            model._syncShadow();
+        };
+
+        var setToDelete = function (model) {
+            model.updateDelete = true;
+            model._syncShadow();
+        };
+
+        var acceptPendingModelUpdate = function (model, pending) {
+            var combinationOperation = model.getCombinationOperation();
+            if (combinationOperation === 'extend') {
+                angular.forEach(pending, function (datum) {
+                    angular[combinationOperation](model, pending);
+                });
+            }
+            angular[combinationOperation](model, pending);
+            model.updatePending = false;
+            model.updateRequested = false;
+            model.acceptPendingUpdate = function () {
+                console.warn("No update pending!");
+            };
+            model._syncShadow();
+        };
+
+        var acceptPendingModelDelete = function (model, i) {
+            list.splice(i, 1);
+            model.deletePending = false;
+            model.deleteRequested = false;
+            model.acceptPendingDelete = function () {
+                console.warn("No delete pending!");
+            };
+        };
+
+        var runActionCBs = function (action, resObj) {
+            angular.forEach(actionCbs[action], function (cb) {
+                cb(resObj);
+            });
+        };
+
+        if (abstractRepo.mapping.validations && modelName !== undefined && modelName !== null && modelName.length > 0) {
+            validations = ValidationStore.getValidations(modelName);
+        }
+
+        // TODO: remove when all repos upgraded!!!
+        if (abstractRepo.mapping.listen) {
+            WsApi.listen(abstractRepo.mapping.listen).then(null, null, function (res) {
+                build(unwrap(res)).then(function () {
+                    runActionCBs(ApiResponseActions.ANY, angular.fromJson(res.body));
+                });
+            });
+        }
+
+        if (abstractRepo.mapping.channel) {
+
+            WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
+
+                var resObj = angular.fromJson(res.body);
+                var modelObj = unwrap(res);
+
+                switch (resObj.meta.action) {
+                case ApiResponseActions.CREATE:
+                    abstractRepo.add(modelObj);
+                    break;
+                case ApiResponseActions.READ:
+                case ApiResponseActions.UPDATE:
+                    var existingModelToUpdate = abstractRepo.findById(modelObj.id);
+                    if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
+                        acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                    } else {
+                        existingModelToUpdate.updatePending = true;
+                        existingModelToUpdate.acceptPendingUpdate = function () {
+                            acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                        };
+                        console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
+                    }
+                    break;
+                case ApiResponseActions.DELETE:
+                    for (var i in list) {
+                        var existingModelToDelete = list[i];
+                        if (existingModelToDelete.id === modelObj.id) {
+                            if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
+                                acceptPendingModelDelete(existingModelToDelete, i);
+                            } else {
+                                existingModelToDelete.deletePending = true;
+                                /*jshint loopfunc: true */
+                                existingModelToDelete.acceptPendingDelete = function () {
+                                    acceptPendingModelDelete(existingModelToDelete, i);
+                                };
+                                console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                case ApiResponseActions.REMOVE:
+                case ApiResponseActions.REORDER:
+                case ApiResponseActions.SORT:
+                case ApiResponseActions.BROADCAST:
+                    var repoDirty = false;
+                    for (var j in list) {
+                        repoDirty = !list[j].updateRequested && list[j].dirty();
+                        if (repoDirty) {
+                            console.log(list[j])
+                            break;
+                        }
+                    }
+                    pendingChanges = modelObj;
+                    if (!repoDirty) {
+                        abstractRepo.acceptPendingChanges();
+                    } else {
+                        console.warn(resObj.meta.action + " attempted on dirty repo");
+                    }
+                    break;
+                }
+
+                runActionCBs(resObj.meta.action, resObj);
+                runActionCBs(ApiResponseActions.ANY, resObj);
+            });
+        }
+
+        if (!mapping.lazy) {
+            fetch();
+        }
+
         return abstractRepo;
-    }
+    };
 
 });

@@ -8,20 +8,26 @@ module.exports = function (grunt) {
             all: ['app/**/*.js', '!app/node_modules/**/*.js']
         },
 
-        watch: {
-            scripts: {
-                files: ['app/**/*.js'],
-                tasks: ['ngdocs']
-            }
-        }
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
+            },
+            all: [
+                'Gruntfile.js',
+                '**/*.js',
+                '!node_modules/**/*'
+            ]
+        },
 
     });
 
     grunt.loadNpmTasks('grunt-ngdocs');
-    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', 'Default Task Alias', ['docs']);
-    grunt.registerTask('docs', 'Build the application', ['ngdocs']);
-    grunt.registerTask('watch', 'Watch the application', ['watch']);
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+
+    grunt.registerTask('default', ['jshint']);
+
+    grunt.registerTask('docs', ['ngdocs']);
 
 }

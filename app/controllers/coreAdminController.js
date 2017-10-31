@@ -1,4 +1,4 @@
-core.controller('CoreAdminController', function ($controller, $injector, $route, $scope, AssumedControl, AuthServiceApi, StorageService, UserService, WsApi) {
+core.controller('CoreAdminController', function ($controller, $injector, $route, $scope, AssumedControl, AuthService, StorageService, UserService, WsApi) {
 
     angular.extend(this, $controller('AbstractController', {
         $scope: $scope

@@ -201,7 +201,6 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     var add = function (facet, meta, channel) {
-
         var alert = new Alert(meta.message, meta.status, channel);
 
         if (store[facet] !== undefined) {
@@ -416,7 +415,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             return true;
         }
         var queued = queue[facet].filter(function (alert) {
-            return alert.meta.status === meta.status &&
+            return alert.meta.type === meta.status &&
                 alert.meta.message === meta.message &&
                 alert.channel === channel;
         });

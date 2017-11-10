@@ -240,6 +240,14 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
                             }
                         }
                     }
+                    for (var i in s) {
+                        if (!diff && s.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
+                            diff = compare(m[i], s[i]);
+                            if (diff) {
+                                break;
+                            }
+                        }
+                    }
                     return diff;
                 } else {
                     return false;

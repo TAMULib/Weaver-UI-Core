@@ -67,13 +67,9 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 url += "?token=" + sessionStorage.token;
             }
 
-            console.log(url);
-
             AuthService.pendingRefresh = $http.get(url, {
                 'Accept': 'application/json, text/plain'
             }).then(function (response) {
-
-                console.log(response);
 
                 if (response.data.meta.status === 'SUCCESS' && response.data.payload.String !== undefined) {
                     sessionStorage.token = response.data.payload.String;

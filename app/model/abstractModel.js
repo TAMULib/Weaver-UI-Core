@@ -266,7 +266,6 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
                         if (abstractModel.hasOwnProperty(key) && typeof abstractModel[key] !== 'function') {
                             abstractModel.watch(key, function (prop, old, val) {
                                 dirty = true;
-                                console.log('set', entityName);
                                 return typeof val === 'function' ? val() : val;
                             });
                         }

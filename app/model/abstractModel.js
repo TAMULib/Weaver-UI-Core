@@ -204,7 +204,10 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
             angular.extend(abstractModel, shadow);
         };
 
-        this.dirty = function () {
+        this.dirty = function (value) {
+            if (value) {
+                dirty = value;
+            }
             return dirty;
         };
 

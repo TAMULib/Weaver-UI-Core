@@ -200,7 +200,16 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
         };
 
         this.dirty = function () {
-            return compare(abstractModel, shadow);
+            var dirty = false;
+            for (var key in shadow) {
+                if (shadow.hasOwnProperty(key) && typeof shadow[key] !== 'function') {
+                    dirty = !angular.equals(abstractModel[key], shadow[key]);
+                    if (dirty) {
+                        break;
+                    }
+                }
+            }
+            return dirty;
         };
 
         this.setValidationResults = function (results) {

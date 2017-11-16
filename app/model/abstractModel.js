@@ -232,16 +232,13 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
             if (typeof m === 'object') {
                 if (typeof s === 'object') {
                     var diff = false;
-                    for (var i in m) {
-                        if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
-                            diff = compare(m[i], s[i]);
-                            if (diff) {
-                                break;
-                            }
+                    if (m !== null && s !== null && m.length && s.length) {
+                        if (m.length !== s.length) {
+                            return true;
                         }
                     }
-                    for (var i in s) {
-                        if (!diff && s.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
+                    for (var i in m) {
+                        if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
                             diff = compare(m[i], s[i]);
                             if (diff) {
                                 break;

@@ -77,7 +77,6 @@ core.model = function (delegateName, delegateFunction) {
                 function watch(property, key) {
                     property.watch(key, function (prop, old, val) {
                         model.instance.dirty(true);
-                        console.log('change');
                         return typeof val === 'function' ? val() : val;
                     });
                 };
@@ -90,10 +89,29 @@ core.model = function (delegateName, delegateFunction) {
                         var property = model.instance[key];
 
                         if (Array.isArray(property)) {
+                            var isString = property.length > 0 ? typeof property[0] === 'string' : false;
+
                             for (var index in property) {
                                 watch(property, index);
                             }
+
+                            if (isString) {
+                                property.push = function (element) {
+                                    console.log(typeof element);
+                                    var index = this.length;
+                                    var array = Array.prototype.push.call(this, element);
+                                    watch(this, index);
+                                    return array;
+                                }
+                                property.unshift = function (element) {
+                                    var array = Array.prototype.push.call(this, element);
+                                    watch(this, 0);
+                                    return array;
+                                }
+                            }
+
                         }
+
                     }
                 }
             }, 250);

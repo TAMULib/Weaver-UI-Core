@@ -72,14 +72,32 @@ core.model = function (delegateName, delegateFunction) {
 
         return function (data) {
             var model = new ctor(data);
+
             $timeout(function () {
-                $rootScope.$watch(function () {
-                    return model.instance;
-                }, function (newVal, oldVal) {
-                    model.instance.dirty(true);
-                    console.log('change')
-                }, true);
+                function watch(property, key) {
+                    property.watch(key, function (prop, old, val) {
+                        model.instance.dirty(true);
+                        console.log('change');
+                        return typeof val === 'function' ? val() : val;
+                    });
+                };
+
+                for (var key in model.instance) {
+                    if (model.instance.hasOwnProperty(key) && typeof model.instance[key] !== 'function') {
+
+                        watch(model.instance, key);
+
+                        var property = model.instance[key];
+
+                        if (Array.isArray(property)) {
+                            for (var index in property) {
+                                watch(property, index);
+                            }
+                        }
+                    }
+                }
             }, 250);
+
             return model.instance;
         }
     });

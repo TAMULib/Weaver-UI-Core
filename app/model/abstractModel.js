@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
+core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
     return function AbstractModel(repoName) {
 
@@ -25,6 +25,8 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
         var beforeMethodBuffer = [];
 
         var repo;
+
+        var dirty = false;
 
         $rootScope.$on("$routeChangeSuccess", function () {
             listenCallbacks.length = 0;
@@ -184,6 +186,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
         };
 
         this._syncShadow = function () {
+            dirty = false;
             shadow = angular.copy(abstractModel);
         };
 
@@ -199,8 +202,11 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
             angular.extend(abstractModel, shadow);
         };
 
-        this.dirty = function () {
-            return compare(abstractModel, shadow);
+        this.dirty = function (value) {
+            if (value) {
+                dirty = value;
+            }
+            return dirty;
         };
 
         this.setValidationResults = function (results) {
@@ -228,38 +234,6 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
             abstractModel._syncShadow();
         };
 
-        var compare = function (m, s) {
-            if (typeof m === 'object') {
-                if (typeof s === 'object') {
-                    var diff = false;
-                    for (var i in m) {
-                        if (m.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
-                            diff = compare(m[i], s[i]);
-                            if (diff) {
-                                break;
-                            }
-                        }
-                    }
-                    for (var i in s) {
-                        if (!diff && s.hasOwnProperty(i) && i !== '$$hashKey' && i !== '$$state') {
-                            diff = compare(m[i], s[i]);
-                            if (diff) {
-                                break;
-                            }
-                        }
-                    }
-                    return diff;
-                } else {
-                    return false;
-                }
-            } else if (typeof m === 'function') {
-                return false;
-            } else {
-                // console.log((m != s), m, s);
-                return m != s;
-            }
-        };
-
         var injectRepo = function () {
             if (repo === undefined) {
                 try {
@@ -283,13 +257,9 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
                 listen();
             }
             if (mapping.caching) {
-                var cachedModel = ModelCache.get(entityName);
-                if (cachedModel === undefined) {
-                    ModelCache.set(entityName, abstractModel);
-                } else {
-                    // could possibly update cache here
-                }
+                ModelCache.set(entityName, abstractModel);
             }
+
             defer.resolve(abstractModel);
         };
 

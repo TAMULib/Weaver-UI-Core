@@ -43,8 +43,9 @@ core.repo = function (delegateName, delegateFunction) {
 
 core.model = function (delegateName, delegateFunction) {
     var repoName = delegateName + 'Repo';
-    return core.factory(delegateName, function ($injector, AbstractModel, AbstractAppModel, api) {
-        return function (data) {
+    return core.factory(delegateName, function ($injector, $rootScope, $timeout, AbstractModel, AbstractAppModel, api) {
+
+        var ctor = function (data) {
 
             delegateFunction.$inject = $injector.annotate(delegateFunction);
 
@@ -58,15 +59,28 @@ core.model = function (delegateName, delegateFunction) {
 
             angular.extend(model.prototype, abstractAppModel);
 
-            var modelInstance = new model();
+            this.instance = new model();
 
-            modelInstance.init(data, api[delegateName]);
+            this.instance.init(data, api[delegateName]);
 
-            angular.extend(abstractAppModel, modelInstance);
+            angular.extend(abstractAppModel, this.instance);
 
             angular.extend(abstractModel, abstractAppModel);
 
-            return modelInstance;
+            return this;
         };
+
+        return function (data) {
+            var model = new ctor(data);
+            $timeout(function () {
+                $rootScope.$watch(function () {
+                    return model.instance;
+                }, function (newVal, oldVal) {
+                    model.instance.dirty(true);
+                    console.log('change')
+                }, true);
+            }, 250);
+            return model.instance;
+        }
     });
 };

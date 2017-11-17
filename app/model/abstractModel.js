@@ -28,8 +28,6 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
 
         var dirty = false;
 
-        var watching = false;
-
         $rootScope.$on("$routeChangeSuccess", function () {
             listenCallbacks.length = 0;
         });
@@ -261,21 +259,6 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
             if (mapping.caching) {
                 ModelCache.set(entityName, abstractModel);
             }
-
-            if (!watching) {
-                watching = true;
-                $timeout(function () {
-                    for (var key in abstractModel) {
-                        if (abstractModel.hasOwnProperty(key) && typeof abstractModel[key] !== 'function') {
-                            abstractModel.watch(key, function (prop, old, val) {
-                                dirty = true;
-                                return typeof val === 'function' ? val() : val;
-                            });
-                        }
-                    }
-                }, 250);
-            }
-
 
             defer.resolve(abstractModel);
         };

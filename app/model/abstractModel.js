@@ -128,7 +128,8 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
             } else {
                 var model = this;
                 var promise = $q(function (resolve) {
-                    if (model.dirty()) {
+                    // when clicking a checkbox model is never dirty
+                    if (model.dirty(true)) {
                         angular.extend(mapping.update, {
                             data: model
                         });

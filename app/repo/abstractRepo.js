@@ -107,7 +107,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         resolve(res);
                     });
                 } else {
-                    console.log('Not processing reauest. No changes to model.', model)
+                    console.log('Not processing request. No changes to model.', model)
                     var payload = {};
                     payload[model.constructor.name] = model;
                     resolve({
@@ -276,6 +276,11 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         abstractRepo.clearValidationResults = function () {
             delete abstractRepo.ValidationResults.messages;
+        };
+
+        abstractRepo.makeReady = function () {
+            defer.resolve(list);
+            return defer.promise;
         };
 
         var build = function (data) {

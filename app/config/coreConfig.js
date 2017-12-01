@@ -10,6 +10,7 @@ var coreConfig = {
 
     'version': 0.1,
 
+    /*TODO: The alert types and classes should be angular constants */
     'alerts': {
         'types': [
             'SUCCESS',

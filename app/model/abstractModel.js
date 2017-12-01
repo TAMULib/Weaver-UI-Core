@@ -1,6 +1,6 @@
-core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, ModelCache, ModelUpdateService) {
+core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
-    return function AbstractModel() {
+    return function AbstractModel(repoName) {
 
         var abstractModel;
 
@@ -23,6 +23,22 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         var combinationOperation = 'extend';
 
         var beforeMethodBuffer = [];
+
+        var repo;
+
+        var dirty = false;
+
+        $rootScope.$on("$routeChangeSuccess", function () {
+            listenCallbacks.length = 0;
+        });
+
+        this.updatePending = false;
+
+        this.deletePending = false;
+
+        this.updateRequested = false;
+
+        this.deleteRequested = false;
 
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
@@ -59,7 +75,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
             entityName = abstractModel.constructor.getName();
 
-            if (mapping.validations) {
+            if (mapping.validations && entityName !== undefined && entityName !== null && entityName.length > 0) {
                 validations = ValidationStore.getValidations(entityName);
             }
 
@@ -76,8 +92,6 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             this.ready().then(function () {
                 ModelUpdateService.register(abstractModel);
             });
-
-
         };
 
         this.enableMergeCombinationOperation = function () {
@@ -86,6 +100,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         this.enableExtendCombinationOperation = function () {
             combinationOperation = 'extend';
+        };
+
+        this.getCombinationOperation = function () {
+            return combinationOperation;
         };
 
         this.getEntityName = function () {
@@ -105,51 +123,59 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         };
 
         this.save = function () {
-            var promise = $q(function (resolve) {
-                if (abstractModel.dirty()) {
-                    angular.extend(mapping.update, {
-                        data: abstractModel
-                    });
-                    WsApi.fetch(mapping.update).then(function (res) {
-                        resolve(res);
-                    });
-                } else {
-                    var payload = {};
-                    payload[abstractModel.constructor.name] = abstractModel;
-                    resolve({
-                        body: angular.toJson({
-                            payload: payload,
-                            meta: {
-                                type: "SUCCESS"
-                            }
-                        })
-                    });
-                }
-            });
-            promise.then(function (res) {
-                var message = angular.fromJson(res.body);
-                if (message.meta.type === "INVALID") {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
-                } else {
-                    angular.extend(abstractModel, message.payload[abstractModel.constructor.name]);
-                    shadow = angular.copy(abstractModel);
-                }
-
-            });
-            return promise;
+            if (injectRepo()) {
+                return repo.save(this);
+            } else {
+                var model = this;
+                var promise = $q(function (resolve) {
+                    // when clicking a checkbox model is never dirty
+                    if (model.dirty(true)) {
+                        angular.extend(mapping.update, {
+                            data: model
+                        });
+                        WsApi.fetch(mapping.update).then(function (res) {
+                            resolve(res);
+                        });
+                    } else {
+                        var payload = {};
+                        payload[model.constructor.name] = model;
+                        resolve({
+                            body: angular.toJson({
+                                payload: payload,
+                                meta: {
+                                    type: "SUCCESS"
+                                }
+                            })
+                        });
+                    }
+                });
+                promise.then(function (res) {
+                    var message = angular.fromJson(res.body);
+                    if (message.meta.status === "INVALID") {
+                        angular.extend(abstractRepo, message.payload);
+                    }
+                });
+                return promise;
+            }
         };
 
         this.delete = function () {
-            angular.extend(mapping.remove, {
-                data: abstractModel
-            });
-            var promise = WsApi.fetch(mapping.remove);
-            promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type === "INVALID") {
-                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
-                }
-            });
-            return promise;
+            if (injectRepo()) {
+                return repo.delete(this);
+            } else {
+                var model = this;
+                angular.extend(mapping.remove, {
+                    data: model
+                });
+                var promise = WsApi.fetch(mapping.remove);
+                promise.then(function (res) {
+                    var message = angular.fromJson(res.body);
+                    if (message.meta.status === "INVALID") {
+                        angular.extend(abstractRepo, message.payload);
+                    }
+                });
+                return promise;
+            }
         };
 
         this.listen = function (cb) {
@@ -160,16 +186,35 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
             listenCallbacks.length = 0;
         };
 
+        this._syncShadow = function () {
+            dirty = false;
+            shadow = angular.copy(abstractModel);
+        };
+
+        this.acceptPendingUpdate = function () {
+            console.warn("No update pending!");
+        };
+
+        this.acceptPendingDelete = function () {
+            console.warn("No delete pending!");
+        };
+
         this.refresh = function () {
             angular.extend(abstractModel, shadow);
         };
 
-        this.dirty = function () {
-            return angular.toJson(abstractModel) !== angular.toJson(shadow);
+        this.dirty = function (value) {
+            if (value) {
+                dirty = value;
+            }
+            return dirty;
         };
 
         this.setValidationResults = function (results) {
             angular.extend(validationResults, results);
+            if (injectRepo()) {
+                angular.extend(repo.ValidationResults, results);
+            }
         };
 
         this.getValidationResults = function () {
@@ -177,34 +222,45 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         };
 
         this.clearValidationResults = function () {
-            if (validationResults.messages !== undefined) {
-                delete validationResults.messages;
-            }
+            delete validationResults.messages;
         };
 
         this.update = function (data) {
             angular[combinationOperation](abstractModel, data);
-            shadow = angular.copy(abstractModel);
+            abstractModel._syncShadow();
         };
 
-        $rootScope.$on("$locationChangeSuccess", function () {
-            listenCallbacks.length = 0;
-        });
+        this.extend = function (changes) {
+            angular.extend(abstractModel, changes);
+            abstractModel._syncShadow();
+        };
+
+        var injectRepo = function () {
+            if (repo === undefined) {
+                try {
+                    repo = $injector.get(repoName);
+                } catch (e) {
+                    console.warn('Unable to inject ' + repoName);
+                    return false;
+                }
+                return true;
+            } else {
+                return true;
+            }
+        };
 
         var setData = function (data) {
+
             angular[combinationOperation](abstractModel, data);
-            shadow = angular.copy(abstractModel);
+
+            abstractModel._syncShadow();
             if (!listening && mapping.modelListeners) {
                 listen();
             }
             if (mapping.caching) {
-                var cachedModel = ModelCache.get(entityName);
-                if (cachedModel === undefined) {
-                    ModelCache.set(entityName, abstractModel);
-                } else {
-                    // could possibly update cache here
-                }
+                ModelCache.set(entityName, abstractModel);
             }
+
             defer.resolve(abstractModel);
         };
 
@@ -229,10 +285,12 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         var processResponse = function (res) {
             var resObj = angular.fromJson(res.body);
-            if (resObj.meta.type !== 'ERROR') {
-                angular.forEach(resObj.payload, function (datum) {
-                    angular[combinationOperation](abstractModel, datum);
-                });
+            if (resObj.meta.status !== 'ERROR') {
+                if (combinationOperation === 'extend') {
+                    angular.forEach(resObj.payload, function (datum) {
+                        angular[combinationOperation](abstractModel, datum);
+                    });
+                }
                 setData(abstractModel);
             } else {
                 abstractModel.refresh();
@@ -242,7 +300,6 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         // additional core level model methods and variables
 
         return this;
-
     };
 
 });

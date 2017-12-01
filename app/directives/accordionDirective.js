@@ -16,7 +16,7 @@
  *  at a time.
  *
  **/
-core.directive("accordion", function (AccordionService) {
+core.directive("wvrAccordion", function (AccordionService) {
     return {
         template: '<div class="accordion" ng-transclude></div>',
         restrict: 'E',
@@ -80,7 +80,7 @@ core.directive("accordion", function (AccordionService) {
  *	This pane directive uses the 'AccordionService' to open and close the pane based on
  *
  **/
-core.directive("pane", function ($location, $timeout, $anchorScroll, AccordionService) {
+core.directive("wvrPane", function ($location, $timeout, $anchorScroll, AccordionService) {
     var count = 0;
     return {
         templateUrl: 'node_modules/weaver-ui-core/app/views/directives/accordionPane.html',

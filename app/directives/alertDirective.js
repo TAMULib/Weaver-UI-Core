@@ -156,7 +156,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
                     AlertService.remove(alert);
                 }, duration);
                 if (immediate) {
-                    delete timer;
+                    $timeout.cancel(timer);
                     AlertService.remove(alert);
                 }
             };

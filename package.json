@@ -5,6 +5,9 @@
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
+  "bin": {
+    "wvr": "cli/weaverCli.js"
+  },
   "scripts": {
     "prestart": "npm install",
     "pretest": "npm install",
@@ -25,6 +28,9 @@
     "angular-ui-bootstrap": "2.5.0",
     "bootstrap": "3.3.7",
     "bootstrap-sass": "3.3.7",
+    "express": "4.15.4",
+    "forever": "^0.15.3",
+    "forever-monitor": "^1.7.1",
     "html5-boilerplate": "6.0.0",
     "jquery": "3.2.1",
     "ng-file-upload": "12.2.13",

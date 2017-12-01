@@ -37,6 +37,7 @@ function setUpApp(bootstrapApp) {
     var jwt = getJwt();
 
     if (jwt) {
+        cleanUrl();
         if (!sessionStorage.token) {
             sessionStorage.token = jwt;
         }
@@ -46,7 +47,6 @@ function setUpApp(bootstrapApp) {
         connect({
             jwt: sessionStorage.token
         });
-
     } else {
         if (appConfig.allowAnonymous) {
             sessionStorage.role = appConfig.anonymousRole;
@@ -96,37 +96,18 @@ function setUpApp(bootstrapApp) {
     };
 
     function getJwt() {
-
         if (sessionStorage.token) {
             return sessionStorage.token;
         }
-
-        var queriesString = location.search;
-
-        if (queriesString === undefined) {
-            return null;
-        }
-
-        var queries = queriesString.substring(1).split("&");
-
-        var jwt = null;
-
-        for (var key in queries) {
-            var queryString = queries[key];
-            var query = queryString.split("=");
-            if (query[0] === "jwt") jwt = query[1];
-
-        }
-
-        if (jwt) {
-            var uri = location.toString();
-            if (uri.indexOf("?") > 0) {
-                var clean_uri = uri.substring(0, uri.indexOf("?"));
-                history.replaceState({}, document.title, clean_uri);
-            }
-        }
-
-        return jwt;
+        return new URL(location).searchParams.get('jwt');
     };
+
+    function cleanUrl() {
+      var uri = location.toString();
+      if (uri.indexOf("?") > 0) {
+          var clean_uri = uri.substring(0, uri.indexOf("?"));
+          history.replaceState({}, document.title, clean_uri);
+      }
+    }
 
 }

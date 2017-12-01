@@ -4,6 +4,8 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
 
     var userEvents = $q.defer();
 
+    var userReady = $q.defer();
+
     var currentUser = new User();
 
     UserService.fetchUser = function () {
@@ -15,8 +17,13 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
             angular.extend(currentUser, credentials);
             StorageService.set("role", currentUser.role);
             userEvents.notify('RECEIVED');
+            userReady.resolve(currentUser);
         });
     };
+
+    UserService.userReady = function () {
+        return userReady.promise;
+    }
 
     UserService.userEvents = function () {
         return userEvents.promise;

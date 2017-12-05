@@ -10,6 +10,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var actionCbs = {};
 
+        var actionOverrides = {};
+
         angular.forEach(ApiResponseActions, function (action) {
             actionCbs[action] = [];
         });
@@ -371,6 +373,10 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             });
         }
 
+        abstractRepo.overrideAction = function(action, cb) {
+          actionOverrides[action] = cb;
+        };
+
         if (abstractRepo.mapping.channel) {
 
             WsApi.listen(abstractRepo.mapping.channel).then(null, null, function (res) {
@@ -378,60 +384,66 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 var resObj = angular.fromJson(res.body);
                 var modelObj = unwrap(res);
 
-                switch (resObj.meta.action) {
-                case ApiResponseActions.CREATE:
-                    abstractRepo.add(modelObj);
-                    break;
-                case ApiResponseActions.READ:
-                case ApiResponseActions.UPDATE:
-                    var existingModelToUpdate = abstractRepo.findById(modelObj.id);
-                    if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
-                        acceptPendingModelUpdate(existingModelToUpdate, modelObj);
-                    } else {
-                        existingModelToUpdate.updatePending = true;
-                        existingModelToUpdate.acceptPendingUpdate = function () {
+                if(actionOverrides[resObj.meta.action]) {
+                  actionOverrides[resObj.meta.action](modelObj);
+                } else {
+                  switch (resObj.meta.action) {
+                    case ApiResponseActions.CREATE:
+                        abstractRepo.add(modelObj);
+                        break;
+                    case ApiResponseActions.READ:
+                    case ApiResponseActions.UPDATE:
+                        var existingModelToUpdate = abstractRepo.findById(modelObj.id);
+                        if(existingModelToUpdate) {
+                          if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
                             acceptPendingModelUpdate(existingModelToUpdate, modelObj);
-                        };
-                        console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
-                    }
-                    break;
-                case ApiResponseActions.DELETE:
-                    for (var i in list) {
-                        var existingModelToDelete = list[i];
-                        if (existingModelToDelete.id === modelObj.id) {
-                            if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
-                                acceptPendingModelDelete(existingModelToDelete, i);
-                            } else {
-                                existingModelToDelete.deletePending = true;
-                                /*jshint loopfunc: true */
-                                existingModelToDelete.acceptPendingDelete = function () {
+                          } else {
+                            existingModelToUpdate.updatePending = true;
+                            existingModelToUpdate.acceptPendingUpdate = function () {
+                                acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                            };
+                            console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
+                          }
+                        }
+                        break;
+                    case ApiResponseActions.DELETE:
+                        for (var i in list) {
+                            var existingModelToDelete = list[i];
+                            if (existingModelToDelete.id === modelObj.id) {
+                                if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
                                     acceptPendingModelDelete(existingModelToDelete, i);
-                                };
-                                console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
+                                } else {
+                                    existingModelToDelete.deletePending = true;
+                                    /*jshint loopfunc: true */
+                                    existingModelToDelete.acceptPendingDelete = function () {
+                                        acceptPendingModelDelete(existingModelToDelete, i);
+                                    };
+                                    console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
+                                }
+                                break;
                             }
-                            break;
                         }
-                    }
-                    break;
-                case ApiResponseActions.REMOVE:
-                case ApiResponseActions.REORDER:
-                case ApiResponseActions.SORT:
-                case ApiResponseActions.BROADCAST:
-                    var repoDirty = false;
-                    for (var j in list) {
-                        repoDirty = !list[j].updateRequested && list[j].dirty();
-                        if (repoDirty) {
-                            console.log(list[j])
-                            break;
+                        break;
+                    case ApiResponseActions.REMOVE:
+                    case ApiResponseActions.REORDER:
+                    case ApiResponseActions.SORT:
+                    case ApiResponseActions.BROADCAST:
+                        var repoDirty = false;
+                        for (var j in list) {
+                            repoDirty = !list[j].updateRequested && list[j].dirty();
+                            if (repoDirty) {
+                                console.log(list[j])
+                                break;
+                            }
                         }
+                        pendingChanges = modelObj;
+                        if (!repoDirty) {
+                            abstractRepo.acceptPendingChanges();
+                        } else {
+                            console.warn(resObj.meta.action + " attempted on dirty repo");
+                        }
+                        break;
                     }
-                    pendingChanges = modelObj;
-                    if (!repoDirty) {
-                        abstractRepo.acceptPendingChanges();
-                    } else {
-                        console.warn(resObj.meta.action + " attempted on dirty repo");
-                    }
-                    break;
                 }
 
                 runActionCBs(resObj.meta.action, resObj);

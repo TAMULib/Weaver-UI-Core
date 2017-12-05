@@ -218,14 +218,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.listen = function (cbOrActionOrActionArray, cb) {
-            if (typeof cbOrAction === "function") {
-                actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            if (typeof cbOrActionOrActionArray === "function") {
+                actionCbs[ApiResponseActions.ANY].push(cbOrActionOrActionArray);
             } else if (Array.isArray(cbOrActionOrActionArray)) {
               angular.forEach(cbOrActionOrActionArray, function(action) {
                 actionCbs[action].push(cb);
               });
             } else {
-                actionCbs[cbOrAction].push(cb);
+                actionCbs[cbOrActionOrActionArray].push(cb);
             }
         };
 
@@ -385,14 +385,18 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 case ApiResponseActions.READ:
                 case ApiResponseActions.UPDATE:
                     var existingModelToUpdate = abstractRepo.findById(modelObj.id);
-                    if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
-                        acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                    if(existingModelToUpdate) {
+                      if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
+                          acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                      } else {
+                          existingModelToUpdate.updatePending = true;
+                          existingModelToUpdate.acceptPendingUpdate = function () {
+                              acceptPendingModelUpdate(existingModelToUpdate, modelObj);
+                          };
+                          console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
+                      }
                     } else {
-                        existingModelToUpdate.updatePending = true;
-                        existingModelToUpdate.acceptPendingUpdate = function () {
-                            acceptPendingModelUpdate(existingModelToUpdate, modelObj);
-                        };
-                        console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
+                        console.warn("Could not find model with id", modelObj.id);
                     }
                     break;
                 case ApiResponseActions.DELETE:

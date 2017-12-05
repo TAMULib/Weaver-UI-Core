@@ -217,9 +217,13 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             return promise;
         };
 
-        abstractRepo.listen = function (cbOrAction, cb) {
+        abstractRepo.listen = function (cbOrActionOrActionArray, cb) {
             if (typeof cbOrAction === "function") {
                 actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            } else if (Array.isArray(cbOrActionOrActionArray)) {
+              angular.forEach(cbOrActionOrActionArray, function(action) {
+                actionCbs[action].push(cb);
+              });
             } else {
                 actionCbs[cbOrAction].push(cb);
             }

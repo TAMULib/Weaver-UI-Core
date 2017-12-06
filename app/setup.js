@@ -95,11 +95,26 @@ function setUpApp(bootstrapApp) {
         });
     };
 
+    function getParameterByName(name, url) {
+        if (!url) {
+          url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+        if (!results) {
+          return null;
+        }
+        if (!results[2]) {
+          return '';
+        }
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     function getJwt() {
         if (sessionStorage.token) {
             return sessionStorage.token;
         }
-        return new URL(location).searchParams.get('jwt');
+        return getParameterByName('jwt');
     };
 
     function cleanUrl() {

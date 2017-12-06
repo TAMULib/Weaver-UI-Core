@@ -220,14 +220,14 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.listen = function (cbOrActionOrActionArray, cb) {
-            if (typeof cbOrAction === "function") {
-                actionCbs[ApiResponseActions.ANY].push(cbOrAction);
+            if (typeof cbOrActionOrActionArray === "function") {
+                actionCbs[ApiResponseActions.ANY].push(cbOrActionOrActionArray);
             } else if (Array.isArray(cbOrActionOrActionArray)) {
               angular.forEach(cbOrActionOrActionArray, function(action) {
                 actionCbs[action].push(cb);
               });
             } else {
-                actionCbs[cbOrAction].push(cb);
+                actionCbs[cbOrActionOrActionArray].push(cb);
             }
         };
 

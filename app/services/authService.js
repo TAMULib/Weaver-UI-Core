@@ -28,7 +28,8 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
         if (!AuthService.pendingRefresh) {
             var url = appConfig.authService + "/admin?netid=" + assume.netid;
             AuthService.pendingRefresh = $http.get(url, {
-                'Accept': 'application/json, text/plain'
+                'Accept': 'application/json',
+                'Content-Type': 'text/plain'
             }).then(function (response) {
                 if (response.data.meta.status === 'SUCCESS' && response.data.payload.String !== undefined) {
                     sessionStorage.token = response.data.payload.String;
@@ -68,7 +69,8 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             }
 
             AuthService.pendingRefresh = $http.get(url, {
-                'Accept': 'application/json, text/plain'
+                'Accept': 'application/json',
+                'Content-Type': 'text/plain'
             }).then(function (response) {
 
                 if (response.data.meta.status === 'SUCCESS' && response.data.payload.String !== undefined) {

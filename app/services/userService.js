@@ -9,7 +9,6 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
     var currentUser = new User();
 
     UserService.fetchUser = function () {
-        console.log(sessionStorage.token);
         userEvents.notify('FETCH');
         WsApi.fetch(currentUser.getMapping().instantiate).then(function (res) {
             delete sessionStorage.role;

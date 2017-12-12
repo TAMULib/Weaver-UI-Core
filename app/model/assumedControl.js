@@ -88,7 +88,7 @@ core.service("AssumedControl", function ($q, AuthService, StorageService, UserSe
 
                 AuthService.getAssumedUser(user).then(function (response) {
 
-                    if (response.data.assumed) {
+                    if (response.data.meta.status === 'SUCCESS') {
 
                         WsApi.clearSubscriptions();
 

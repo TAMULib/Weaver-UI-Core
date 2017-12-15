@@ -20,7 +20,10 @@ core.service("AccessControlService", function ($location, StorageService) {
 
         var restrict = allowedUsers ? allowedUsers.indexOf(role) == -1 : false;
 
-        if (restrict) {
+        if (role == 'ROLE_ANONYMOUS' && (allowedUsers !== undefined)) {
+            StorageService.set("post_authorize_url","myprofile");
+            $location.path("/error/401");
+        } else if (restrict) {
             evt.preventDefault();
             $location.path("/error/403");
         }

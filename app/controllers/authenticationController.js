@@ -17,7 +17,7 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
  **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore, StorageService) {
 
     angular.extend(this, $controller('AbstractController', {
         $scope: $scope
@@ -63,8 +63,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
             path = "/" + location.pathname.split("/")[1] + "/" + page;
             path = '/'+page;
         } else if (authorizeUrl) {
-            path = '/'+authorizeUrl;
-            StorageService.delete("post_authorize_url")
+            path = authorizeUrl;
         } else {
             path = location.pathname;
         }

@@ -95,11 +95,24 @@ function setUpApp(bootstrapApp) {
         });
     };
 
+    function getQueryVariable(variable) {
+      var value;
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] === variable){
+          value = pair[1];
+        }
+      }
+      return value;
+    }
+
     function getJwt() {
         if (sessionStorage.token) {
             return sessionStorage.token;
         }
-        return new URL(location).searchParams.get('jwt');
+        return getQueryVariable('jwt');
     };
 
     function cleanUrl() {

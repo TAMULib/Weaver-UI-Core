@@ -18,7 +18,8 @@ core.directive("validatedinput", function ($timeout) {
             "form": "=",
             "confirm": "&",
             "validations": "=",
-            "formView": "="
+            "formView": "=",
+            "results": "="
         },
         link: function ($scope, element, attr) {
 

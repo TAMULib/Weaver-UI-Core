@@ -26,7 +26,7 @@ core.service("AccessControlService", function ($location, StorageService) {
             StorageService.set("post_authorize_url",$location.path());
             $location.path("/error/401");
         } else if (authorizeUrl && $location.path() != "/error/401") {
-            StorageService.delete("post_authorize_url")
+            StorageService.delete("post_authorize_url");
             $location.path(authorizeUrl);
         } else if (restrict) {
             evt.preventDefault();

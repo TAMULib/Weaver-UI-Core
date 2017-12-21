@@ -113,14 +113,12 @@ function setUpApp(bootstrapApp) {
             return sessionStorage.token;
         }
         return getQueryVariable('jwt');
-    };
+    }
 
     function cleanUrl() {
       var uri = location.toString();
-      if (uri.indexOf("?") > 0) {
-          var clean_uri = uri.substring(0, uri.indexOf("?"));
-          history.replaceState({}, document.title, clean_uri);
-      }
+      var jwtQuery = "jwt=" + getQueryVariable('jwt');
+      history.replaceState({}, document.title, uri.replace(jwtQuery, ""));
     }
 
 }

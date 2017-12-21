@@ -9,12 +9,12 @@
 		class="form-control"
 		aria-describedby="{{label}}"
 		ng-model="model[property]"
-		ng-options="key as option for (key, option) in options"
+		ng-options="option for option in options"
 		ng-blur="blur($event)"
 		ng-change="change()"
 		ng-required="validations[property].required.value">
-	</select>
-
+  </select>
+  
 	<select
 		ng-if="optionproperty"
 		id="{{property}}"

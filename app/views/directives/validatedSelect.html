@@ -16,7 +16,7 @@
   </select>
   
 	<select
-		ng-if="optionproperty"
+		ng-if="optionproperty && !optionvalue"
 		id="{{property}}"
 		name="{{property}}"
 		class="form-control"
@@ -26,9 +26,22 @@
 		ng-blur="blur($event)"
 		ng-change="change()"
 		ng-required="validations[property].required.value">
-	</select>
+  </select>
 
-	<validationmessage
+  <select
+    ng-if="optionproperty && optionvalue"
+    id="{{property}}"
+    name="{{property}}"
+    class="form-control"
+    aria-describedby="{{label}}"
+    ng-model="model[property]"
+    ng-options="option[optionvalue] as option[optionproperty] for option in options"
+    ng-blur="blur($event)"
+    ng-change="change()"
+    ng-required="validations[property].required.value">
+  </select>
+  
+  <validationmessage
 		type="input"
 		property="{{property}}"
 		form="form"

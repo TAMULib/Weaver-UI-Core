@@ -17,7 +17,7 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
  **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore, StorageService) {
 
     angular.extend(this, $controller('AbstractController', {
         $scope: $scope
@@ -53,13 +53,17 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      */
     $scope.login = function (page) {
 
-        delete sessionStorage.token;
-        delete sessionStorage.role;
+        StorageService.delete("token");
+        StorageService.delete("role");
+
+        var authorizeUrl = StorageService.get("post_authorize_url");
 
         var path = '';
-
         if (typeof page != 'undefined') {
             path = "/" + location.pathname.split("/")[1] + "/" + page;
+            path = '/'+page;
+        } else if (authorizeUrl) {
+            path = authorizeUrl;
         } else {
             path = location.pathname;
         }
@@ -83,8 +87,8 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      *  direct to the default home page
      */
     $scope.logout = function () {
-        delete sessionStorage.token;
-        sessionStorage.role = appConfig.anonymousRole;
+        StorageService.delete("token");
+        StorageService.set("role",appConfig.anonymousRole);
         $scope.user.logout();
         angular.element(".dropdown").dropdown("toggle");
         $location.path('/');

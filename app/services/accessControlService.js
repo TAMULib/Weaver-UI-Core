@@ -20,7 +20,15 @@ core.service("AccessControlService", function ($location, StorageService) {
 
         var restrict = allowedUsers ? allowedUsers.indexOf(role) == -1 : false;
 
-        if (restrict) {
+        var authorizeUrl = StorageService.get("post_authorize_url");
+
+        if (role == 'ROLE_ANONYMOUS' && (allowedUsers !== undefined)) {
+            StorageService.set("post_authorize_url",$location.path());
+            $location.path("/error/401");
+        } else if (authorizeUrl && $location.path() != "/error/401") {
+            StorageService.delete("post_authorize_url");
+            $location.path(authorizeUrl);
+        } else if (restrict) {
             evt.preventDefault();
             $location.path("/error/403");
         }

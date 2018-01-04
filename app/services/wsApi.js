@@ -94,7 +94,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
      *  websocket communication on the desired channel
      *
      */
-    WsApi.fetch = function (initialReq, manifest, query) {
+    WsApi.fetch = function (initialReq, manifest) {
 
         var apiReq = angular.copy(initialReq);
 

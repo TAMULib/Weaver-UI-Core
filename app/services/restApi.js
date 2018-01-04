@@ -12,7 +12,23 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthService) {
+core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs) {
+
+  var restApi = this;
+
+  var buildUrl = function(req) {
+    var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
+    if (req.query) {
+      url += "?";
+      for(var key in req.query) {
+        if(req.query.hasOwnProperty(key)) {
+          url += key + "=" + req.query[key] + "&";
+        }
+      }
+      url = url.substring(0, url.length - 1);
+    }
+    return url;
+  };
 
     /**
      * @ngdoc property
@@ -50,9 +66,9 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
      * @description
      *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
      */
-    this.anonymousGet = function (req) {
+    restApi.anonymousGet = function (req) {
 
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+      var url = buildUrl(req);
 
         var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
 
@@ -88,9 +104,9 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
      * @description
      *	Initiates a post request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
      */
-    this.anonymousPost = function (req) {
+    restApi.anonymousPost = function (req) {
 
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+        var url = buildUrl(req);
 
         var data = req.data !== undefined ? req.data : {};
 
@@ -127,55 +143,8 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
      * @description
      *	Initiates a get request to the configured web service on behalf of an authenticated user.
      */
-    this.get = function (req) {
-
-        var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
-
-        var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
-
-        var headers = {
-            data: data,
-            'Accept': 'application/json, text/plain'
-        };
-
-        if (sessionStorage.token) {
-            headers.jwt = sessionStorage.token;
-        }
-
-        var restObj = {
-            method: 'GET',
-            url: url,
-            headers: headers
-        };
-
-        return $http(restObj).then(
-            //success callback
-            function (response) {
-                if (response.data.meta.status === 'REFRESH') {
-                    if (sessionStorage.assumedUser) {
-                        return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    } else {
-                        return AuthService.getRefreshToken().then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    }
-                }
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
-            },
-            //error callback
-            function (error) {
-                console.log(error);
-                return error.data;
-            });
+    restApi.get = function (req) {
+      return restApi.makeReq(req, HttpMethodVerbs.GET);
     };
 
     /**
@@ -188,56 +157,72 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService) {
      * @description
      *	Initiates a post request to the configured web service on behalf of an authenticated user.
      */
-    this.post = function (req) {
-
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
-
-        var data = req.data !== undefined ? req.data : {};
-
-        var headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json, text/plain'
-        };
-
-        if (sessionStorage.token) {
-            headers.jwt = sessionStorage.token;
-        }
-
-        var restObj = {
-            method: 'POST',
-            url: url,
-            data: data,
-            headers: headers
-        };
-
-        return $http(restObj).then(
-            //success callback
-            function (response) {
-                if (response.data.meta.status === 'REFRESH') {
-                    if (sessionStorage.assumedUser) {
-                        return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    } else {
-                        return AuthService.getRefreshToken().then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    }
-                }
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
-            },
-            //error callback
-            function (error) {
-                console.log(error);
-                return error.data;
-            });
+    restApi.post = function (req) {
+      return restApi.makeReq(req, HttpMethodVerbs.POST);
     };
+
+    restApi.put = function (req) {
+      return restApi.makeReq(req, HttpMethodVerbs.PUT);
+    };
+
+    restApi.delete = function (req) {
+      return restApi.makeReq(req, HttpMethodVerbs.DELETE);
+    };
+
+    restApi[HttpMethodVerbs.GET] = restApi.get;
+    restApi[HttpMethodVerbs.POST] = restApi.post;
+    restApi[HttpMethodVerbs.PUT] = restApi.put;
+    restApi[HttpMethodVerbs.DELETE] = restApi.delete;
+
+    restApi.makeReq = function(req, method) {
+      var url = buildUrl(req);
+      
+      var data = req.data !== undefined ? req.data : {};
+
+      var headers = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json, text/plain'
+      };
+
+      if (sessionStorage.token) {
+          headers.jwt = sessionStorage.token;
+      }
+
+      var restObj = {
+          method: method,
+          url: url,
+          data: data,
+          headers: headers
+      };
+
+      return $http(restObj).then(
+          //success callback
+          function (response) {
+              if (response.data.meta.status === 'REFRESH') {
+                  if (sessionStorage.assumedUser) {
+                      return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
+                          restObj.headers.jwt = sessionStorage.token;
+                          return $http(restObj).then(function (response) {
+                              return response.data;
+                          });
+                      });
+                  } else {
+                      return AuthService.getRefreshToken().then(function () {
+                          restObj.headers.jwt = sessionStorage.token;
+                          return $http(restObj).then(function (response) {
+                              return response.data;
+                          });
+                      });
+                  }
+              }
+              AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+              return response.data;
+          },
+          //error callback
+          function (error) {
+              console.log(error);
+              return error.data;
+          });
+    } 
 
 });

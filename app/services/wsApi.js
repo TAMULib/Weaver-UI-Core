@@ -106,7 +106,11 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
         }
 
         if (manifest && manifest.data) {
-            apiReq.data = manifest.data;
+          apiReq.data = manifest.data;
+        }
+
+        if (manifest && manifest.query) {
+          apiReq.query = manifest.query;
         }
 
         if (apiReq.useWebSockets) {
@@ -122,7 +126,16 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
             return WsService.send(request, headers, payload, channel);
         }
 
-        var restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : RestApi.get;
+
+        var restSend = RestApi.get;
+
+        if(manifest && manifest.method) {
+          restSend = RestApi[manifest.method];
+        } else {
+          restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
+        }
+
+        
 
         return $q(function (resolve, reject) {
             restSend(apiReq).then(function (res) {

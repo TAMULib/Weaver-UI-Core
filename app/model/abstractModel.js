@@ -23,7 +23,9 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
         var combinationOperation = 'extend';
 
         var beforeMethodBuffer = [];
-
+        
+        var beforePromises = [];
+        
         var repo;
 
         var dirty = false;
@@ -87,7 +89,10 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
                 }
             }
             angular.forEach(beforeMethodBuffer, function (beforeMethod) {
-                beforeMethod();
+                var beforePromise = beforeMethod();
+                if(beforePromise && beforePromise.$$state) {
+                    beforePromises.push(beforePromise);
+                }
             });
             this.ready().then(function () {
                 ModelUpdateService.register(abstractModel);
@@ -119,7 +124,8 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
         };
 
         this.ready = function () {
-            return defer.promise;
+            beforePromises.push(defer.promise);
+            return $q.all(beforePromises);
         };
 
         this.save = function () {

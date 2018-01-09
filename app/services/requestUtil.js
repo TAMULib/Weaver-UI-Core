@@ -1,4 +1,4 @@
-core.service("RequestUtil", function ($http, $q, $window, AuthService, Upload, WsApi) {
+core.service("RequestUtil", function () {
 
     var requestUtils = this;
 

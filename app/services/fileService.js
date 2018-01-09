@@ -1,14 +1,16 @@
-core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
+core.service("FileService", function ($http, $q, $window, AuthService, Upload, RequestUtil) {
 
     var webservice = appConfig.webService;
 
     var authservice = appConfig.authService;
 
-    this.anonymousDownload = function (req) {
+    this.anonymousDownload = function (req, manifest) {
 
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
 
-        var headers = req.data !== undefined ? req.data : {};
+        var url = WsRequestUtilApi.buildUrl(apiReq);
+
+        var headers = apiReq.data !== undefined ? apiReq.data : {};
 
         return $http({
             method: 'GET',
@@ -26,12 +28,16 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             });
     };
 
-    this.anonymousUpload = function (req) {
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+    this.anonymousUpload = function (req, manifest) {
+
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
+
+        var url = RequestUtil.buildUrl(apiReq);
+
         return attemptAnonymousUpload({
             url: url,
             data: {
-                file: req.file
+                file: apiReq.file ? apiReq.file : apiReq.data
             }
         }, $q.defer());
     };
@@ -47,7 +53,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         return defer.promise;
     }
 
-    this.download = function (req) {
+    this.download = function (req, manifest) {
 
         var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
@@ -93,9 +99,11 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             });
     };
 
-    this.upload = function (req) {
+    this.upload = function (req, manifest) {
 
-        var url = appConfig.webService + "/" + req.controller + "/" + req.method;
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
+
+        var url = RequestUtil.buildUrl(apiReq);
 
         var headers = {};
 
@@ -106,7 +114,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         return attemptUpload({
             url: url,
             data: {
-                file: req.file
+                file: apiReq.file ? apiReq.file : apiReq.data
             },
             headers: headers
         }, $q.defer());

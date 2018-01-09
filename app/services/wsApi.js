@@ -9,7 +9,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, RequestUtil, WsService) {
 
     var WsApi = this;
 
@@ -96,22 +96,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
      */
     WsApi.fetch = function (initialReq, manifest) {
 
-        var apiReq = angular.copy(initialReq);
-
-        if (manifest && manifest.pathValues) {
-            for (var key in manifest.pathValues) {
-                var value = manifest.pathValues[key];
-                apiReq.method = apiReq.method.replace(new RegExp(':' + key, 'g'), value);
-            }
-        }
-
-        if (manifest && manifest.data) {
-          apiReq.data = manifest.data;
-        }
-
-        if (manifest && manifest.query) {
-          apiReq.query = manifest.query;
-        }
+        var apiReq = RequestUtil.prepareRequest(initialReq, manifest);
 
         if (apiReq.useWebSockets) {
             var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
@@ -126,16 +111,13 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
             return WsService.send(request, headers, payload, channel);
         }
 
+        var restSend = RestApi.GET;
 
-        var restSend = RestApi.get;
-
-        if(manifest && manifest.method) {
-          restSend = RestApi[manifest.method];
+        if(apiReq.httpMethod) {
+          restSend = RestApi[apiReq.httpMethod];
         } else {
-          restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
+          restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.POST : restSend;
         }
-
-        
 
         return $q(function (resolve, reject) {
             restSend(apiReq).then(function (res) {

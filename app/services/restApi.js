@@ -12,23 +12,9 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs) {
+core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs, RequestUtil) {
 
   var restApi = this;
-
-  var buildUrl = function(req) {
-    var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
-    if (req.query) {
-      url += "?";
-      for(var key in req.query) {
-        if(req.query.hasOwnProperty(key)) {
-          url += key + "=" + req.query[key] + "&";
-        }
-      }
-      url = url.substring(0, url.length - 1);
-    }
-    return url;
-  };
 
     /**
      * @ngdoc property
@@ -68,7 +54,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
      */
     restApi.anonymousGet = function (req) {
 
-      var url = buildUrl(req);
+      var url = WsApi.buildUrl(req);
 
         var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
 
@@ -175,7 +161,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
     restApi[HttpMethodVerbs.DELETE] = restApi.delete;
 
     restApi.makeReq = function(req, method) {
-      var url = buildUrl(req);
+      var url = RequestUtil.buildUrl(req);
       
       var data = req.data !== undefined ? req.data : {};
 

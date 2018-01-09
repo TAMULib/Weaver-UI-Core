@@ -26,7 +26,7 @@ core.service("RequestUtil", function () {
         }
 
         if(manifest && manifest.method) {
-            apiReq.method = manifest.method;
+            apiReq.httpMethod = manifest.method;
         }
         
         return apiReq;

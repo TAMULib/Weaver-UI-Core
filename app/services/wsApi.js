@@ -95,16 +95,18 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService, M
           apiReq.data = manifest.data;
         }
 
+        if(manifest && manifest.file) {
+            apiReq.file = manifest.file;
+        }
+
         if (manifest && manifest.query) {
           apiReq.query = manifest.query;
         }
 
-       
-
         if(manifest && manifest.method) {
             apiReq.method = manifest.method;
         }
-
+        
         return apiReq;
 
     };

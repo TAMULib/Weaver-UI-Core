@@ -4,7 +4,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
 
     var authservice = appConfig.authService;
 
-    this.anonymousDownload = function (req) {
+    this.anonymousDownload = function (req, manifest) {
 
         var apiReq = WsApi.prepareRequest(req, manifest);
 
@@ -28,7 +28,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
             });
     };
 
-    this.anonymousUpload = function (req) {
+    this.anonymousUpload = function (req, manifest) {
 
         var apiReq = WsApi.prepareRequest(req, manifest);
 
@@ -53,7 +53,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
         return defer.promise;
     }
 
-    this.download = function (req) {
+    this.download = function (req, manifest) {
 
         var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
@@ -99,7 +99,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
             });
     };
 
-    this.upload = function (req) {
+    this.upload = function (req, manifest) {
 
         var apiReq = WsApi.prepareRequest(req, manifest);
 

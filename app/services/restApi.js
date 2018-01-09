@@ -184,6 +184,12 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
           'Accept': 'application/json, text/plain'
       };
 
+      if(req.headers) {
+        angular.forEach(req.headers, function(hv,h) {
+          headers[h] = hv;
+        });
+      }
+
       if (sessionStorage.token) {
           headers.jwt = sessionStorage.token;
       }

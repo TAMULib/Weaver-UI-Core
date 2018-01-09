@@ -135,7 +135,9 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
           restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
         }
 
-        
+        if(manifest && manifest.headers) {
+            apiReq.headers = manifest.headers;
+        }
 
         return $q(function (resolve, reject) {
             restSend(apiReq).then(function (res) {

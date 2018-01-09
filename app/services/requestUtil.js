@@ -4,7 +4,7 @@ core.service("RequestUtil", function () {
 
     requestUtils.prepareRequest = function(request, manifest) {
 
-        var apiReq = angular.copy(initialReq);
+        var apiReq = angular.copy(request);
 
         if (manifest && manifest.pathValues) {
             for (var key in manifest.pathValues) {

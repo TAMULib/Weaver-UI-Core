@@ -9,7 +9,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService, ManifestService) {
 
     var WsApi = this;
 
@@ -80,21 +80,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
         listenCount = 0;
     };
 
-    /**
-     * @ngdoc method
-     * @name  core.service:WsApi#WsApi.fetch
-     * @methodOf core.service:WsApi
-     * @param {object} apiReq
-     *  An apireq which containes the channel, controller and method
-     *  which should be listened to.
-     * @returns {Promsie} A promise from the WsService send method
-     *
-     * @description
-     *  This method gives a promise which is resolved by id upon
-     *  websocket communication on the desired channel
-     *
-     */
-    WsApi.fetch = function (initialReq, manifest) {
+    WsApi.prepareRequest = function(request, manifest) {
 
         var apiReq = angular.copy(initialReq);
 
@@ -113,6 +99,48 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
           apiReq.query = manifest.query;
         }
 
+       
+
+        if(manifest && manifest.method) {
+            apiReq.method = manifest.method;
+        }
+
+        return apiReq;
+
+    };
+
+    WsApi.buildUrl = function(req) {
+        var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
+        if (req.query) {
+          url += "?";
+          for(var key in req.query) {
+            if(req.query.hasOwnProperty(key)) {
+              url += key + "=" + req.query[key] + "&";
+            }
+          }
+          url = url.substring(0, url.length - 1);
+        }
+        return url;
+    };
+
+    /**
+     * @ngdoc method
+     * @name  core.service:WsApi#WsApi.fetch
+     * @methodOf core.service:WsApi
+     * @param {object} apiReq
+     *  An apireq which containes the channel, controller and method
+     *  which should be listened to.
+     * @returns {Promsie} A promise from the WsService send method
+     *
+     * @description
+     *  This method gives a promise which is resolved by id upon
+     *  websocket communication on the desired channel
+     *
+     */
+    WsApi.fetch = function (initialReq, manifest) {
+
+        var apiReq = WsApi.prepareRequest(initialReq, manifest);
+
         if (apiReq.useWebSockets) {
             var request = '/ws/' + apiReq.controller + '/' + apiReq.method;
             var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
@@ -129,13 +157,11 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
         var restSend = RestApi.get;
 
-        if(manifest && manifest.method) {
-          restSend = RestApi[manifest.method];
+        if(apiReq.method) {
+          restSend = RestApi[apiReq.method];
         } else {
           restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
         }
-
-        
 
         return $q(function (resolve, reject) {
             restSend(apiReq).then(function (res) {

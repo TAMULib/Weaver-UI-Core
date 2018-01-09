@@ -9,7 +9,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $location, $rootScope, RestApi, RequestUtil, WsService, ManifestService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, RequestUtil, WsService) {
 
     var WsApi = this;
 

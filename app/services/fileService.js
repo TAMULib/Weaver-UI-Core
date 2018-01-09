@@ -1,4 +1,4 @@
-core.service("FileService", function ($http, $q, $window, AuthService, Upload, WsApi) {
+core.service("FileService", function ($http, $q, $window, AuthService, Upload, RequestUtil) {
 
     var webservice = appConfig.webService;
 
@@ -6,9 +6,9 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
 
     this.anonymousDownload = function (req, manifest) {
 
-        var apiReq = WsApi.prepareRequest(req, manifest);
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
 
-        var url = WsApi.buildUrl(apiReq);
+        var url = WsRequestUtilApi.buildUrl(apiReq);
 
         var headers = apiReq.data !== undefined ? apiReq.data : {};
 
@@ -30,9 +30,9 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
 
     this.anonymousUpload = function (req, manifest) {
 
-        var apiReq = WsApi.prepareRequest(req, manifest);
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
 
-        var url = WsApi.buildUrl(apiReq);
+        var url = RequestUtil.buildUrl(apiReq);
 
         return attemptAnonymousUpload({
             url: url,
@@ -101,9 +101,9 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload, W
 
     this.upload = function (req, manifest) {
 
-        var apiReq = WsApi.prepareRequest(req, manifest);
+        var apiReq = RequestUtil.prepareRequest(req, manifest);
 
-        var url = WsApi.buildUrl(apiReq);
+        var url = RequestUtil.buildUrl(apiReq);
 
         var headers = {};
 

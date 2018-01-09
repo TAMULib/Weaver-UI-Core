@@ -12,11 +12,9 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs, WsApi) {
+core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs, RequestUtil) {
 
   var restApi = this;
-
-  
 
     /**
      * @ngdoc property
@@ -163,7 +161,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
     restApi[HttpMethodVerbs.DELETE] = restApi.delete;
 
     restApi.makeReq = function(req, method) {
-      var url = buildUrl(req);
+      var url = RequestUtil.buildUrl(req);
       
       var data = req.data !== undefined ? req.data : {};
 

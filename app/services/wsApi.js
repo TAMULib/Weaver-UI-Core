@@ -9,7 +9,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService, ManifestService) {
+core.service("WsApi", function ($q, $location, $rootScope, RestApi, RequestUtil, WsService, ManifestService) {
 
     var WsApi = this;
 
@@ -80,51 +80,6 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService, M
         listenCount = 0;
     };
 
-    WsApi.prepareRequest = function(request, manifest) {
-
-        var apiReq = angular.copy(initialReq);
-
-        if (manifest && manifest.pathValues) {
-            for (var key in manifest.pathValues) {
-                var value = manifest.pathValues[key];
-                apiReq.method = apiReq.method.replace(new RegExp(':' + key, 'g'), value);
-            }
-        }
-
-        if (manifest && manifest.data) {
-          apiReq.data = manifest.data;
-        }
-
-        if(manifest && manifest.file) {
-            apiReq.file = manifest.file;
-        }
-
-        if (manifest && manifest.query) {
-          apiReq.query = manifest.query;
-        }
-
-        if(manifest && manifest.method) {
-            apiReq.method = manifest.method;
-        }
-        
-        return apiReq;
-
-    };
-
-    WsApi.buildUrl = function(req) {
-        var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
-        if (req.query) {
-          url += "?";
-          for(var key in req.query) {
-            if(req.query.hasOwnProperty(key)) {
-              url += key + "=" + req.query[key] + "&";
-            }
-          }
-          url = url.substring(0, url.length - 1);
-        }
-        return url;
-    };
-
     /**
      * @ngdoc method
      * @name  core.service:WsApi#WsApi.fetch
@@ -141,7 +96,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService, M
      */
     WsApi.fetch = function (initialReq, manifest) {
 
-        var apiReq = WsApi.prepareRequest(initialReq, manifest);
+        var apiReq = RequestUtil.prepareRequest(initialReq, manifest);
 
         if (apiReq.useWebSockets) {
             var request = '/ws/' + apiReq.controller + '/' + apiReq.method;

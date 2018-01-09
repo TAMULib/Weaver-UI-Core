@@ -111,11 +111,12 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, RequestUtil,
             return WsService.send(request, headers, payload, channel);
         }
 
+        var restSend = RestApi.GET;
 
         if(apiReq.httpMethod) {
           restSend = RestApi[apiReq.httpMethod];
         } else {
-          restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
+          restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.POST : restSend;
         }
 
         return $q(function (resolve, reject) {

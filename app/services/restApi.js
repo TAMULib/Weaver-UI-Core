@@ -147,6 +147,10 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
       return restApi.makeReq(req, HttpMethodVerbs.GET);
     };
 
+    restApi.patch = function (req) {
+      return restApi.makeReq(req, HttpMethodVerbs.PATCH);
+    };
+
     /**
      * @ngdoc method
      * @name core.service:RestApi#post
@@ -176,7 +180,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
 
     restApi.makeReq = function(req, method) {
       var url = buildUrl(req);
-      
+
       var data = req.data !== undefined ? req.data : {};
 
       var headers = {
@@ -229,6 +233,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
               console.log(error);
               return error.data;
           });
-    } 
+    }
 
 });

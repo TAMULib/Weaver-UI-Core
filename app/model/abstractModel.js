@@ -124,8 +124,10 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
         };
 
         this.ready = function () {
-            beforePromises.push(defer.promise);
-            return $q.all(beforePromises);
+            $q.all(beforePromises).then(function(result) {
+              defer.resolve(result[0]);
+            });
+            return defer.promise;
         };
 
         this.save = function () {

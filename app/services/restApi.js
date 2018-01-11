@@ -174,6 +174,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
     };
 
     restApi[HttpMethodVerbs.GET] = restApi.get;
+    restApi[HttpMethodVerbs.PATCH] = restApi.patch;
     restApi[HttpMethodVerbs.POST] = restApi.post;
     restApi[HttpMethodVerbs.PUT] = restApi.put;
     restApi[HttpMethodVerbs.DELETE] = restApi.delete;

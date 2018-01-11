@@ -44,7 +44,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
 
         this.before = function (beforeMethod) {
             beforeMethodBuffer.push(beforeMethod);
-        }
+        };
 
         this.fetch = function () {
             if (mapping.instantiate !== undefined) {
@@ -67,7 +67,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
                 }
 
             }
-        }
+        };
 
         this.init = function (data, apiMapping) {
 
@@ -124,10 +124,12 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
         };
 
         this.ready = function () {
+            var aggDefer = $q.defer();
+            beforePromises.push(defer);
             $q.all(beforePromises).then(function(result) {
-              defer.resolve(result[0]);
+              aggDefer.resolve(result[0]);
             });
-            return defer.promise;
+            return aggDefer.promise;
         };
 
         this.save = function () {

@@ -12,6 +12,7 @@ tmp/
 .idea
 
 npm-debug.log
+package-lock.json
 
 app/config/appConfig.js
 

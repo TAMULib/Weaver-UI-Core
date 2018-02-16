@@ -1,4 +1,4 @@
-core.controller('LoginController', function ($controller, $location, $scope, UserService) {
+core.controller('LoginController', function ($controller, $location, $scope, UserService, StorageService) {
 
     angular.extend(this, $controller('AuthenticationController', {
         $scope: $scope

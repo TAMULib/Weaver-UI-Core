@@ -128,9 +128,10 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
 
         var restSend = RestApi.get;
-
+        var httpMethod = manifest.method||apiReq.httpMethod;
+        
         if((manifest && manifest.method) || apiReq.httpMethod) {
-          restSend = RestApi[manifest.method||apiReq.httpMethod];
+          restSend = RestApi[httpMethod];
         } else {
           restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
         }

@@ -12,7 +12,7 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AuthServiceApi) {
+core.service("RestApi", function ($http, $window, AlertService, AuthServiceApi) {
 
     /**
      * @ngdoc property
@@ -54,7 +54,7 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
 
         return $http({
             method: 'GET',
@@ -89,7 +89,7 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
 
         return $http({
             method: 'POST',
@@ -121,7 +121,7 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
         var url = isUrl ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
 
         var restObj = {
             method: 'GET',
@@ -140,7 +140,7 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
             },
             //error callback
             function (response) {
-                if (response.data.code == "EXPIRED_JWT") {
+                if (response.data.code === "EXPIRED_JWT") {
 
                     if (sessionStorage.assumedUser) {
 
@@ -182,7 +182,7 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
 
-        var data = (typeof req.data != 'undefined') ? JSON.stringify(req.data) : '{}';
+        var data = req.data !== undefined ? JSON.stringify(req.data) : '{}';
 
         var headers = req.file === undefined ? {
             'jwt': sessionStorage.token,
@@ -204,12 +204,13 @@ core.service("RestApi", function ($http, $window, AuthServiceApi) {
 
             //success callback
             function (response) {
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
 
             //error callback
             function (response) {
-                if (response.data.code == "EXPIRED_JWT") {
+                if (response.data.code === "EXPIRED_JWT") {
 
                     if (sessionStorage.assumedUser) {
 

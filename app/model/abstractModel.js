@@ -70,10 +70,13 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                     this.fetch();
                 }
             }
-
+            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
+                beforeMethod();
+            });
             this.ready().then(function () {
                 ModelUpdateService.register(abstractModel);
             });
+
 
         };
 
@@ -124,10 +127,14 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                 }
             });
             promise.then(function (res) {
-                if (angular.fromJson(res.body).meta.type !== "INVALID") {
-                    angular.extend(abstractModel, angular.fromJson(res.body).payload);
+                var message = angular.fromJson(res.body);
+               if (message.meta.type === "INVALID") {
+                    angular.extend(abstractModel, message.payload);
+                } else {
+                    angular.extend(abstractModel, message.payload);
                     shadow = angular.copy(abstractModel);
                 }
+
             });
             return promise;
         };
@@ -147,6 +154,10 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
 
         this.listen = function (cb) {
             listenCallbacks.push(cb);
+        };
+
+        this.clearListens = function () {
+            listenCallbacks.length = 0;
         };
 
         this.refresh = function () {
@@ -183,7 +194,7 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
         var setData = function (data) {
             angular[combinationOperation](abstractModel, data);
             shadow = angular.copy(abstractModel);
-            if (!listening) {
+            if (!listening && mapping.modelListeners) {
                 listen();
             }
             if (mapping.caching) {
@@ -194,9 +205,6 @@ core.factory("AbstractModel", function ($q, $rootScope, WsApi, ValidationStore, 
                     // could possibly update cache here
                 }
             }
-            angular.forEach(beforeMethodBuffer, function (beforeMethod) {
-                beforeMethod();
-            });
             defer.resolve(abstractModel);
         };
 

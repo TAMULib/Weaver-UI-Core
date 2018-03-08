@@ -193,13 +193,14 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *  An API response meta containing message and type.
      * @param {string} channel
      *  The channel on which the response returned.
+     * @returns {Alert} returns a new Alert.
      *
      * @description
      *  Method to check store for facet and either add if not already in store
      *  or add to the queue
      *
      */
-    var add = function (facet, meta, channel) {
+     var add = function (facet, meta, channel) {
 
         var alert = new Alert(meta.message, meta.type, channel);
 
@@ -213,6 +214,9 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             // queue alert
             enqueue(facet, meta, channel);
         }
+
+        return alert;
+
     };
 
     /**
@@ -223,6 +227,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *  An API response meta containing message and type.
      * @param {string} channel
      *  The channel on which the response returned.
+     * @returns {Alert} returns a new Alert.
      *
      * @description
      *  Method to add an alert to the appropriate stores.
@@ -231,40 +236,43 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     AlertService.add = function (meta, channel) {
 
+        var alert;
+
         if (typeof channel != 'undefined') {
             var endpoint = channel;
 
             // add alert to store by endpoint
-            add(endpoint, meta, channel);
+            alert = add(endpoint, meta, channel);
 
             // return if endpoint is exclusive
             if (exclusive.indexOf(endpoint) > -1) {
-                return;
+                return alert;
             }
 
             var controller = channel.substr(0, channel.lastIndexOf("/"));
 
             // add alert to store by controller
-            add(controller, meta, channel);
+            alert = add(controller, meta, channel);
 
             // return if controller is exclusive
             if (exclusive.indexOf(controller) > -1) {
-                return;
+                return alert;
             }
         }
 
         // allow time for any exclusive channels to be created
         // before adding to stores by type
         if (initializing) {
+            var emptyAlert = {};
             $timeout(function () {
                 initializing = false;
-                AlertService.add(meta, channel);
+                Object.assign(emptyAlert, AlertService.add(meta, channel));
             });
-            return;
+            return emptyAlert;
         }
 
         // add alert to store by type
-        add(meta.type, meta, channel);
+        return add(meta.type, meta, channel);
     };
 
     /**

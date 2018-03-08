@@ -13,6 +13,8 @@ core.service("WsApi", function ($q, $http, WsService) {
 
     var WsApi = this;
 
+    var listenCount = 0;
+
     /**
      * @ngdoc method
      * @name  core.service:WsApi#WsApi.listen
@@ -35,11 +37,12 @@ core.service("WsApi", function ($q, $http, WsService) {
             channel += "/" + apiReq.method;
         }
 
-        return WsService.subscribe(channel, true).defer.promise;
+        return WsService.subscribe(channel, listenCount++, true).defer.promise;
     };
 
     WsApi.clearSubscriptions = function () {
         WsService.unsubscribeAll();
+        listenCount = 0;
     };
 
     /**
@@ -75,12 +78,12 @@ core.service("WsApi", function ($q, $http, WsService) {
         var channel = apiReq.endpoint + "/" + apiReq.controller + "/" + apiReq.method;
 
         var headers = {
-            'jwt': sessionStorage.token,
-            'data': (typeof apiReq.data != 'undefined') ?
-                JSON.stringify(apiReq.data) : '{}'
+            'jwt': sessionStorage.token
         };
 
-        return WsService.send(request, headers, {}, channel);
+        var payload = apiReq.data !== undefined && apiReq.data !== null ? JSON.stringify(apiReq.data) : JSON.stringify({});
+
+        return WsService.send(request, headers, payload, channel);
     };
 
     return WsApi;

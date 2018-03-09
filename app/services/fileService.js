@@ -64,33 +64,34 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             responseType: 'arraybuffer'
         };
 
-        return $http(restObj).then(
-            //success callback
-            function (response) {
-                if (response.data.meta !== undefined && response.data.meta.status === 'REFRESH') {
-                    if (sessionStorage.assumedUser) {
-                        return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    } else {
-                        return AuthService.getRefreshToken().then(function () {
-                            restObj.headers.jwt = sessionStorage.token;
-                            return $http(restObj).then(function (response) {
-                                return response.data;
-                            });
-                        });
-                    }
-                }
-                return response.data;
-            },
-            //error callback
-            function (error) {
-                console.log(error);
-                return error.data;
+        // Since there is no reasonable way to get the meta status from an arraybuffer response we must refresh token first.
+        // This will ensure the token is not expired. The correct solution to this would be to use proper status codes rather
+        // than indicating 200 for all responses and encoding status in meta of the response!!!
+        if (sessionStorage.assumedUser) {
+            return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
+                restObj.headers.jwt = sessionStorage.token;
+                return $http(restObj).then(function (response) {
+                    return response.data;
+                },
+                //error callback
+                function (error) {
+                    console.log(error);
+                    return error.data;
+                });
             });
+        } else {
+            return AuthService.getRefreshToken().then(function () {
+                restObj.headers.jwt = sessionStorage.token;
+                return $http(restObj).then(function (response) {
+                    return response.data;
+                },
+                //error callback
+                function (error) {
+                    console.log(error);
+                    return error.data;
+                });
+            });
+        }
     };
 
     this.upload = function (req) {

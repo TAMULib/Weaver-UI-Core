@@ -17,7 +17,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
   var restApi = this;
 
   var buildUrl = function(req) {
-    var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + "/" + req.method;
+    var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + (req.method ? "/" + req.method : "");
     if (req.query) {
       url += "?";
       for(var key in req.query) {

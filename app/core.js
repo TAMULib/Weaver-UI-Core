@@ -17,7 +17,7 @@ var core = angular.module('core', [
 ]).constant('coreConfig', coreConfig);
 
 core.repo = function (delegateName, delegateFunction) {
-    var modelName = delegateName.replace('Repo', '');
+    var modelName = delegateName.substring(0,delegateName.lastIndexOf("Repo"));
     return core.factory(delegateName, function ($injector, AbstractRepo, AbstractAppRepo, api) {
 
         delegateFunction.$inject = $injector.annotate(delegateFunction);

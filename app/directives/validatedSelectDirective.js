@@ -6,6 +6,7 @@ core.directive("validatedselect", function () {
             "options": "=",
             "optionproperty": "@",
             "optionvalue": "@",
+            "disabled": "=",
             "model": "=",
             "property": "@",
             "label": "@",

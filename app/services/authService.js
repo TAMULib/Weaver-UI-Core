@@ -95,9 +95,9 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 delete sessionStorage.token;
 
                 if (appConfig.mockRole) {
-                    window.open(appConfig.authService + "/token?referer=" + location.href + "&mock=" + appConfig.mockRole, "_self");
+                    window.open(appConfig.authService + "/token?referer=" + encodeURIComponent(location.href)+ "&mock=" + appConfig.mockRole, "_self");
                 } else {
-                    window.open(appConfig.authService + "/token?referer=" + location.href, "_self");
+                    window.open(appConfig.authService + "/token?referer=" + encodeURIComponent(location.href), "_self");
                 }
             });
         }

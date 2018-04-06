@@ -95,18 +95,13 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 delete sessionStorage.token;
 
                 var referer = location.href;
-
                 if(location.href.indexOf('?') >= 0) {
                     var parts = location.href.split('?');
                     referer = parts[0] + encodeURIComponent(parts[1]);
                 }
-
                 if (appConfig.mockRole) {
                     referer +=  "&mock=" + appConfig.mockRole;
                 }
-
-                console.log(referer);
-
                 window.open(appConfig.authService + "/token?referer=" + referer, "_self");
             });
         }

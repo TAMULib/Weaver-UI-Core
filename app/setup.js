@@ -53,16 +53,13 @@ function setUpApp(bootstrapApp) {
             connect({});
         } else {
             var referer = location.href;
-
             if(location.href.indexOf('?') >= 0) {
                 var parts = location.href.split('?');
                 referer = parts[0] + encodeURIComponent(parts[1]);
             }
-
             if (appConfig.mockRole) {
                 referer +=  "&mock=" + appConfig.mockRole;
             }
-
             window.open(appConfig.authService + "/token?referer=" + referer, "_self");
         }
     }

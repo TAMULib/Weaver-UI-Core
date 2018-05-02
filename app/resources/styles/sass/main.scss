@@ -137,12 +137,11 @@ footer p {
 }
 
 .tamu-lib a {
-  background: url("../../node_modules/weaver-ui-core/app/resources/images/library-logo.png") left center no-repeat;
   color: #fff;
   display: block;
   height: 45px;
-  text-indent: -9999px;
 }
+
 @media screen and (min-width: 768px) {
   .tamu-lib {
     margin: 15px 25px 15px 0;

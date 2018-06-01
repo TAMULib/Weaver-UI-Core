@@ -4,7 +4,7 @@
 
    <select
      ng-if="!optionproperty"
-     id="{{property}}"
+     id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"
@@ -18,7 +18,7 @@
 
    <select
      ng-if="optionproperty && !optionvalue"
-     id="{{property}}"
+     id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"
@@ -32,7 +32,7 @@
 
    <select
      ng-if="optionproperty && optionvalue"
-     id="{{property}}"
+     id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"

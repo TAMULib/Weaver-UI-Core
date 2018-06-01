@@ -4,6 +4,7 @@ core.directive("validatedtextarea", function () {
         restrict: 'E',
         scope: {
             "model": "=",
+            "id": "@",
             "property": "@",
             "label": "@",
             "rows": "@",
@@ -14,6 +15,11 @@ core.directive("validatedtextarea", function () {
             "results": "="
         },
         link: function ($scope, element, attr) {
+
+            if ($scope.id === undefined) {
+                $scope.id = $scope.property;
+            }
+
             $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/directives/validatedTextArea.html";
 
             $scope.blur = function ($event) {

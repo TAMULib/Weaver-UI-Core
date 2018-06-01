@@ -4,6 +4,7 @@ core.directive("validatedtextarea", function () {
         restrict: 'E',
         scope: {
             "model": "=",
+            "noId": "@",
             "id": "@",
             "property": "@",
             "label": "@",

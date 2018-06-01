@@ -8,6 +8,7 @@ core.directive("validatedselect", function () {
             "optionvalue": "@",
             "disabled": "=",
             "model": "=",
+            "noId": "@",
             "id": "@",
             "property": "@",
             "label": "@",

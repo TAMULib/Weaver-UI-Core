@@ -1,26 +1,52 @@
-<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
+<div ng-if="noId === 'false' || noId === undefined" class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
 
- 	<label for="textarea-{{label}}">{{label}}</label>
+  <label for="textarea-{{label}}">{{label}}</label>
 
-	<textarea
-		id="{{id}}"
-		name="{{property}}"
-		class="form-control"
-		ng-model="model[property]"
-		rows="{{rows}}"
-		ng-blur="blur($event)"
-		aria-describedby="{{label}}"
-		ng-required="validations[property].required.value"
-		ng-minlength="validations[property].minlength.value"
-		ng-maxlength="validations[property].maxlength.value"
-		ng-pattern="validations[property].pattern.value">
-	</textarea>
+  <textarea
+    id="{{id}}"
+    name="{{property}}"
+    class="form-control"
+    ng-model="model[property]"
+    rows="{{rows}}"
+    ng-blur="blur($event)"
+    aria-describedby="{{label}}"
+    ng-required="validations[property].required.value"
+    ng-minlength="validations[property].minlength.value"
+    ng-maxlength="validations[property].maxlength.value"
+    ng-pattern="validations[property].pattern.value">
+  </textarea>
 
-	<validationmessage
-		type="input"
-		property="{{property}}"
-		form="form"
-		validations="validations"
-		results="results">
-	</validationmessage>
+  <validationmessage
+    type="input"
+    property="{{property}}"
+    form="form"
+    validations="validations"
+    results="results">
+  </validationmessage>
+</div>
+
+<div ng-if="noId === 'true'" class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
+
+  <label for="textarea-{{label}}">{{label}}</label>
+
+  <textarea
+    name="{{property}}"
+    class="form-control"
+    ng-model="model[property]"
+    rows="{{rows}}"
+    ng-blur="blur($event)"
+    aria-describedby="{{label}}"
+    ng-required="validations[property].required.value"
+    ng-minlength="validations[property].minlength.value"
+    ng-maxlength="validations[property].maxlength.value"
+    ng-pattern="validations[property].pattern.value">
+  </textarea>
+
+  <validationmessage
+    type="input"
+    property="{{property}}"
+    form="form"
+    validations="validations"
+    results="results">
+  </validationmessage>
 </div>

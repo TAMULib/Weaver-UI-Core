@@ -5,6 +5,7 @@ core.directive("validatedinput", function ($timeout) {
         scope: {
             "type": "@",
             "model": "=",
+            "noId": "@",
             "id": "@",
             "property": "@",
             "label": "@",

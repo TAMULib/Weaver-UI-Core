@@ -1,10 +1,10 @@
-<div ng-if="noId === 'false' || noId === undefined" class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
+<div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
 
     <label for="select-{{label}}">{{label}}</label>
 
    <select
      ng-if="!optionproperty"
-     id="{{id}}"
+     ng-attr-id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"
@@ -18,7 +18,7 @@
 
    <select
      ng-if="optionproperty && !optionvalue"
-     id="{{id}}"
+     ng-attr-id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"
@@ -32,7 +32,7 @@
 
    <select
      ng-if="optionproperty && optionvalue"
-     id="{{id}}"
+     ng-attr-id="{{id}}"
      name="{{property}}"
      class="form-control"
      aria-describedby="{{label}}"
@@ -52,56 +52,3 @@
      results="results">
    </validationmessage>
  </div>
-
-<div ng-if="noId === 'true'" class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
-
-  <label for="select-{{label}}">{{label}}</label>
-
- <select
-   ng-if="!optionproperty"
-   name="{{property}}"
-   class="form-control"
-   aria-describedby="{{label}}"
-   ng-disabled="disabled"
-   ng-model="model[property]"
-   ng-options="option for option in options"
-   ng-blur="blur($event)"
-   ng-change="change()"
-   ng-required="validations[property].required.value">
- </select>
-
- <select
-   ng-if="optionproperty && !optionvalue"
-   name="{{property}}"
-   class="form-control"
-   aria-describedby="{{label}}"
-   ng-disabled="disabled"
-   ng-model="model[property]"
-   ng-options="option as option[optionproperty] for option in options track by option.id"
-   ng-blur="blur($event)"
-   ng-change="change()"
-   ng-required="validations[property].required.value">
- </select>
-
- <select
-   ng-if="optionproperty && optionvalue"
-   name="{{property}}"
-   class="form-control"
-   aria-describedby="{{label}}"
-   ng-disabled="disabled"
-   ng-model="model[property]"
-   ng-options="option[optionvalue] as option[optionproperty] for option in options"
-   ng-blur="blur($event)"
-   ng-change="change()"
-   ng-required="validations[property].required.value">
- </select>
-
- <validationmessage
-   type="input"
-   property="{{property}}"
-   form="form"
-   validations="validations"
-   results="results">
- </validationmessage>
-</div>
- 

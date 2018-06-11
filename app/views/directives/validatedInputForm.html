@@ -6,7 +6,7 @@
 		 	<label ng-if="label" for="{{property}}-input">{{label}}</label>
 			<div ng-class="{ 'input-group': toolTip !== undefined }">
 				<input
-					id="{{property}}"
+					ng-attr-id="{{id}}"
 					name="{{property}}"
 					type="{{type}}"
 					class="form-control"
@@ -35,7 +35,7 @@
 			<label ng-if="label" for="{{property}}-input" class="checkbox">{{label}}</label>
 			<div class="checkbox-inline">
 				<input
-					id="{{property}}"
+					ng-attr-id="{{id}}"
 					name="{{property}}"
 					type="{{type}}"
 					ng-change="change($event)"

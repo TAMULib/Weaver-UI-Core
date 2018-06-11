@@ -8,6 +8,8 @@ core.directive("validatedselect", function () {
             "optionvalue": "@",
             "disabled": "=",
             "model": "=",
+            "noId": "@",
+            "id": "@",
             "property": "@",
             "label": "@",
             "blurEnabled": "=",
@@ -18,6 +20,11 @@ core.directive("validatedselect", function () {
             "results": "="
         },
         link: function ($scope, element, attr) {
+
+            if ($scope.id === undefined && ($scope.noId === 'false' || $scope.noId === undefined)) {
+                $scope.id = $scope.property;
+            }
+
             $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/directives/validatedSelect.html";
 
             $scope.blur = function ($event) {

@@ -22,9 +22,9 @@ core.service("StorageService", function ($q) {
      *
      */
     StorageService.storage = {
-        'session': window['sessionStorage'],
-        'local': window['localStorage']
-    }
+        'session': window.sessionStorage,
+        'local': window.localStorage
+    };
 
     /**
      * @ngdoc property
@@ -38,7 +38,7 @@ core.service("StorageService", function ($q) {
     StorageService.keys = {
         'session': {},
         'local': {}
-    }
+    };
 
     /**
      * @ngdoc method
@@ -63,7 +63,7 @@ core.service("StorageService", function ($q) {
         }
         StorageService.storage[type][key] = value;
         StorageService.keys[type][key].notify(StorageService.storage[type][key]);
-    }
+    };
 
     /**
      * @ngdoc method
@@ -82,7 +82,7 @@ core.service("StorageService", function ($q) {
     StorageService.get = function (key, type) {
         type = (type !== undefined) ? type : appConfig.storageType;
         return StorageService.storage[type][key];
-    }
+    };
 
     /**
      * @ngdoc method
@@ -110,9 +110,9 @@ core.service("StorageService", function ($q) {
         StorageService.keys[type][key].promise.then(null, null, function (promisedData) {
             console.log(promisedData);
             angular.extend(data, promisedData);
-        })
+        });
         return data;
-    }
+    };
 
     /**
      * @ngdoc method
@@ -135,7 +135,7 @@ core.service("StorageService", function ($q) {
         }
         delete StorageService.keys[type][key];
         delete StorageService.storage[type][key];
-    }
+    };
 
     for (var type in {
             'session': '0',

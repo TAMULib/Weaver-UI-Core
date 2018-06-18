@@ -89,8 +89,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
 
             if (attr.types) {
                 var splitTypes = attr.types.split(',');
-                for (var i in splitTypes) {
-                    types.push(splitTypes[i].trim());
+                for (var j in splitTypes) {
+                    types.push(splitTypes[j].trim());
                 }
             }
 
@@ -203,29 +203,35 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
                 }
             };
 
-            for (var i in facets) {
-                if (channels.length > 0 && types.indexOf(facets[i]) > -1) continue;
-                var alerts = AlertService.get(facets[i]);
+            for (var k in facets) {
+                if (channels.length > 0 && types.indexOf(facets[k]) > -1) continue;
+                var alerts = AlertService.get(facets[k]);
                 if (alerts === undefined) break;
                 if (alerts.defer) {
-                    for (var j in alerts.list) {
-                        handle(alerts.list[j]);
+                    for (var l in alerts.list) {
+                        handle(alerts.list[l]);
                     }
-                    alerts.defer.promise.then(function (alert) {
-                        // resolved
-                    }, function (alert) {
-                        // rejected
-                    }, function (alert) {
-                        // notified
-                        handle(alert);
-                    });
+                    alerts.defer.promise.then(
+                        /*jshint loopfunc: true */
+                        function (alert) {
+                            // resolved
+                        },
+                        /*jshint loopfunc: true */
+                        function (alert) {
+                            // rejected
+                        },
+                        /*jshint loopfunc: true */
+                        function (alert) {
+                            // notified
+                            handle(alert);
+                        });
                 }
             }
 
             $rootScope.$on("$routeChangeStart", function (event, next, current) {
                 // remove alerts on route change
-                for (var i in $scope.alerts) {
-                    AlertService.remove($scope.alerts[i]);
+                for (var m in $scope.alerts) {
+                    AlertService.remove($scope.alerts[m]);
                 }
             });
 

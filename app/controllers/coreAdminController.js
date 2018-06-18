@@ -50,7 +50,7 @@ core.controller('CoreAdminController', function ($controller, $injector, $route,
     $scope.cancelAssumeUser = function () {
         $scope.closeModal();
         AssumedControl.cancel();
-    }
+    };
 
     $scope.isMocking = function () {
         if (appConfig.mockRole) {

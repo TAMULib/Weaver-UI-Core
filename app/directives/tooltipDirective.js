@@ -108,7 +108,7 @@ core.directive('tooltip', function ($timeout, $compile) {
                 $scope.showTimer = $timeout(function () {
                     $scope.tipVisible = true;
                 }, 500);
-            }
+            };
 
             /**
              * @ngdoc method
@@ -129,7 +129,7 @@ core.directive('tooltip', function ($timeout, $compile) {
                     $scope.hidden = true;
                 }, 500);
 
-            }
+            };
 
             /**
              * @ngdoc method
@@ -151,7 +151,7 @@ core.directive('tooltip', function ($timeout, $compile) {
                     }, 500);
                 }
 
-            }
+            };
 
             /**
              * @ngdoc method
@@ -165,9 +165,9 @@ core.directive('tooltip', function ($timeout, $compile) {
              *  and $scope.tipStyles["left"] variables respectively to aid display of the tooltip  message in that position.
              */
             $scope.positionTip = function ($event) {
-                $scope.tipStyles["top"] = $event.clientY + 20;
-                $scope.tipStyles["left"] = $event.clientX - 25;
-            }
+                $scope.tipStyles.top = $event.clientY + 20;
+                $scope.tipStyles.left = $event.clientX - 25;
+            };
         }
     };
 });

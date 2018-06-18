@@ -1,5 +1,3 @@
-'use strict';
-
 describe('core.version module', function () {
     beforeEach(module('core.version'));
 

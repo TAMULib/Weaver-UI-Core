@@ -1,15 +1,15 @@
 #! /usr/bin/env node
 
-const process = require('process');
-const fs = require('fs');
+var process = require('process');
+var fs = require('fs');
 
-const command = process.argv[2];
+var command = process.argv[2];
 
-const commandArgsArr = process.argv.slice(2, process.argv.length);
-const commandArgs = {};
+var commandArgsArr = process.argv.slice(2, process.argv.length);
+var commandArgs = {};
 
 for (var i = 0; i < commandArgsArr.length; i++) {
-    const cmd = commandArgsArr[i];
+    var cmd = commandArgsArr[i];
     if (cmd[0] === '-') {
         var nextEntry = commandArgsArr[i + 1];
         if (nextEntry && nextEntry[0] !== '-') {
@@ -20,9 +20,9 @@ for (var i = 0; i < commandArgsArr.length; i++) {
     }
 }
 
-const commands = {
+var commands = {
     server: require('./server.js')
-}
+};
 
 if (commands[command]) {
     //If the command exists, run it
@@ -41,4 +41,3 @@ if (commands[command]) {
     console.log('ERROR: ' + command + ' not found.');
     console.log('-h for help');
 }
-

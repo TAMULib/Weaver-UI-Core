@@ -72,11 +72,11 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
     };
 
     var processResponse = function (message) {
-        var messageContent = JSON.parse(message.body)
-        var meta = messageContent.meta
+        var messageContent = JSON.parse(message.body);
+        var meta = messageContent.meta;
 
         var requestId = meta.id ? meta.id : null;
-        var status = meta.status
+        var status = meta.status;
 
         if (pendingRequests[requestId]) {
             message.ack({
@@ -138,15 +138,15 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
 
         if (subscription === undefined) {
 
-            var subscription = {
+            subscription = {
                 id: id,
                 channel: channel,
                 defer: $q.defer(),
                 listen: listen
             };
 
-            if(listen) {
-              subscription.unsubscribeCb = unsubscribeCb;
+            if (listen) {
+                subscription.unsubscribeCb = unsubscribeCb;
             }
 
             var subscriptionCallback;
@@ -248,8 +248,8 @@ core.service("WsService", function ($interval, $q, AlertService, AuthService) {
      */
     WsService.unsubscribe = function (subscription) {
         window.stompClient.unsubscribe(subscription.channel);
-        if(subscriptions[subscription.id].listen) {
-          subscriptions[subscription.id].unsubscribeCb();
+        if (subscriptions[subscription.id].listen) {
+            subscriptions[subscription.id].unsubscribeCb();
         }
         delete subscriptions[subscription.id];
     };

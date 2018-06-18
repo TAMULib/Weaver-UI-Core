@@ -14,21 +14,21 @@
  */
 core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs) {
 
-  var restApi = this;
+    var restApi = this;
 
-  var buildUrl = function(req) {
-    var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + (req.method ? "/" + req.method : "");
-    if (req.query) {
-      url += "?";
-      for(var key in req.query) {
-        if(req.query.hasOwnProperty(key)) {
-          url += key + "=" + req.query[key] + "&";
+    var buildUrl = function (req) {
+        var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + (req.method ? "/" + req.method : "");
+        if (req.query) {
+            url += "?";
+            for (var key in req.query) {
+                if (req.query.hasOwnProperty(key)) {
+                    url += key + "=" + req.query[key] + "&";
+                }
+            }
+            url = url.substring(0, url.length - 1);
         }
-      }
-      url = url.substring(0, url.length - 1);
-    }
-    return url;
-  };
+        return url;
+    };
 
     /**
      * @ngdoc property
@@ -68,7 +68,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
      */
     restApi.anonymousGet = function (req) {
 
-      var url = buildUrl(req);
+        var url = buildUrl(req);
 
         var data = req.data !== undefined ? angular.toJson(req.data) : '{}';
 
@@ -144,11 +144,11 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
      *	Initiates a get request to the configured web service on behalf of an authenticated user.
      */
     restApi.get = function (req) {
-      return restApi.makeReq(req, HttpMethodVerbs.GET);
+        return restApi.makeReq(req, HttpMethodVerbs.GET);
     };
 
     restApi.patch = function (req) {
-      return restApi.makeReq(req, HttpMethodVerbs.PATCH);
+        return restApi.makeReq(req, HttpMethodVerbs.PATCH);
     };
 
     /**
@@ -162,15 +162,15 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
      *	Initiates a post request to the configured web service on behalf of an authenticated user.
      */
     restApi.post = function (req) {
-      return restApi.makeReq(req, HttpMethodVerbs.POST);
+        return restApi.makeReq(req, HttpMethodVerbs.POST);
     };
 
     restApi.put = function (req) {
-      return restApi.makeReq(req, HttpMethodVerbs.PUT);
+        return restApi.makeReq(req, HttpMethodVerbs.PUT);
     };
 
     restApi.delete = function (req) {
-      return restApi.makeReq(req, HttpMethodVerbs.DELETE);
+        return restApi.makeReq(req, HttpMethodVerbs.DELETE);
     };
 
     restApi[HttpMethodVerbs.GET] = restApi.get;
@@ -179,61 +179,61 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
     restApi[HttpMethodVerbs.PUT] = restApi.put;
     restApi[HttpMethodVerbs.DELETE] = restApi.delete;
 
-    restApi.makeReq = function(req, method) {
-      var url = buildUrl(req);
+    restApi.makeReq = function (req, method) {
+        var url = buildUrl(req);
 
-      var data = req.data !== undefined ? req.data : {};
+        var data = req.data !== undefined ? req.data : {};
 
-      var headers = {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, text/plain'
-      };
+        var headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json, text/plain'
+        };
 
-      if(req.headers) {
-        angular.forEach(req.headers, function(hv,h) {
-          headers[h] = hv;
-        });
-      }
+        if (req.headers) {
+            angular.forEach(req.headers, function (hv, h) {
+                headers[h] = hv;
+            });
+        }
 
-      if (sessionStorage.token) {
-          headers.jwt = sessionStorage.token;
-      }
+        if (sessionStorage.token) {
+            headers.jwt = sessionStorage.token;
+        }
 
-      var restObj = {
-          method: method,
-          url: url,
-          data: data,
-          headers: headers
-      };
+        var restObj = {
+            method: method,
+            url: url,
+            data: data,
+            headers: headers
+        };
 
-      return $http(restObj).then(
-          //success callback
-          function (response) {
-              if (response.data.meta.status === 'REFRESH') {
-                  if (sessionStorage.assumedUser) {
-                      return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
-                          restObj.headers.jwt = sessionStorage.token;
-                          return $http(restObj).then(function (response) {
-                              return response.data;
-                          });
-                      });
-                  } else {
-                      return AuthService.getRefreshToken().then(function () {
-                          restObj.headers.jwt = sessionStorage.token;
-                          return $http(restObj).then(function (response) {
-                              return response.data;
-                          });
-                      });
-                  }
-              }
-              AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-              return response.data;
-          },
-          //error callback
-          function (error) {
-              console.log(error);
-              return error.data;
-          });
-    }
+        return $http(restObj).then(
+            //success callback
+            function (response) {
+                if (response.data.meta.status === 'REFRESH') {
+                    if (sessionStorage.assumedUser) {
+                        return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
+                    } else {
+                        return AuthService.getRefreshToken().then(function () {
+                            restObj.headers.jwt = sessionStorage.token;
+                            return $http(restObj).then(function (response) {
+                                return response.data;
+                            });
+                        });
+                    }
+                }
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                return response.data;
+            },
+            //error callback
+            function (error) {
+                console.log(error);
+                return error.data;
+            });
+    };
 
 });

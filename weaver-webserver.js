@@ -1,28 +1,28 @@
-const fs = require('fs');
-const process = require('process');
-const path = require('path');
+var fs = require('fs');
+var process = require('process');
+var path = require('path');
 
-const express = require('express');
-const app = express();
-const router = express.Router();
+var express = require('express');
+var app = express();
+var router = express.Router();
 
-const args = process.argv.slice(2, process.argv.length);
+var args = process.argv.slice(2, process.argv.length);
 
-const port = args[0] ? args[0] : 8080;
-const base = args[1] ? args[1] : '/';
+var port = args[0] ? args[0] : 8080;
+var base = args[1] ? args[1] : '/';
 
-const root = process.cwd() + path.sep + 'app';
+var root = process.cwd() + path.sep + 'app';
 
 router.use(express.static('app'));
 
 router.use(function (req, res, next) {
     if (req.get("X-Requested-With")) {
-      res.status(404).send('Not found');
-      throw new Error(getTime() + ": Resource requested and not found at -- " + req.url);
+        res.status(404).send('Not found');
+        throw new Error(getTime() + ": Resource requested and not found at -- " + req.url);
     } else {
-      res.sendFile("index.html", {
-          root: root
-      });
+        res.sendFile("index.html", {
+            root: root
+        });
     }
 });
 
@@ -34,7 +34,7 @@ app.listen(port, function () {
 });
 
 function getTime() {
-  return new Date().toISOString().
-                replace(/T/, ' ').      // replace T with a space
-                replace(/\..+/, '')     // delete the dot and everything after
+    return new Date().toISOString().
+    replace(/T/, ' '). // replace T with a space
+    replace(/\..+/, ''); // delete the dot and everything after
 }

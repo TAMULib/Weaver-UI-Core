@@ -23,11 +23,11 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
 
     UserService.userReady = function () {
         return userReady.promise;
-    }
+    };
 
     UserService.userEvents = function () {
         return userEvents.promise;
-    }
+    };
 
     UserService.setCurrentUser = function (user) {
         angular.extend(currentUser, user);

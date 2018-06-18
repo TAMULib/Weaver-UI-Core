@@ -67,7 +67,7 @@ core.model("User", function ($q, RestApi, StorageService) {
                     user.setValidationResults(data.payload.ValidationResults);
                 } else {
                     if (data.meta.status === 'SUCCESS') {
-                        sessionStorage.token = data.payload.String
+                        sessionStorage.token = data.payload.String;
                     }
                     deferred.resolve(data);
                 }
@@ -78,6 +78,6 @@ core.model("User", function ($q, RestApi, StorageService) {
         };
 
         return this;
-    }
+    };
 
 });

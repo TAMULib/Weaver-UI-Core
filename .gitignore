@@ -1,3 +1,5 @@
+.coveralls.yml
+coverage/
 dist/
 docs/
 logs/

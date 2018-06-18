@@ -72,7 +72,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
             }
             channels.push(channel);
         }
-        return subscriptions[channel]
+        return subscriptions[channel];
     };
 
     WsApi.clearSubscriptions = function () {
@@ -106,11 +106,11 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
         }
 
         if (manifest && manifest.data) {
-          apiReq.data = manifest.data;
+            apiReq.data = manifest.data;
         }
 
         if (manifest && manifest.query) {
-          apiReq.query = manifest.query;
+            apiReq.query = manifest.query;
         }
 
         if (apiReq.useWebSockets) {
@@ -129,7 +129,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
 
         var restSend = RestApi.get;
 
-        if(manifest && manifest.method) {
+        if (manifest && manifest.method) {
             restSend = RestApi[manifest.method];
         } else if (apiReq.httpMethod) {
             restSend = RestApi[apiReq.httpMethod];
@@ -137,7 +137,7 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
             restSend = (apiReq.data !== undefined && apiReq.data !== null) ? RestApi.post : restSend;
         }
 
-        if(manifest && manifest.headers) {
+        if (manifest && manifest.headers) {
             apiReq.headers = manifest.headers;
         }
 

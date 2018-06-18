@@ -53,12 +53,12 @@ function setUpApp(bootstrapApp) {
             connect({});
         } else {
             var referer = location.href;
-            if(location.href.indexOf('?') >= 0) {
+            if (location.href.indexOf('?') >= 0) {
                 var parts = location.href.split('?');
                 referer = parts[0] + encodeURIComponent(parts[1]);
             }
             if (appConfig.mockRole) {
-                referer +=  "&mock=" + appConfig.mockRole;
+                referer += "&mock=" + appConfig.mockRole;
             }
             window.open(appConfig.authService + "/token?referer=" + referer, "_self");
         }
@@ -91,25 +91,25 @@ function setUpApp(bootstrapApp) {
             }
         });
 
-    };
+    }
 
     function connect(headers) {
         angular.element(document).ready(function () {
             attemptConnect(headers, 0);
         });
-    };
+    }
 
     function getQueryVariable(variable) {
-      var value;
-      var query = window.location.search.substring(1);
-      var vars = query.split("&");
-      for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        if(pair[0] === variable){
-          value = pair[1];
+        var value;
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                value = pair[1];
+            }
         }
-      }
-      return value;
+        return value;
     }
 
     function getJwt() {
@@ -120,9 +120,9 @@ function setUpApp(bootstrapApp) {
     }
 
     function cleanUrl() {
-      var uri = location.toString();
-      var jwtQuery = "jwt=" + getQueryVariable('jwt');
-      history.replaceState({}, document.title, uri.replace(jwtQuery, ""));
+        var uri = location.toString();
+        var jwtQuery = "jwt=" + getQueryVariable('jwt');
+        history.replaceState({}, document.title, uri.replace(jwtQuery, ""));
     }
 
 }

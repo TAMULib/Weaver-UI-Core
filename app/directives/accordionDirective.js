@@ -39,7 +39,7 @@ core.directive("wvrAccordion", function (AccordionService) {
              */
             this.closeAll = function (id) {
                 if ($scope.singleExpand == "true") AccordionService.closeAll(id);
-            }
+            };
 
         },
         link: function ($scope, element, attr) {
@@ -109,9 +109,9 @@ core.directive("wvrPane", function ($location, $timeout, $anchorScroll, Accordio
 
 
             $timeout(function () {
-                var panelSearch = $location.search()["panel"];
+                var panelSearch = $location.search().panel;
                 if (panelSearch == $scope.query) $scope.open();
-                $location.hash(panelSearch).replace()
+                $location.hash(panelSearch).replace();
                 $anchorScroll();
             });
 
@@ -126,8 +126,12 @@ core.directive("wvrPane", function ($location, $timeout, $anchorScroll, Accordio
              */
             $scope.toggleExpanded = function () {
                 $scope.closeAll(paneID);
-                $scope.expanded ? $scope.close() : $scope.open();
-            }
+                if ($scope.expanded) {
+                    $scope.close();
+                } else {
+                    $scope.open();
+                }
+            };
 
             /**
              * @ngdoc method
@@ -148,8 +152,7 @@ core.directive("wvrPane", function ($location, $timeout, $anchorScroll, Accordio
                 $scope.expanded = true;
                 AccordionService.add(paneID, $scope.close);
                 $location.search("panel", $scope.query, false).replace();
-
-            }
+            };
 
             /**
              * @ngdoc method
@@ -162,7 +165,7 @@ core.directive("wvrPane", function ($location, $timeout, $anchorScroll, Accordio
              */
             $scope.close = function () {
                 $scope.expanded = false;
-            }
+            };
 
             /**
              * @ngdoc method
@@ -178,7 +181,7 @@ core.directive("wvrPane", function ($location, $timeout, $anchorScroll, Accordio
                 $timeout(function () {
                     $scope.loading = false;
                 }, 500);
-            }
+            };
 
         }
     };
@@ -237,7 +240,7 @@ core.service("AccordionService", function () {
      */
     AccordionService.remove = function (id) {
         if (openPanes[id]) delete openPanes[id];
-    }
+    };
 
     /**
      * @ngdoc method

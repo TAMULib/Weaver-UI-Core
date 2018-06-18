@@ -118,7 +118,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         this.channel = channel ? channel : 'unassigned';
         this.time = new Date().getTime();
         if (classes[type] === undefined) {
-            this.class = classes['DEFAULT'];
+            this.class = classes.DEFAULT;
         } else {
             this.class = classes[type];
         }
@@ -388,7 +388,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             queue[facet].push({
                 'meta': meta,
                 'channel': channel
-            })
+            });
         }
     };
 
@@ -420,7 +420,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
                 alert.channel === channel;
         });
         return queued.length === 0;
-    }
+    };
 
     /**
      * @ngdoc method

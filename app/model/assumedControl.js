@@ -18,7 +18,7 @@ core.service("AssumedControl", function ($q, AuthService, StorageService, UserSe
 
     var AssumedControl = function () {
         return this;
-    }
+    };
 
     var initiliazed = false;
     var set = false;

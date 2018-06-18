@@ -17,7 +17,7 @@ var core = angular.module('core', [
 ]).constant('coreConfig', coreConfig);
 
 core.repo = function (delegateName, delegateFunction) {
-    var modelName = delegateName.substring(0,delegateName.lastIndexOf("Repo"));
+    var modelName = delegateName.substring(0, delegateName.lastIndexOf("Repo"));
     return core.factory(delegateName, function ($injector, AbstractRepo, AbstractAppRepo, api) {
 
         delegateFunction.$inject = $injector.annotate(delegateFunction);
@@ -79,7 +79,7 @@ core.model = function (delegateName, delegateFunction) {
                         model.instance.dirty(true);
                         return typeof val === 'function' ? val() : val;
                     });
-                };
+                }
 
                 for (var key in model.instance) {
                     if (model.instance.hasOwnProperty(key) && typeof model.instance[key] !== 'function') {
@@ -96,18 +96,19 @@ core.model = function (delegateName, delegateFunction) {
                             }
 
                             if (isString) {
+                                /*jshint loopfunc: true */
                                 property.push = function (element) {
-                                    console.log(typeof element);
                                     var index = this.length;
                                     var array = Array.prototype.push.call(this, element);
                                     watch(this, index);
                                     return array;
-                                }
+                                };
+                                /*jshint loopfunc: true */
                                 property.unshift = function (element) {
                                     var array = Array.prototype.push.call(this, element);
                                     watch(this, 0);
                                     return array;
-                                }
+                                };
                             }
 
                         }
@@ -117,6 +118,6 @@ core.model = function (delegateName, delegateFunction) {
             }, 250);
 
             return model.instance;
-        }
+        };
     });
 };

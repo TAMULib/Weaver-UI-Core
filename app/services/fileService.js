@@ -45,7 +45,7 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             defer.notify(parseInt(100.0 * event.loaded / event.total));
         });
         return defer.promise;
-    }
+    };
 
     this.download = function (req) {
 
@@ -71,25 +71,25 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
                 restObj.headers.jwt = sessionStorage.token;
                 return $http(restObj).then(function (response) {
-                    return response.data;
-                },
-                //error callback
-                function (error) {
-                    console.log(error);
-                    return error.data;
-                });
+                        return response.data;
+                    },
+                    //error callback
+                    function (error) {
+                        console.log(error);
+                        return error.data;
+                    });
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
                 restObj.headers.jwt = sessionStorage.token;
                 return $http(restObj).then(function (response) {
-                    return response.data;
-                },
-                //error callback
-                function (error) {
-                    console.log(error);
-                    return error.data;
-                });
+                        return response.data;
+                    },
+                    //error callback
+                    function (error) {
+                        console.log(error);
+                        return error.data;
+                    });
             });
         }
     };
@@ -142,6 +142,6 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         });
 
         return defer.promise;
-    }
+    };
 
 });

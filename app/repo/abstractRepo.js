@@ -109,7 +109,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                         resolve(res);
                     });
                 } else {
-                    console.log('Not processing request. No changes to model.', model)
+                    console.log('Not processing request. No changes to model.', model);
                     var payload = {};
                     payload[model.constructor.name] = model;
                     resolve({
@@ -223,9 +223,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             if (typeof cbOrActionOrActionArray === "function") {
                 actionCbs[ApiResponseActions.ANY].push(cbOrActionOrActionArray);
             } else if (Array.isArray(cbOrActionOrActionArray)) {
-              angular.forEach(cbOrActionOrActionArray, function(action) {
-                actionCbs[action].push(cb);
-              });
+                angular.forEach(cbOrActionOrActionArray, function (action) {
+                    actionCbs[action].push(cb);
+                });
             } else {
                 actionCbs[cbOrActionOrActionArray].push(cb);
             }
@@ -236,7 +236,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             angular.forEach(pendingChanges, function (modelObj) {
                 list.push(new model(modelObj));
             });
-            delete pendingChanges;
+            pendingChanges = undefined;
         };
 
         abstractRepo.changesPending = function () {
@@ -373,8 +373,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             });
         }
 
-        abstractRepo.overrideAction = function(action, cb) {
-          actionOverrides[action] = cb;
+        abstractRepo.overrideAction = function (action, cb) {
+            actionOverrides[action] = cb;
         };
 
         if (abstractRepo.mapping.channel) {
@@ -384,65 +384,65 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 var resObj = angular.fromJson(res.body);
                 var modelObj = unwrap(res);
 
-                if(actionOverrides[resObj.meta.action]) {
-                  actionOverrides[resObj.meta.action](modelObj);
+                if (actionOverrides[resObj.meta.action]) {
+                    actionOverrides[resObj.meta.action](modelObj);
                 } else {
-                  switch (resObj.meta.action) {
-                    case ApiResponseActions.CREATE:
-                        abstractRepo.add(modelObj);
-                        break;
-                    case ApiResponseActions.READ:
-                    case ApiResponseActions.UPDATE:
-                        var existingModelToUpdate = abstractRepo.findById(modelObj.id);
-                        if(existingModelToUpdate) {
-                          if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
-                            acceptPendingModelUpdate(existingModelToUpdate, modelObj);
-                          } else {
-                            existingModelToUpdate.updatePending = true;
-                            existingModelToUpdate.acceptPendingUpdate = function () {
-                                acceptPendingModelUpdate(existingModelToUpdate, modelObj);
-                            };
-                            console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
-                          }
-                        }
-                        break;
-                    case ApiResponseActions.DELETE:
-                        for (var i in list) {
-                            var existingModelToDelete = list[i];
-                            if (existingModelToDelete.id === modelObj.id) {
-                                if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
-                                    acceptPendingModelDelete(existingModelToDelete, i);
+                    switch (resObj.meta.action) {
+                        case ApiResponseActions.CREATE:
+                            abstractRepo.add(modelObj);
+                            break;
+                        case ApiResponseActions.READ:
+                        case ApiResponseActions.UPDATE:
+                            var existingModelToUpdate = abstractRepo.findById(modelObj.id);
+                            if (existingModelToUpdate) {
+                                if (existingModelToUpdate.updateRequested || !existingModelToUpdate.dirty()) {
+                                    acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                                 } else {
-                                    existingModelToDelete.deletePending = true;
-                                    /*jshint loopfunc: true */
-                                    existingModelToDelete.acceptPendingDelete = function () {
-                                        acceptPendingModelDelete(existingModelToDelete, i);
+                                    existingModelToUpdate.updatePending = true;
+                                    existingModelToUpdate.acceptPendingUpdate = function () {
+                                        acceptPendingModelUpdate(existingModelToUpdate, modelObj);
                                     };
-                                    console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
+                                    console.warn(resObj.meta.action + " attempted on dirty model", existingModelToUpdate);
                                 }
-                                break;
                             }
-                        }
-                        break;
-                    case ApiResponseActions.REMOVE:
-                    case ApiResponseActions.REORDER:
-                    case ApiResponseActions.SORT:
-                    case ApiResponseActions.BROADCAST:
-                        var repoDirty = false;
-                        for (var j in list) {
-                            repoDirty = !list[j].updateRequested && list[j].dirty();
-                            if (repoDirty) {
-                                console.log(list[j])
-                                break;
+                            break;
+                        case ApiResponseActions.DELETE:
+                            for (var i in list) {
+                                var existingModelToDelete = list[i];
+                                if (existingModelToDelete.id === modelObj.id) {
+                                    if (existingModelToDelete.deleteRequested || !existingModelToDelete.dirty()) {
+                                        acceptPendingModelDelete(existingModelToDelete, i);
+                                    } else {
+                                        existingModelToDelete.deletePending = true;
+                                        /*jshint loopfunc: true */
+                                        existingModelToDelete.acceptPendingDelete = function () {
+                                            acceptPendingModelDelete(existingModelToDelete, i);
+                                        };
+                                        console.warn(resObj.meta.action + " attempted on dirty model", existingModelToDelete);
+                                    }
+                                    break;
+                                }
                             }
-                        }
-                        pendingChanges = modelObj;
-                        if (!repoDirty) {
-                            abstractRepo.acceptPendingChanges();
-                        } else {
-                            console.warn(resObj.meta.action + " attempted on dirty repo");
-                        }
-                        break;
+                            break;
+                        case ApiResponseActions.REMOVE:
+                        case ApiResponseActions.REORDER:
+                        case ApiResponseActions.SORT:
+                        case ApiResponseActions.BROADCAST:
+                            var repoDirty = false;
+                            for (var j in list) {
+                                repoDirty = !list[j].updateRequested && list[j].dirty();
+                                if (repoDirty) {
+                                    console.log(list[j]);
+                                    break;
+                                }
+                            }
+                            pendingChanges = modelObj;
+                            if (!repoDirty) {
+                                abstractRepo.acceptPendingChanges();
+                            } else {
+                                console.warn(resObj.meta.action + " attempted on dirty repo");
+                            }
+                            break;
                     }
                 }
 

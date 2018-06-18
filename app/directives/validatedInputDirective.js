@@ -36,7 +36,7 @@ core.directive("validatedinput", function ($timeout) {
             if ($scope.form === undefined) {
                 $scope.forms = {
                     dynamic: {}
-                }
+                };
             }
 
             if ($scope.id === undefined && ($scope.noId === 'false' || $scope.noId === undefined)) {

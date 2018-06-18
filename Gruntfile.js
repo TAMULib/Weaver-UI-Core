@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         ngdocs: {
-            all: ['app/**/*.js', '!app/node_modules/**/*.js']
+            all: ['app/**/*.js', '!app/node_modules/**/*.js', '!app/coverage/**/*.js']
         },
 
         jshint: {
@@ -16,18 +16,28 @@ module.exports = function (grunt) {
             all: [
                 'Gruntfile.js',
                 '**/*.js',
-                '!node_modules/**/*'
+                '!node_modules/**/*',
+                '!coverage/**/*'
             ]
         },
 
+        coveralls: {
+            options: {
+                debug: true,
+                coverageDir: 'coverage/'
+            }
+        }
+
     });
 
-    grunt.loadNpmTasks('grunt-ngdocs');
-
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-karma-coveralls');
+    grunt.loadNpmTasks('grunt-ngdocs');
 
     grunt.registerTask('default', ['jshint']);
 
+    grunt.registerTask('coverage', ['jshint', 'coveralls']);
+
     grunt.registerTask('docs', ['ngdocs']);
 
-}
+};

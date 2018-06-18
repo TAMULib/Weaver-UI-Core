@@ -38,7 +38,7 @@ core.directive("wvrTabs", function () {
              */
             this.activeTab = function (tab) {
                 return $routeParams.tab == tab;
-            }
+            };
 
             /**
              * @ngdoc method
@@ -56,7 +56,7 @@ core.directive("wvrTabs", function () {
                 var newPath = $location.$$path.replace($routeParams.tab, "");
                 $location.url(newPath + tab);
                 TabService.setTab($scope.target, html);
-            }
+            };
 
             /**
              * @ngdoc property

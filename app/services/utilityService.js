@@ -110,7 +110,7 @@ core.service("Utility", function () {
      */
     Utility.exactSearch = function (objList, property, target) {
         return Utility.search(objList, property, false, target, undefined, true);
-    }
+    };
 
     /**
      *	@ngdoc method
@@ -142,23 +142,35 @@ core.service("Utility", function () {
             pivot = objList[0];
 
             for (var i = 1; i < objList.length; i++) {
-                objList[i][property].substring(position, objList[i][property].length).toUpperCase() < pivot[property].substring(position, pivot[property].length).toUpperCase() ? left.push(objList[i]) : right.push(objList[i]);
+                if (objList[i][property].substring(position, objList[i][property].length).toUpperCase() < pivot[property].substring(position, pivot[property].length).toUpperCase()) {
+                    left.push(objList[i]);
+                } else {
+                    right.push(objList[i]);
+                }
             }
         } else {
             pivot = objList[0];
 
-            for (var i = 1; i < objList.length; i++) {
+            for (var j = 1; j < objList.length; j++) {
                 if (!isNumber) {
-                    objList[i][property].toUpperCase() < pivot[property].toUpperCase() ? left.push(objList[i]) : right.push(objList[i]);
+                    if (objList[j][property].toUpperCase() < pivot[property].toUpperCase()) {
+                        left.push(objList[j]);
+                    } else {
+                        right.push(objList[j]);
+                    }
                 } else {
-                    objList[i][property] < pivot[property] ? left.push(objList[i]) : right.push(objList[i]);
+                    if (objList[j][property] < pivot[property]) {
+                        left.push(objList[j]);
+                    } else {
+                        right.push(objList[j]);
+                    }
                 }
 
             }
         }
 
         return Utility.quickSort(left, property, isNumber, position).concat(pivot, Utility.quickSort(right, property, isNumber, position));
-    }
+    };
 
     return Utility;
 

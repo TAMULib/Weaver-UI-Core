@@ -61,7 +61,6 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         var path = '';
         if (typeof page != 'undefined') {
             path = "/" + location.pathname.split("/")[1] + "/" + page;
-            path = '/'+page;
         } else if (authorizeUrl) {
             path = authorizeUrl;
         } else {
@@ -88,7 +87,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
      */
     $scope.logout = function () {
         StorageService.delete("token");
-        StorageService.set("role",appConfig.anonymousRole);
+        StorageService.set("role", appConfig.anonymousRole);
         $scope.user.logout();
         angular.element(".dropdown").dropdown("toggle");
         $location.path('/');

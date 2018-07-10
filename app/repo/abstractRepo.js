@@ -37,8 +37,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         abstractRepo.contains = function (model) {
             var contains = false;
             for (var i in list) {
-                if (list[i].id === model.id) {
+                if (angular.toJson(list[i]) === angular.toJson(model.id)) {
                     contains = true;
+                    break;
                 }
             }
             return contains;

@@ -11,6 +11,105 @@ core.service("Utility", function () {
     var Utility = this;
 
     /**
+     * @ngdoc method
+     * @name core.service:Utility#Utility.filter
+     * @methodOf core.service:Utility
+     * @param {array} objList
+     *  the list of objects to be filtered
+     * @param {array} properties
+     *  the properties of the object to filter against
+     * @param {string} target
+     *  the target facet to filter for
+     * @param {number=} position
+     *  optional argument in which to filter at a specific position in the property
+     * @returns {array} returns filtered list of objects
+     *
+     * @description
+     * A filter utility.
+     */
+    Utility.filter = function (objList, properties, target, position) {
+
+        return objList.filter(function (obj) {
+
+            for (var i in properties) {
+                if (typeof position != 'undefined') {
+                    if (obj[properties[i]] != null) {
+                        if (typeof obj[properties[i]] == 'object') {
+                            for (var o in obj[properties[i]]) {
+                                if (obj[properties[i]][o] != null) {
+                                    if (typeof obj[properties[i]][o] == 'object') {
+                                        for (var p in obj[properties[i]][o]) {
+                                            if (obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) == position) {
+                                                return true;
+                                            }
+                                        }
+                                    } else {
+                                        if (obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) == position) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (typeof obj[properties[i]] == 'number') {
+                            console.log("Can not filter on a position of a number!");
+                            return false;
+                        } else {
+                            if (obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) == position) {
+                                return true;
+                            }
+                        }
+                    }
+                } else {
+                    if (obj[properties[i]] != null) {
+                        if (typeof obj[properties[i]] == 'number') {
+                            if (target.indexOf(obj[properties[i]]) > -1) {
+                                return true;
+                            }
+                        } else {
+                            if (obj[properties[i]] instanceof Array && typeof target == 'number') {
+                                if (target == 0) {
+                                    if (obj[properties[i]].length == target) {
+                                        return true;
+                                    }
+                                } else {
+                                    if (obj[properties[i]].length >= target) {
+                                        return true;
+                                    }
+                                }
+                            } else {
+                                if (typeof obj[properties[i]] == 'object') {
+                                    for (var o in obj[properties[i]]) {
+                                        if (obj[properties[i]][o] != null) {
+                                            if (typeof obj[properties[i]][o] == 'object') {
+                                                for (var p in obj[properties[i]][o]) {
+                                                    if (obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+                                                        return true;
+                                                    }
+                                                }
+                                            } else {
+                                                if (obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (obj[properties[i]].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            return false;
+        });
+
+    };
+
+    /**
      *	@ngdoc method
      *	@name  core.service:Utility#Utility.search
      *	@methodOf core.service:Utility

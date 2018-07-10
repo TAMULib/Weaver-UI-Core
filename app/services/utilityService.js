@@ -35,16 +35,16 @@ core.service("Utility", function () {
                 if (typeof position != 'undefined') {
                     if (obj[properties[i]] != null) {
                         if (typeof obj[properties[i]] == 'object') {
-                            for (var o in obj[properties[i]]) {
-                                if (obj[properties[i]][o] != null) {
-                                    if (typeof obj[properties[i]][o] == 'object') {
-                                        for (var p in obj[properties[i]][o]) {
-                                            if (obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) == position) {
+                            for (var o1 in obj[properties[i]]) {
+                                if (obj[properties[i]][o1] != null) {
+                                    if (typeof obj[properties[i]][o1] == 'object') {
+                                        for (var p1 in obj[properties[i]][o1]) {
+                                            if (obj[properties[i]][o1][p1].toUpperCase().indexOf(target.toUpperCase()) == position) {
                                                 return true;
                                             }
                                         }
                                     } else {
-                                        if (obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) == position) {
+                                        if (obj[properties[i]][o1].toUpperCase().indexOf(target.toUpperCase()) == position) {
                                             return true;
                                         }
                                     }
@@ -78,16 +78,16 @@ core.service("Utility", function () {
                                 }
                             } else {
                                 if (typeof obj[properties[i]] == 'object') {
-                                    for (var o in obj[properties[i]]) {
-                                        if (obj[properties[i]][o] != null) {
-                                            if (typeof obj[properties[i]][o] == 'object') {
-                                                for (var p in obj[properties[i]][o]) {
-                                                    if (obj[properties[i]][o][p].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+                                    for (var o2 in obj[properties[i]]) {
+                                        if (obj[properties[i]][o2] != null) {
+                                            if (typeof obj[properties[i]][o2] == 'object') {
+                                                for (var p2 in obj[properties[i]][o2]) {
+                                                    if (obj[properties[i]][o2][p2].toUpperCase().indexOf(target.toUpperCase()) > -1) {
                                                         return true;
                                                     }
                                                 }
                                             } else {
-                                                if (obj[properties[i]][o].toUpperCase().indexOf(target.toUpperCase()) > -1) {
+                                                if (obj[properties[i]][o2].toUpperCase().indexOf(target.toUpperCase()) > -1) {
                                                     return true;
                                                 }
                                             }

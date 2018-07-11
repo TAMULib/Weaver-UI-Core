@@ -104,11 +104,15 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             headers.jwt = sessionStorage.token;
         }
 
+        var data = {
+            file: req.file
+        };
+
+        angular.extend(data, req.data);
+
         return attemptUpload({
             url: url,
-            data: {
-                file: req.file
-            },
+            data: data,
             headers: headers
         }, $q.defer());
     };

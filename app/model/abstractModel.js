@@ -125,7 +125,7 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
 
         this.ready = function () {
             var aggDefer = $q.defer();
-            beforePromises.push(defer);
+            beforePromises.push(defer.promise);
             $q.all(beforePromises).then(function(result) {
               aggDefer.resolve(result[0]);
             });

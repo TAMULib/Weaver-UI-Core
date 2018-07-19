@@ -9,7 +9,7 @@
  *  A service wrapper for the webservices api.
  *
  */
-core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
+core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi, WsService) {
 
     var WsApi = this;
 
@@ -72,6 +72,10 @@ core.service("WsApi", function ($q, $location, $rootScope, RestApi, WsService) {
             }
             channels.push(channel);
         }
+        subscriptions[channel].then(null, null, function (message) {
+            var messageContent = JSON.parse(message.body);
+            AlertService.add(messageContent.meta, channel);
+        });
         return subscriptions[channel];
     };
 

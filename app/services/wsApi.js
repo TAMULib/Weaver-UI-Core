@@ -74,7 +74,11 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
         }
         subscriptions[channel].then(null, null, function (message) {
             var messageContent = JSON.parse(message.body);
-            AlertService.add(messageContent.meta, channel);
+            if (angular.isDefined(messageContent.meta.action)) {
+                AlertService.add(messageContent.meta, channel + ':' + messageContent.meta.action);
+            } else {
+                AlertService.add(messageContent.meta, channel);
+            }
         });
         return subscriptions[channel];
     };

@@ -238,13 +238,23 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         var alert;
 
         if (channel !== undefined) {
+            var actionResponse = channel + ':' + meta.action;
+
+            // add alert to store by endpoint
+            alert = add(actionResponse, meta, channel);
+
+            // return if endpoint is exclusive
+            if (exclusive.indexOf(actionResponse) >= 0) {
+                return alert;
+            }
+
             var endpoint = channel;
 
             // add alert to store by endpoint
             alert = add(endpoint, meta, channel);
 
             // return if endpoint is exclusive
-            if (exclusive.indexOf(endpoint) > -1) {
+            if (exclusive.indexOf(endpoint) >= 0) {
                 return alert;
             }
 
@@ -254,7 +264,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             alert = add(controller, meta, channel);
 
             // return if controller is exclusive
-            if (exclusive.indexOf(controller) > -1) {
+            if (exclusive.indexOf(controller) >= 0) {
                 return alert;
             }
         }

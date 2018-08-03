@@ -21,7 +21,9 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
         template: '<ul ng-if="hasAlerts()" class="alertList list-unstyled"><li ng-repeat="alert in alerts" class="alertEntry"><span ng-include src="view"></span></li></ul>',
         restrict: 'E',
         replace: false,
-        scope: {},
+        scope: {
+
+        },
         link: function ($scope, element, attr) {
 
             angular.extend(this, $controller('AbstractController', {
@@ -108,8 +110,8 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              */
             var facets = [];
 
-            facets = facets.concat(types ? types : []);
-            facets = facets.concat(channels ? channels : []);
+            facets = facets.concat(types);
+            facets = facets.concat(channels);
 
             /**
              * @ngdoc property
@@ -204,7 +206,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
             };
 
             for (var k in facets) {
-                if (channels.length > 0 && types.indexOf(facets[k]) > -1) continue;
+                if (channels.length > 0 && types.indexOf(facets[k]) >= 0) continue;
                 var alerts = AlertService.get(facets[k]);
                 if (alerts === undefined) break;
                 if (alerts.defer) {

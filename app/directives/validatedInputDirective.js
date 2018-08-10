@@ -9,6 +9,7 @@ core.directive("validatedinput", function ($timeout) {
             "id": "@",
             "property": "@",
             "label": "@",
+            "disabled": "=",
             "placeholder": "@",
             "autocomplete": "@",
             "wvrTypeahead": "=",

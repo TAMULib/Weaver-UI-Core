@@ -203,8 +203,6 @@ core.service("AlertService", function ($q, $interval, $timeout) {
     var add = function (facet, meta, channel) {
         var alert = new Alert(meta.message, meta.status, channel);
 
-        console.log(facet, meta, channel);
-
         if (store[facet] !== undefined) {
             // add alert to store by facet
             if (isNotStored(facet, meta, channel)) {

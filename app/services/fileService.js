@@ -165,9 +165,18 @@ core.service("FileService", function ($http, $q, AuthService, Upload) {
                 }
             }
             defer.resolve(response);
-        }, function (response) {
-            console.log(response);
-            defer.reject(response);
+        }, function (error) {
+            console.log(error);
+            AlertService.add({
+                status: "ERROR",
+                message: '(' + error.data.status + ') ' + error.data.message
+            }, error.data.path);
+            defer.reject({
+                meta: {
+                    status: 'ERROR'
+                },
+                payload: error.data
+            });
         }, function (event) {
             defer.notify(parseInt(100.0 * event.loaded / event.total));
         });

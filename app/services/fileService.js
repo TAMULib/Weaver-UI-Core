@@ -1,8 +1,4 @@
-core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
-
-    var webservice = appConfig.webService;
-
-    var authservice = appConfig.authService;
+core.service("FileService", function ($http, $q, AuthService, Upload) {
 
     this.anonymousDownload = function (req) {
 
@@ -22,10 +18,15 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                 return response.data;
             },
             // error callback
-            function (response) {
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
-            });
+            function (error) {
+                console.log(error);
+                AlertService.add({
+                    type: "ERROR",
+                    message: error.data.message + ' (' + error.data.status + ')'
+                }, error.data.path);
+                return error.data;
+            }
+        );
     };
 
     this.anonymousUpload = function (req) {
@@ -77,11 +78,16 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                     function (response) {
                         return response.data;
                     },
-                    //error callback
-                    function (response) {
-                        console.log(response);
-                        return response.data;
-                    });
+                    // error callback
+                    function (error) {
+                        console.log(error);
+                        AlertService.add({
+                            type: "ERROR",
+                            message: error.data.message + ' (' + error.data.status + ')'
+                        }, error.data.path);
+                        return error.data;
+                    }
+                );
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
@@ -92,10 +98,15 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                         return response.data;
                     },
                     // error callback
-                    function (response) {
-                        console.log(response);
-                        return response.data;
-                    });
+                    function (error) {
+                        console.log(error);
+                        AlertService.add({
+                            type: "ERROR",
+                            message: error.data.message + ' (' + error.data.status + ')'
+                        }, error.data.path);
+                        return error.data;
+                    }
+                );
             });
         }
     };
@@ -124,23 +135,18 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
     };
 
     var attemptUpload = function (uploadObj, defer) {
-
         Upload.upload(uploadObj).then(function (response) {
             if (response.data.meta.status === 'REFRESH') {
                 if (sessionStorage.assumedUser) {
-
                     return AuthService.getAssumedUser(angular.toJson(sessionStorage.assumedUser)).then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
-
                 } else {
-
                     return AuthService.getRefreshToken().then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
-
                 }
             }
             defer.resolve(response);

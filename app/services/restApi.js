@@ -31,30 +31,6 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
     };
 
     /**
-     * @ngdoc property
-     * @name core.service:RestApi#webservice
-     * @propertyOf core.service:RestApi
-     *
-     * @description
-     * 	A private reference to the application's configuration
-     * 	for webService.
-     *
-     */
-    var webservice = appConfig.webService;
-
-    /**
-     * @ngdoc property
-     * @name core.service:RestApi#authService
-     * @propertyOf core.service:RestApi
-     *
-     * @description
-     * 	A private reference to the application's configuration
-     * 	for authService.
-     *
-     */
-    var authservice = appConfig.authService;
-
-    /**
      * @ngdoc method
      * @name core.service:RestApi#anonymousGet
      * @methodOf core.service:RestApi
@@ -86,11 +62,15 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                 return response.data;
             },
             // error callback
-            function (response) {
-                console.log(response);
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
-            });
+            function (error) {
+                console.log(error);
+                AlertService.add({
+                    type: "ERROR",
+                    message: error.data.message + ' (' + error.data.status + ')'
+                }, error.data.path);
+                return error.data;
+            }
+        );
     };
 
     /**
@@ -128,11 +108,15 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                 return response.data;
             },
             // error callback
-            function (response) {
-                console.log(response);
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
-            });
+            function (error) {
+                console.log(error);
+                AlertService.add({
+                    type: "ERROR",
+                    message: error.data.message + ' (' + error.data.status + ')'
+                }, error.data.path);
+                return error.data;
+            }
+        );
     };
 
     /**
@@ -232,10 +216,13 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                 return response.data;
             },
             // error callback
-            function (response) {
-                console.log(response);
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
-                return response.data;
+            function (error) {
+                console.log(error);
+                AlertService.add({
+                    type: "ERROR",
+                    message: error.data.message + ' (' + error.data.status + ')'
+                }, error.data.path);
+                return error.data;
             }
         );
     };

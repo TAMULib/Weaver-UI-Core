@@ -73,7 +73,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                         status: 'ERROR'
                     },
                     payload: error.data
-                }
+                };
             }
         );
     };
@@ -124,7 +124,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                         status: 'ERROR'
                     },
                     payload: error.data
-                }
+                };
             }
         );
     };
@@ -237,7 +237,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                         status: 'ERROR'
                     },
                     payload: error.data
-                }
+                };
             }
         );
     };

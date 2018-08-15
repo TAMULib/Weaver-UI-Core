@@ -29,7 +29,7 @@ core.service("FileService", function ($http, $q, AuthService, Upload) {
                         status: 'ERROR'
                     },
                     payload: error.data
-                }
+                };
             }
         );
     };
@@ -95,7 +95,7 @@ core.service("FileService", function ($http, $q, AuthService, Upload) {
                                 status: 'ERROR'
                             },
                             payload: error.data
-                        }
+                        };
                     }
                 );
             });
@@ -119,7 +119,7 @@ core.service("FileService", function ($http, $q, AuthService, Upload) {
                                 status: 'ERROR'
                             },
                             payload: error.data
-                        }
+                        };
                     }
                 );
             });

@@ -16,13 +16,15 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             headers: headers,
             responseType: 'arraybuffer'
         }).then(
-            //success callback
+            // success callback
             function (response) {
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
-            //error callback
-            function (error) {
-                return error.data;
+            // error callback
+            function (response) {
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                return response.data;
             });
     };
 
@@ -70,25 +72,29 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         if (sessionStorage.assumedUser) {
             return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
                 restObj.headers.jwt = sessionStorage.token;
-                return $http(restObj).then(function (response) {
+                return $http(restObj).then(
+                    // success callback
+                    function (response) {
                         return response.data;
                     },
                     //error callback
-                    function (error) {
-                        console.log(error);
-                        return error.data;
+                    function (response) {
+                        console.log(response);
+                        return response.data;
                     });
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
                 restObj.headers.jwt = sessionStorage.token;
-                return $http(restObj).then(function (response) {
+                return $http(restObj).then(
+                    // success callback
+                    function (response) {
                         return response.data;
                     },
-                    //error callback
-                    function (error) {
-                        console.log(error);
-                        return error.data;
+                    // error callback
+                    function (response) {
+                        console.log(response);
+                        return response.data;
                     });
             });
         }
@@ -138,9 +144,9 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
                 }
             }
             defer.resolve(response);
-        }, function (error) {
-            console.log(error);
-            defer.reject(error);
+        }, function (response) {
+            console.log(response);
+            defer.reject(response);
         }, function (event) {
             defer.notify(parseInt(100.0 * event.loaded / event.total));
         });

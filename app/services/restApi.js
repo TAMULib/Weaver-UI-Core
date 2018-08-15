@@ -12,7 +12,7 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs) {
+core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVerbs) {
 
     var restApi = this;
 
@@ -86,9 +86,10 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
                 return response.data;
             },
             // error callback
-            function (error) {
-                console.log(error);
-                return error.data;
+            function (response) {
+                console.log(response);
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                return response.data;
             });
     };
 
@@ -127,9 +128,10 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
                 return response.data;
             },
             // error callback
-            function (error) {
-                console.log(error);
-                return error.data;
+            function (response) {
+                console.log(response);
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                return response.data;
             });
     };
 
@@ -207,7 +209,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
         };
 
         return $http(restObj).then(
-            //success callback
+            // success callback
             function (response) {
                 if (response.data.meta.status === 'REFRESH') {
                     if (sessionStorage.assumedUser) {
@@ -229,11 +231,13 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
                 AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
-            //error callback
-            function (error) {
-                console.log(error);
-                return error.data;
-            });
+            // error callback
+            function (response) {
+                console.log(response);
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                return response.data;
+            }
+        );
     };
 
 });

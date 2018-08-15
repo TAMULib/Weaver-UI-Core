@@ -65,10 +65,15 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             function (error) {
                 console.log(error);
                 AlertService.add({
-                    type: "ERROR",
-                    message: error.data.message + ' (' + error.data.status + ')'
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
                 }, error.data.path);
-                return error.data;
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                }
             }
         );
     };
@@ -111,10 +116,15 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             function (error) {
                 console.log(error);
                 AlertService.add({
-                    type: "ERROR",
-                    message: error.data.message + ' (' + error.data.status + ')'
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
                 }, error.data.path);
-                return error.data;
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                }
             }
         );
     };
@@ -219,10 +229,15 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             function (error) {
                 console.log(error);
                 AlertService.add({
-                    type: "ERROR",
-                    message: error.data.message + ' (' + error.data.status + ')'
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
                 }, error.data.path);
-                return error.data;
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                }
             }
         );
     };

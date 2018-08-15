@@ -1,8 +1,4 @@
-core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
-
-    var webservice = appConfig.webService;
-
-    var authservice = appConfig.authService;
+core.service("FileService", function ($http, $q, AuthService, Upload) {
 
     this.anonymousDownload = function (req) {
 
@@ -16,14 +12,26 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
             headers: headers,
             responseType: 'arraybuffer'
         }).then(
-            //success callback
+            // success callback
             function (response) {
+                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
-            //error callback
+            // error callback
             function (error) {
-                return error.data;
-            });
+                console.log(error);
+                AlertService.add({
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
+                }, error.data.path);
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                };
+            }
+        );
     };
 
     this.anonymousUpload = function (req) {
@@ -70,26 +78,50 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
         if (sessionStorage.assumedUser) {
             return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
                 restObj.headers.jwt = sessionStorage.token;
-                return $http(restObj).then(function (response) {
+                return $http(restObj).then(
+                    // success callback
+                    function (response) {
                         return response.data;
                     },
-                    //error callback
+                    // error callback
                     function (error) {
                         console.log(error);
-                        return error.data;
-                    });
+                        AlertService.add({
+                            status: "ERROR",
+                            message: '(' + error.data.status + ') ' + error.data.message
+                        }, error.data.path);
+                        return {
+                            meta: {
+                                status: 'ERROR'
+                            },
+                            payload: error.data
+                        };
+                    }
+                );
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
                 restObj.headers.jwt = sessionStorage.token;
-                return $http(restObj).then(function (response) {
+                return $http(restObj).then(
+                    // success callback
+                    function (response) {
                         return response.data;
                     },
-                    //error callback
+                    // error callback
                     function (error) {
                         console.log(error);
-                        return error.data;
-                    });
+                        AlertService.add({
+                            status: "ERROR",
+                            message: '(' + error.data.status + ') ' + error.data.message
+                        }, error.data.path);
+                        return {
+                            meta: {
+                                status: 'ERROR'
+                            },
+                            payload: error.data
+                        };
+                    }
+                );
             });
         }
     };
@@ -118,29 +150,33 @@ core.service("FileService", function ($http, $q, $window, AuthService, Upload) {
     };
 
     var attemptUpload = function (uploadObj, defer) {
-
         Upload.upload(uploadObj).then(function (response) {
             if (response.data.meta.status === 'REFRESH') {
                 if (sessionStorage.assumedUser) {
-
                     return AuthService.getAssumedUser(angular.toJson(sessionStorage.assumedUser)).then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
-
                 } else {
-
                     return AuthService.getRefreshToken().then(function () {
                         uploadObj.headers.jwt = sessionStorage.token;
                         attemptUpload(uploadObj, defer);
                     });
-
                 }
             }
             defer.resolve(response);
         }, function (error) {
             console.log(error);
-            defer.reject(error);
+            AlertService.add({
+                status: "ERROR",
+                message: '(' + error.data.status + ') ' + error.data.message
+            }, error.data.path);
+            defer.reject({
+                meta: {
+                    status: 'ERROR'
+                },
+                payload: error.data
+            });
         }, function (event) {
             defer.notify(parseInt(100.0 * event.loaded / event.total));
         });

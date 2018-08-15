@@ -12,7 +12,7 @@
  * 	functionality of WsApi.
  *
  */
-core.service("RestApi", function ($http, $window, AlertService, AuthService, HttpMethodVerbs) {
+core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVerbs) {
 
     var restApi = this;
 
@@ -29,30 +29,6 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
         }
         return url;
     };
-
-    /**
-     * @ngdoc property
-     * @name core.service:RestApi#webservice
-     * @propertyOf core.service:RestApi
-     *
-     * @description
-     * 	A private reference to the application's configuration
-     * 	for webService.
-     *
-     */
-    var webservice = appConfig.webService;
-
-    /**
-     * @ngdoc property
-     * @name core.service:RestApi#authService
-     * @propertyOf core.service:RestApi
-     *
-     * @description
-     * 	A private reference to the application's configuration
-     * 	for authService.
-     *
-     */
-    var authservice = appConfig.authService;
 
     /**
      * @ngdoc method
@@ -88,8 +64,18 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
             // error callback
             function (error) {
                 console.log(error);
-                return error.data;
-            });
+                AlertService.add({
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
+                }, error.data.path);
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                };
+            }
+        );
     };
 
     /**
@@ -129,8 +115,18 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
             // error callback
             function (error) {
                 console.log(error);
-                return error.data;
-            });
+                AlertService.add({
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
+                }, error.data.path);
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                };
+            }
+        );
     };
 
     /**
@@ -207,7 +203,7 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
         };
 
         return $http(restObj).then(
-            //success callback
+            // success callback
             function (response) {
                 if (response.data.meta.status === 'REFRESH') {
                     if (sessionStorage.assumedUser) {
@@ -229,11 +225,21 @@ core.service("RestApi", function ($http, $window, AlertService, AuthService, Htt
                 AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
-            //error callback
+            // error callback
             function (error) {
                 console.log(error);
-                return error.data;
-            });
+                AlertService.add({
+                    status: "ERROR",
+                    message: '(' + error.data.status + ') ' + error.data.message
+                }, error.data.path);
+                return {
+                    meta: {
+                        status: 'ERROR'
+                    },
+                    payload: error.data
+                };
+            }
+        );
     };
 
 });

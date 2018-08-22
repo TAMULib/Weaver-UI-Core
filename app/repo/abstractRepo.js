@@ -213,7 +213,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             var promise = abstractRepo.save(model);
             promise.then(function (res) {
                 var message = angular.fromJson(res.body);
-                if (message.meta.type === "INVALID") {
+                if (message.meta.status === "INVALID") {
                     angular.extend(abstractRepo, message.payload);
                 }
             });

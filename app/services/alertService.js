@@ -235,13 +235,14 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     AlertService.add = function (meta, channel) {
 
-        if (channel.indexOf('/') === 0) {
-            channel = channel.substring(1, channel.length);
-        }
-
         var alert;
 
         if (channel !== undefined) {
+
+            if (channel.indexOf('/') === 0) {
+                channel = channel.substring(1, channel.length);
+            }
+
             var actionResponse = channel + ':' + meta.action;
 
             // add alert to store by endpoint

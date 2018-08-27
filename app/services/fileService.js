@@ -1,4 +1,4 @@
-core.service("FileService", function ($http, $q, AuthService, Upload) {
+core.service("FileService", function ($http, $q, AlertService, AuthService, Upload) {
 
     this.anonymousDownload = function (req) {
 

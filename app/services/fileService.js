@@ -19,11 +19,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             },
             // error callback
             function (error) {
-                console.log(error);
-                AlertService.add({
-                    status: "ERROR",
-                    message: '(' + error.data.status + ') ' + error.data.message
-                }, error.data.path);
+                addAlertServiceError(error);
                 return {
                     meta: {
                         status: 'ERROR'
@@ -85,11 +81,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                     },
                     // error callback
                     function (error) {
-                        console.log(error);
-                        AlertService.add({
-                            status: "ERROR",
-                            message: '(' + error.data.status + ') ' + error.data.message
-                        }, error.data.path);
+                        addAlertServiceError(error);
                         return {
                             meta: {
                                 status: 'ERROR'
@@ -109,11 +101,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                     },
                     // error callback
                     function (error) {
-                        console.log(error);
-                        AlertService.add({
-                            status: "ERROR",
-                            message: '(' + error.data.status + ') ' + error.data.message
-                        }, error.data.path);
+                        addAlertServiceError(error);
                         return {
                             meta: {
                                 status: 'ERROR'
@@ -166,11 +154,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             }
             defer.resolve(response);
         }, function (error) {
-            console.log(error);
-            AlertService.add({
-                status: "ERROR",
-                message: '(' + error.data.status + ') ' + error.data.message
-            }, error.data.path);
+            addAlertServiceError(error);
             defer.reject({
                 meta: {
                     status: 'ERROR'
@@ -184,4 +168,22 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
         return defer.promise;
     };
 
+    var addAlertServiceError = function(error) {
+        var status;
+        var message;
+        console.log(error);
+        if (error.data.status !== undefined) {
+            status = error.data.status;
+            message = error.data.message;
+        } else if (error.status !== undefined) {
+            status = error.status;
+            message = error.data.meta.message === undefined ? error.statusText : error.data.meta.message;
+        }
+        if (status !== undefined) {
+            AlertService.add({
+                status: "ERROR",
+                message: '(' + status + ') ' + message
+            }, error.data.path);
+        }
+    };
 });

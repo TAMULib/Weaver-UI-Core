@@ -46,7 +46,7 @@
     "grunt-karma-coveralls": "^2.5.4",
     "grunt-ngdocs": "^0.2.11",
     "jshint-stylish": "2.2.1",
-    "karma": "1.7.1",
+    "karma": "3.0.0",
     "karma-chrome-launcher": "2.2.0",
     "karma-coverage": "1.1.2",
     "karma-firefox-launcher": "1.1",

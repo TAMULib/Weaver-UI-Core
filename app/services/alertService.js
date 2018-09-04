@@ -243,13 +243,13 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             }, channel);
         } else {
             if (!status) {
-                console.warm('No error status!');
+                console.warn('No error status!');
             }
             if (!message) {
-                console.warm('No error message!');
+                console.warn('No error message!');
             }
             if (!channel) {
-                console.warm('No alert channel!');
+                console.warn('No alert channel!');
             }
             console.warn(error);
         }

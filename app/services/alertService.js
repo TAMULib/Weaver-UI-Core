@@ -228,8 +228,8 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             channel = error.data.path;
         }
 
-        if(!message && error.data.meta && error.data.meta.message) {
-            message = error.data.meta.message ? error.data.meta.message : error.statusText;
+        if(!message && error.data.meta) {
+            message = error.data.meta.message;
         }
 
         if(!message) {

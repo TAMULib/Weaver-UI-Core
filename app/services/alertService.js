@@ -220,24 +220,33 @@ core.service("AlertService", function ($q, $interval, $timeout) {
     AlertService.addAlertServiceError = function(error) {
         var status;
         var message;
-        console.log(error);
-        if (error.data !== undefined && error.data.status !== undefined) {
-            status = error.data.status;
+        var channel;
+
+        if(error.data) {
+            status = error.data.status ? error.data.status : error.status;
             message = error.data.message;
-        } else if (error.status !== undefined) {
-            status = error.status;
-            if (error.data === undefined || error.data.meta === undefined || error.data.meta.message === undefined) {
-              message = error.statusText;
-            }
-            else {
-              message = error.data.meta.message;
-            }
+            channel = error.data.path;
         }
-        if (status !== undefined) {
+
+        if(!message && error.data.meta && error.data.meta.message) {
+            message = error.data.meta.message ? error.data.meta.message : error.statusText;
+        }
+
+        if(!message) {
+            message = error.statusText;
+        }
+
+        if(!channel && error.config && error.config.url) {
+            channel = error.config.url.replace(appConfig.webService, '');
+        }
+
+        if (status) {
             AlertService.add({
                 status: "ERROR",
                 message: '(' + status + ') ' + message
-            }, error.data.path);
+            }, channel);
+        } else {
+            console.warn('Error has no status!', error);
         }
     };
 

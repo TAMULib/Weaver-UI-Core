@@ -63,11 +63,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                console.log(error);
-                AlertService.add({
-                    status: "ERROR",
-                    message: '(' + error.data.status + ') ' + error.data.message
-                }, error.data.path);
+                AlertService.addAlertServiceError(error);
                 return {
                     meta: {
                         status: 'ERROR'
@@ -114,11 +110,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                console.log(error);
-                AlertService.add({
-                    status: "ERROR",
-                    message: '(' + error.data.status + ') ' + error.data.message
-                }, error.data.path);
+                AlertService.addAlertServiceError(error);
                 return {
                     meta: {
                         status: 'ERROR'
@@ -227,11 +219,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                console.log(error);
-                AlertService.add({
-                    status: "ERROR",
-                    message: '(' + error.data.status + ') ' + error.data.message
-                }, error.data.path);
+                AlertService.addAlertServiceError(error);
                 return {
                     meta: {
                         status: 'ERROR'

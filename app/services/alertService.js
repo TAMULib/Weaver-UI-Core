@@ -229,7 +229,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         }
 
         if (!message) {
-            message = error.data.message && error.data.meta.message ? error.data.meta.message : error.statusText;
+            message = error.data.meta && error.data.meta.message ? error.data.meta.message : error.statusText;
         }
 
         if (!channel && error.config && error.config.url) {

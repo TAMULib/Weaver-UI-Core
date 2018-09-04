@@ -215,7 +215,30 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         }
 
         return alert;
+    };
 
+    AlertService.addAlertServiceError = function(error) {
+        var status;
+        var message;
+        console.log(error);
+        if (error.data !== undefined && error.data.status !== undefined) {
+            status = error.data.status;
+            message = error.data.message;
+        } else if (error.status !== undefined) {
+            status = error.status;
+            if (error.data === undefined || error.data.meta === undefined || error.data.meta.message === undefined) {
+              message = error.statusText;
+            }
+            else {
+              message = error.data.meta.message;
+            }
+        }
+        if (status !== undefined) {
+            AlertService.add({
+                status: "ERROR",
+                message: '(' + status + ') ' + message
+            }, error.data.path);
+        }
     };
 
     /**

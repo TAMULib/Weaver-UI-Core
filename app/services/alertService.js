@@ -222,31 +222,36 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         var message;
         var channel;
 
-        if(error.data) {
+        if (error.data) {
             status = error.data.status ? error.data.status : error.status;
             message = error.data.message;
             channel = error.data.path;
         }
 
-        if(!message && error.data.meta) {
-            message = error.data.meta.message;
+        if (!message) {
+            message = error.data.message && error.data.meta.message ? error.data.meta.message : error.statusText;
         }
 
-        if(!message) {
-            message = error.statusText;
-        }
-
-        if(!channel && error.config && error.config.url) {
+        if (!channel && error.config && error.config.url) {
             channel = error.config.url.replace(appConfig.webService, '');
         }
 
-        if (status) {
+        if (status && message && channel) {
             AlertService.add({
                 status: "ERROR",
                 message: '(' + status + ') ' + message
             }, channel);
         } else {
-            console.warn('Error has no status!', error);
+            if (!status) {
+                console.warm('No error status!');
+            }
+            if (!message) {
+                console.warm('No error message!');
+            }
+            if (!channel) {
+                console.warm('No alert channel!');
+            }
+            console.warn(error);
         }
     };
 

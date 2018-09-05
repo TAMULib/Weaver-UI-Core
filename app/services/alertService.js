@@ -216,28 +216,43 @@ core.service("AlertService", function ($q, $interval, $timeout) {
 
         return alert;
     };
+    
+    var isDefined = angular.isDefined;
+    var isUndefined = angular.isUndefined;
 
     AlertService.addAlertServiceError = function(error) {
-        var status;
-        var message;
-        console.log(error);
-        if (error.data !== undefined && error.data.status !== undefined) {
-            status = error.data.status;
+        var status, message, channel;
+
+        if (isDefined(error.data)) {
+            status = isDefined(error.data.status) ? error.data.status : error.status;
             message = error.data.message;
-        } else if (error.status !== undefined) {
-            status = error.status;
-            if (error.data === undefined || error.data.meta === undefined || error.data.meta.message === undefined) {
-              message = error.statusText;
-            }
-            else {
-              message = error.data.meta.message;
-            }
+            channel = error.data.path;
         }
-        if (status !== undefined) {
+
+        if (isUndefined(message)) {
+            message = isDefined(error.data.meta) && isDefined(error.data.meta.message) ? error.data.meta.message : error.statusText;
+        }
+
+        if (isUndefined(channel) && isDefined(error.config) && isDefined(error.config.url)) {
+            channel = error.config.url.replace(appConfig.webService, '');
+        }
+
+        if (isDefined(status) && isDefined(message) && isDefined(channel)) {
             AlertService.add({
                 status: "ERROR",
                 message: '(' + status + ') ' + message
-            }, error.data.path);
+            }, channel);
+        } else {
+            if (isUndefined(status)) {
+                console.warn('No error status!');
+            }
+            if (isUndefined(message)) {
+                console.warn('No error message!');
+            }
+            if (isUndefined(channel)) {
+                console.warn('No alert channel!');
+            }
+            console.warn(error);
         }
     };
 

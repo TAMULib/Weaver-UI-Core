@@ -218,7 +218,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
     };
     
     var isDefined = angular.isDefined;
-    var isUndefined = angular.isDefined;
+    var isUndefined = angular.isUndefined;
 
     AlertService.addAlertServiceError = function(error) {
         var status, message, channel;

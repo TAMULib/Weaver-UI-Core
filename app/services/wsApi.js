@@ -19,13 +19,22 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
 
     var routeBasedChannels = {};
 
-    var unsubscribe = true;
+    var persistentRouteBasedChannels = [];
+
+    var toPath = function(next) {
+        var paths = next.$$route.originalPath.substring(1).split('/');
+        for(var i in paths) {
+            if(paths[i][0] === ':') {
+                paths[i] = next.pathParams[paths[i].substring(1)];
+            }
+        }
+        return paths.join('/');
+    };
 
     $rootScope.$on("$routeChangeStart", function (evt, next, current) {
-        if(unsubscribe) {
+        var path = toPath(next);
+        if(persistentRouteBasedChannels.indexOf(path) < 0) {
             WsService.unsubscribeAll();
-        } else {
-            unsubscribe = true;
         }
     });
 
@@ -39,8 +48,10 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
         }
     });
 
-    WsApi.skipUnsubscribe = function() {
-        unsubscribe = false;
+    WsApi.registerPersistentRouteBasedChannel = function(path) {
+        if(persistentRouteBasedChannels.indexOf(path) < 0) {
+            persistentRouteBasedChannels.push(path);
+        }
     };
 
     /**

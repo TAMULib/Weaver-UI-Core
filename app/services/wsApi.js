@@ -19,8 +19,14 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
 
     var routeBasedChannels = {};
 
+    var unsubscribe = true;
+
     $rootScope.$on("$routeChangeStart", function (evt, next, current) {
-        WsService.unsubscribeAll();
+        if(unsubscribe) {
+            WsService.unsubscribeAll();
+        } else {
+            unsubscribe = true;
+        }
     });
 
     $rootScope.$on("$routeChangeSuccess", function (evt, next, current) {
@@ -32,6 +38,10 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
             }
         }
     });
+
+    WsApi.skipUnsubscribe = function() {
+        unsubscribe = false;
+    };
 
     /**
      * @ngdoc method

@@ -21,12 +21,12 @@
     "protractor": "protractor e2e-tests/protractor.conf.js"
   },
   "dependencies": {
-    "angular": "1.6.5",
-    "angular-loader": "1.6.5",
-    "angular-messages": "1.6.5",
-    "angular-mocks": "1.6.5",
-    "angular-route": "1.6.5",
-    "angular-sanitize": "1.6.5",
+    "angular": "1.7.4",
+    "angular-loader": "1.7.4",
+    "angular-messages": "1.7.4",
+    "angular-mocks": "1.7.4",
+    "angular-route": "1.7.4",
+    "angular-sanitize": "1.7.4",
     "angular-ui-bootstrap": "2.5.6",
     "bootstrap": "3.3.7",
     "bootstrap-sass": "3.3.7",
@@ -53,6 +53,6 @@
     "karma-jasmine": "1.1.2",
     "karma-junit-reporter": "1.2.0",
     "karma-ng-html2js-preprocessor": "1.0.0",
-    "protractor": "5.4.0"
+    "protractor": "5.4.1"
   }
 }

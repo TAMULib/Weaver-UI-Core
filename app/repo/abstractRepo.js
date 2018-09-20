@@ -326,7 +326,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         var setToDelete = function (model) {
-            model.updateDelete = true;
+            model.deleteRequested = true;
             model._syncShadow();
         };
 

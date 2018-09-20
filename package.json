@@ -9,9 +9,7 @@
     "wvr": "cli/weaverCli.js"
   },
   "scripts": {
-    "preinstall": "npm install grunt-cli grunt-contrib-jshint grunt-karma-coveralls grunt-ngdocs",
     "pretest": "npm install",
-    "postinstall": "grunt",
     "test": "karma start karma.conf.js",
     "test-single-run": "karma start karma.conf.js --single-run",
     "test-ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=Chrome",

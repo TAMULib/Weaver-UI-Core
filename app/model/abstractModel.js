@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
+core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
     return function AbstractModel(repoName) {
 
@@ -117,6 +117,10 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
 
         this.getValidations = function () {
             return validations;
+        };
+
+        this.setValidations = function (customValidations) {
+            validations = customValidations;
         };
 
         this.getMapping = function () {

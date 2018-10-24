@@ -148,6 +148,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         abstractRepo.reset = function () {
             defer = $q.defer();
             fetch();
+            return defer.promise;
         };
 
         abstractRepo.findById = function (id) {

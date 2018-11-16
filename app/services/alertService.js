@@ -223,14 +223,17 @@ core.service("AlertService", function ($q, $interval, $timeout) {
     AlertService.addAlertServiceError = function(error) {
         var status, message, channel;
 
-        if (isDefined(error.data)) {
+        if (isDefined(error.data) && error.data !== null) {
             status = isDefined(error.data.status) ? error.data.status : error.status;
             message = error.data.message;
             channel = error.data.path;
-        }
 
-        if (isUndefined(message)) {
-            message = isDefined(error.data.meta) && isDefined(error.data.meta.message) ? error.data.meta.message : error.statusText;
+            if (isUndefined(message)) {
+                message = isDefined(error.data.meta) && isDefined(error.data.meta.message) ? error.data.meta.message : error.statusText;
+            }
+        } else {
+            status = error.status;
+            message = error.statusText;
         }
 
         if (isUndefined(channel) && isDefined(error.config) && isDefined(error.config.url)) {

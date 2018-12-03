@@ -43,7 +43,7 @@ core.repo = function (delegateName, delegateFunction) {
 
 core.model = function (delegateName, delegateFunction) {
     var repoName = delegateName + 'Repo';
-    return core.factory(delegateName, function ($injector, $rootScope, $timeout, AbstractModel, AbstractAppModel, api) {
+    return core.factory(delegateName, function ($injector, $timeout, AbstractModel, AbstractAppModel, api) {
 
         var ctor = function (data) {
 

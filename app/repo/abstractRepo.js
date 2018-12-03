@@ -90,7 +90,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.getContents = function () {
-            return angular.extend([], list);
+            return list;
         };
 
         abstractRepo.setToUpdate = function (id) {

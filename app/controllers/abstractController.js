@@ -72,7 +72,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing anonymously.
      */
     $scope.isAnonymous = function () {
-        return (sessionStorage.role === appConfig.anonymousRole);
+        return $scope.hasRole(appConfig.anonymousRole);
     };
 
     /**
@@ -85,7 +85,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_USER'.
      */
     $scope.isUser = function () {
-        return (sessionStorage.role === "ROLE_USER");
+        return $scope.hasRole("USER");
     };
 
     /**
@@ -98,7 +98,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_ANNOTATOR'.
      */
     $scope.isAnnotator = function () {
-        return (sessionStorage.role === "ROLE_ANNOTATOR");
+        return $scope.hasRole("ANNOTATOR");
     };
 
     /**
@@ -111,7 +111,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_MANGER'.
      */
     $scope.isManager = function () {
-        return (sessionStorage.role === "ROLE_MANAGER");
+        return $scope.hasRole("MANAGER");
     };
 
     /**
@@ -124,7 +124,21 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      * 	A boolean indicating that the current user is browsing with a role of 'ROLE_ADMIN'.
      */
     $scope.isAdmin = function () {
-        return (sessionStorage.role === "ROLE_ADMIN");
+        return $scope.hasRole("ADMIN");
+    };
+
+    /**
+     * @ngdoc method
+     * @name core.controller:AbstractController#$scope.hasRole
+     * @methodOf core.controller:AbstractController
+     * @param {role} a string representing the role to check against
+     * @returns {boolean} returns a boolean
+     *
+     * @description
+     *  A boolean indicating that the current user is browsing with the provided role.
+     */
+    $scope.hasRole = function (role) {
+        return (sessionStorage.role === "ROLE_"+role.toUpperCase());
     };
 
     /**

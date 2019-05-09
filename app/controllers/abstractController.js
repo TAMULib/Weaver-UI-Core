@@ -138,8 +138,11 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
      *  A boolean indicating that the current user is browsing with the provided role.
      */
     $scope.hasRole = function (role) {
+        if (sessionStorage.role === undefined) {
+            return false;
+        }
         role = role.toUpperCase();
-        if(sessionStorage.role.startsWith("ROLE_")) {
+        if (sessionStorage.role.startsWith("ROLE_")) {
             role = role.startsWith("ROLE_") ? role : "ROLE_" + role;
         } else {
             role = role.startsWith("ROLE_") ? role.subject(5) : role;

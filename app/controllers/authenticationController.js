@@ -17,7 +17,7 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
  **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, ValidationStore, StorageService) {
+core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, StorageService) {
 
     angular.extend(this, $controller('AbstractController', {
         $scope: $scope
@@ -91,6 +91,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         $scope.user.logout();
         angular.element(".dropdown").dropdown("toggle");
         $location.path('/');
+        $window.location.reload();
     };
 
 });

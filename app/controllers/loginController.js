@@ -1,4 +1,4 @@
-core.controller('LoginController', function ($controller, $location, $scope, UserService, StorageService) {
+core.controller('LoginController', function ($controller, $location, $scope, $window, StorageService, UserService) {
 
     angular.extend(this, $controller('AuthenticationController', {
         $scope: $scope
@@ -13,6 +13,7 @@ core.controller('LoginController', function ($controller, $location, $scope, Use
                     StorageService.delete("post_authorize_url");
                     $location.path(authorizeUrl);
                 }
+                $window.location.reload();
             });
         });
     };

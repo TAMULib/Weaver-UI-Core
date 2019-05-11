@@ -44,6 +44,8 @@
      ng-required="validations[property].required.value">
    </select>
 
+   <small ng-if="hint" class="form-text text-muted">{{hint}}</small>
+
    <validationmessage
      type="input"
      property="{{property}}"

@@ -205,6 +205,10 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
             shadow = angular.copy(abstractModel);
         };
 
+        this.getShadow = function () {
+            return shadow;
+        };
+
         this.acceptPendingUpdate = function () {
             console.warn("No update pending!");
         };

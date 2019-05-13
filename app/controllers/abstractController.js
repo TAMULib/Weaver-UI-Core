@@ -166,7 +166,7 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
             method: 'error',
             data: alert
         }).then(function () {
-            $scope.closeModal();
+            $scope.openModal('#reportModal');
         }, function (response) {
             if (response.data === undefined || response.data.message !== "EXPIRED_JWT") {
                 var subject = 'Error Report';

@@ -22,11 +22,18 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
     var persistentRouteBasedChannels = [];
 
     var toPath = function(next) {
-        var paths = next.$$route.originalPath.substring(1).split('/');
-        for(var i in paths) {
-            if(paths[i][0] === ':') {
-                paths[i] = next.pathParams[paths[i].substring(1)];
+        var paths;
+        if(next.$$route !== undefined) {
+            paths = next.$$route.originalPath.substring(1).split('/');
+            for(var i in paths) {
+                if(paths[i][0] === ':') {
+                    paths[i] = next.pathParams[paths[i].substring(1)];
+                }
             }
+        } else {
+            paths = [];
+            // NOTE: if route not found, the post_authorize_url prevented navigation to 404 error view
+            sessionStorage.removeItem('post_authorize_url');
         }
         return paths.join('/');
     };

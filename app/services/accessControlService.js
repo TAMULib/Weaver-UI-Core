@@ -6,7 +6,7 @@ core.service("AccessControlService", function ($location, StorageService) {
 
     AccessControlService.checkRoute = function (evt, next, current) {
 
-        if (typeof (current) != "undefined" && typeof (current.$$route) != "undefined") {
+        if (current !== undefined && current.$$route !== undefined) {
             AccessControlService.lastRoutePath = current.$$route.originalPath;
             if (AccessControlService.lastRoutePath.indexOf('/') === 0) {
                 AccessControlService.lastRoutePath = AccessControlService.lastRoutePath.replace('/', '');
@@ -16,16 +16,19 @@ core.service("AccessControlService", function ($location, StorageService) {
         if (!next.$$route) return;
 
         var allowedUsers = next.$$route.access;
+
+        if(allowedUsers === undefined) return;
+
         var role = StorageService.get("role");
 
-        var restrict = allowedUsers ? allowedUsers.indexOf(role) == -1 : false;
+        var restrict = allowedUsers.indexOf(role) < 0;
 
         var authorizeUrl = StorageService.get("post_authorize_url");
 
-        if (role == 'ROLE_ANONYMOUS' && (allowedUsers !== undefined)) {
+        if (role === 'ROLE_ANONYMOUS') {
             StorageService.set("post_authorize_url", $location.path());
             $location.path("/error/401");
-        } else if (authorizeUrl && $location.path() != "/error/401") {
+        } else if (authorizeUrl && $location.path() !== "/error/401") {
             StorageService.delete("post_authorize_url");
             $location.path(authorizeUrl);
         } else if (restrict) {

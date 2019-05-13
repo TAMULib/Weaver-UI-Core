@@ -16,6 +16,9 @@ core.service("AccessControlService", function ($location, StorageService) {
         if (!next.$$route) return;
 
         var allowedUsers = next.$$route.access;
+
+        if(allowedUsers === undefined) return;
+
         var role = StorageService.get("role");
 
         var restrict = allowedUsers ? allowedUsers.indexOf(role) == -1 : false;

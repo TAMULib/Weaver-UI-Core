@@ -32,8 +32,6 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
             }
         } else {
             paths = [];
-            // NOTE: if route not found, the post_authorize_url prevented navigation to 404 error view
-            sessionStorage.removeItem('post_authorize_url');
         }
         return paths.join('/');
     };

@@ -25,7 +25,7 @@ core.service("AccessControlService", function ($location, StorageService) {
         if (role == 'ROLE_ANONYMOUS' && (allowedUsers !== undefined)) {
             StorageService.set("post_authorize_url", $location.path());
             $location.path("/error/401");
-        } else if (authorizeUrl && $location.path() != "/error/401") {
+        } else if (authorizeUrl && allowedUsers && $location.path() != "/error/401") {
             StorageService.delete("post_authorize_url");
             $location.path(authorizeUrl);
         } else if (restrict) {

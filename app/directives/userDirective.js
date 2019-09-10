@@ -85,22 +85,20 @@ core.directive('useruin', function () {
  *	The useraffiliation element directive provides the current user's affiliation in the application.
  *
  */
-core.directive('useraffiliation', function (WsApi) {
+core.directive('useraffiliation', function (UserService) {
     return {
         template: '<span>{{ affiliation }}</span>',
         restrict: 'E',
         scope: true,
         controller: 'UserController',
         link: function ($scope, element, attr) {
-            if ($scope.ready) {
-                $scope.ready.then(function () {
-                    if ($scope.user.affiliation) {
-                        $scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
-                    } else {
-                        $scope.affiliation = "UNKNOWN";
-                    }
-                });
-            }
+            UserService.userReady().then(function () {
+                if ($scope.user.affiliation) {
+                    $scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
+                } else {
+                    $scope.affiliation = "UNKNOWN";
+                }
+            });
         }
     };
 });

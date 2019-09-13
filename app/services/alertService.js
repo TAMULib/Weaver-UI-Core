@@ -5,10 +5,10 @@
  * @requires ng.$interval
  *
  * @description
- * 	Alert service which tracks responses from the web socket API.
- * 	Stores responses categorized by type, controller, or endpoint. The id is popped
- * 	from an array of keys(sequential integers) and recycled upon removal
- * 	of the alert. Old alerts removed using an interval.
+ *  Alert service which tracks responses from the web socket API.
+ *  Stores responses categorized by type, controller, or endpoint. The id is popped
+ *  from an array of keys(sequential integers) and recycled upon removal
+ *  of the alert. Old alerts removed using an interval.
  *
  */
 core.service("AlertService", function ($q, $interval, $timeout) {
@@ -101,15 +101,15 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      * @name  core.service:AlertService#Alert
      * @methodOf core.service:AlertService
      * @param {string} message
-     * 	message on the API response
+     *  message on the API response
      * @param {string} type
-     * 	mapped response type on the API response
+     *  mapped response type on the API response
      * @param {string} channel
-     * 	channel on which the response returned
+     *  channel on which the response returned
      * @returns {Alert} returns a new Alert.
      *
      * @description
-     * 	Constructor for an Alert.
+     *  Constructor for an Alert.
      */
     var Alert = function (message, type, channel) {
         this.id = keys.pop();
@@ -216,7 +216,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
 
         return alert;
     };
-    
+
     var isDefined = angular.isDefined;
     var isUndefined = angular.isUndefined;
 
@@ -237,7 +237,8 @@ core.service("AlertService", function ($q, $interval, $timeout) {
         }
 
         if (isUndefined(channel) && isDefined(error.config) && isDefined(error.config.url)) {
-            channel = error.config.url.replace(appConfig.webService, '');
+            // Use URL, but strip off any query parameters and remove any trailing '/'.
+            channel = error.config.url.replace(appConfig.webService, '').replace(/\?.*$/i, '').replace(/\/+$/i, '');
         }
 
         if (isDefined(status) && isDefined(message) && isDefined(channel)) {
@@ -284,14 +285,16 @@ core.service("AlertService", function ($q, $interval, $timeout) {
                 channel = channel.substring(1, channel.length);
             }
 
-            var actionResponse = channel + ':' + meta.action;
+            if (isDefined(meta.action)) {
+              var actionResponse = channel + ':' + meta.action;
 
-            // add alert to store by endpoint
-            alert = add(actionResponse, meta, channel);
+              // add alert to store by action response endppint
+              alert = add(actionResponse, meta, channel);
 
-            // return if endpoint is exclusive
-            if (exclusive.indexOf(actionResponse) >= 0) {
-                return alert;
+              // return if action response endpoint is exclusive
+              if (exclusive.indexOf(actionResponse) >= 0) {
+                  return alert;
+              }
             }
 
             var endpoint = channel;

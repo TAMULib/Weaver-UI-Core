@@ -279,10 +279,14 @@ core.service("AlertService", function ($q, $interval, $timeout) {
 
         var alert;
 
-        if (channel !== undefined) {
+        if (isDefined(channel)) {
 
             if (channel.indexOf('/') === 0) {
                 channel = channel.substring(1, channel.length);
+            }
+
+            if (channel.indexOf('?') >= 0) {
+                channel = channel.replace(/\?.*$/i, '').replace(/\/+$/i, '');
             }
 
             if (isDefined(meta.action)) {

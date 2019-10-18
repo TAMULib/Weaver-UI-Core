@@ -52,15 +52,15 @@ function setUpApp(bootstrapApp) {
             sessionStorage.role = appConfig.anonymousRole;
             connect({});
         } else {
-            var referer = location.href;
+            var referrer = location.href;
             if (location.href.indexOf('?') >= 0) {
                 var parts = location.href.split('?');
-                referer = parts[0] + encodeURIComponent(parts[1]);
+                referrer = parts[0] + '?' + encodeURIComponent(parts[1]);
             }
             if (appConfig.mockRole) {
-                referer += "&mock=" + appConfig.mockRole;
+                referrer += "&mock=" + appConfig.mockRole;
             }
-            window.open(appConfig.authService + "/token?referer=" + referer, "_self");
+            window.open(appConfig.authService + "/token?referrer=" + referrer, "_self");
         }
     }
 

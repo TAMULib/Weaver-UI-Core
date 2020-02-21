@@ -131,7 +131,7 @@ core.directive('alerts', function (AlertService, $controller, $rootScope, $timeo
              * @description
              * 	A variable to store the 'attr' object 'view' property if present else it points to the 'defaultalert' view
              */
-            $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/alerts/defaultalert.html";
+            $scope.view = attr.view ? attr.view : "node_modules/@wvr/core/app/views/alerts/defaultalert.html";
 
             /**
              * @ngdoc property

@@ -20,7 +20,7 @@
  */
 core.directive('modal', function ($controller) {
     return {
-        templateUrl: 'node_modules/weaver-ui-core/app/views/modalWrapper.html',
+        templateUrl: 'node_modules/@wvr/core/app/views/modalWrapper.html',
         restrict: 'E',
         replace: false,
         transclude: true,

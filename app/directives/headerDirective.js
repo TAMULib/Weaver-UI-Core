@@ -15,7 +15,7 @@
  */
 core.directive('tamuheader', function ($controller) {
     return {
-        templateUrl: 'node_modules/weaver-ui-core/app/views/header.html',
+        templateUrl: 'node_modules/@wvr/core/app/views/header.html',
         restrict: 'E',
         replace: false,
         transclude: true,

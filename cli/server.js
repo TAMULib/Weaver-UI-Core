@@ -33,7 +33,7 @@ function startServer(args) {
   var base = args["-b"] ? args["-b"] : '/';
   var prod = args["--prod"] ? args["--prod"] : false;
 
-  var webserverLocation = process.cwd() + path.sep + "node_modules" + path.sep + "weaver-ui-core" + path.sep + "weaver-webserver.js";
+  var webserverLocation = process.cwd() + path.sep + "node_modules" + path.sep + "@wvr/core" + path.sep + "weaver-webserver.js";
 
   var child = null;
 

@@ -21,7 +21,7 @@ core.directive("validatedtextarea", function () {
                 $scope.id = $scope.property;
             }
 
-            $scope.view = attr.view ? attr.view : "node_modules/weaver-ui-core/app/views/directives/validatedTextArea.html";
+            $scope.view = attr.view ? attr.view : "node_modules/@wvr/core/app/views/directives/validatedTextArea.html";
 
             $scope.blur = function ($event) {
                 if ($scope.blurEnabled && $scope.form.$valid) {

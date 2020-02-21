@@ -83,7 +83,7 @@ core.directive("wvrAccordion", function (AccordionService) {
 core.directive("wvrPane", function ($location, $timeout, $anchorScroll, AccordionService) {
     var count = 0;
     return {
-        templateUrl: 'node_modules/weaver-ui-core/app/views/directives/accordionPane.html',
+        templateUrl: 'node_modules/@wvr/core/app/views/directives/accordionPane.html',
         restrict: 'E',
         replace: false,
         transclude: true,

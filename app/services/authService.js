@@ -72,7 +72,6 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
             }
 
             AuthService.pendingRefresh = $http.get(url, {
-                withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
                 }
@@ -94,15 +93,18 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
                 console.log(error);
                 delete sessionStorage.token;
 
+                // NOTE: duplicated in setup.js
+                /*------------------------------------------------------------------------*/
                 var referrer = location.href;
                 if (location.href.indexOf('?') >= 0) {
                     var parts = location.href.split('?');
-                    referrer = parts[0] + encodeURIComponent(parts[1]);
+                    referrer = parts[0] + '?' + encodeURIComponent(parts[1]);
                 }
                 if (appConfig.mockRole) {
                     referrer += "&mock=" + appConfig.mockRole;
                 }
                 window.open(appConfig.authService + "/token?referrer=" + referrer, "_self");
+                /*------------------------------------------------------------------------*/
             });
         }
         return AuthService.pendingRefresh;

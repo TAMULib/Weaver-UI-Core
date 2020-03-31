@@ -28,7 +28,6 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
         if (!AuthService.pendingRefresh) {
             var url = appConfig.authService + "/admin?netid=" + assume.netid;
             AuthService.pendingRefresh = $http.get(url, {
-                withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
                 }

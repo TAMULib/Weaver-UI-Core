@@ -58,6 +58,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
 
         var authorizeUrl = StorageService.get("post_authorize_url");
 
+        // NOTE: simular in setup.js and authService.js
         var path = '';
         if (typeof page != 'undefined') {
             path = "/" + location.pathname.split("/")[1] + "/" + page;

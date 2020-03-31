@@ -52,6 +52,8 @@ function setUpApp(bootstrapApp) {
             sessionStorage.role = appConfig.anonymousRole;
             connect({});
         } else {
+            // NOTE: duplicated in authService.js
+            /*------------------------------------------------------------------------*/
             var referrer = location.href;
             if (location.href.indexOf('?') >= 0) {
                 var parts = location.href.split('?');
@@ -61,6 +63,7 @@ function setUpApp(bootstrapApp) {
                 referrer += "&mock=" + appConfig.mockRole;
             }
             window.open(appConfig.authService + "/token?referrer=" + referrer, "_self");
+            /*------------------------------------------------------------------------*/
         }
     }
 

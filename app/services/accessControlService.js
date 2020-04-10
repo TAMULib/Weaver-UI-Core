@@ -26,11 +26,10 @@ core.service("AccessControlService", function ($location, StorageService) {
         var authorizeUrl = StorageService.get("post_authorize_url");
 
         if (role === 'ROLE_ANONYMOUS') {
-            StorageService.set("post_authorize_url", $location.path());
+            StorageService.set("post_authorize_url", window.location.pathname);
             $location.path("/error/401");
         } else if (authorizeUrl && $location.path() !== "/error/401") {
             StorageService.delete("post_authorize_url");
-            $location.path(authorizeUrl);
         } else if (restrict) {
             evt.preventDefault();
             $location.path("/error/403");

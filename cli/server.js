@@ -14,7 +14,7 @@ function run(args) {
     if (start) {
       startServer(args);
     } else {
-      stopServer();
+      stopServer(args);
     }
 
   } else {
@@ -24,7 +24,13 @@ function run(args) {
 }
 
 function stopServer() {
-  forever.stopAll();
+  var uid = args["--uid"] ? args["--uid"] : null;
+
+  if (uid) {
+    forever.stop(uid);
+  } else {
+    forever.stopAll();
+  }
 }
 
 function startServer(args) {

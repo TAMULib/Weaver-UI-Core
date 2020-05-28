@@ -9,7 +9,7 @@
  *  The service which handles all communication with the Authorization webservice.
  *
  */
-core.service("AuthService", function ($http, $timeout, StorageService) {
+core.service("AuthService", function ($timeout, RestApi) {
 
     var AuthService = this;
 
@@ -26,8 +26,8 @@ core.service("AuthService", function ($http, $timeout, StorageService) {
      */
     AuthService.getAssumedUser = function (assume, cb) {
         if (!AuthService.pendingRefresh) {
-            var url = appConfig.authService + "/admin?netid=" + assume.netid;
-            AuthService.pendingRefresh = $http.get(url, {
+            AuthService.pendingRefresh = RestApi.get({
+                controller: 'admin',
                 headers: {
                     'X-Requested-With': undefined
                 }

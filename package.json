@@ -19,7 +19,7 @@
     "protractor": "protractor e2e-tests/protractor.conf.js"
   },
   "dependencies": {
-    "angular": "1.7.9",
+    "angular": "1.8.2",
     "angular-loader": "1.7.9",
     "angular-messages": "1.7.9",
     "angular-mocks": "1.7.9",

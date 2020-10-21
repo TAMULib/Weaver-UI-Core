@@ -11,7 +11,7 @@
  * TODO
  *
  * @description
- *	TODO
+ * TODO
  *
  */
 core.service("AssumedControl", function ($q, AuthService, StorageService, UserService, ModelCache, ModelUpdateService, WsApi) {

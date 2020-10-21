@@ -27,7 +27,7 @@ core.service("AuthService", function ($timeout, RestApi) {
     AuthService.getAssumedUser = function (assume, cb) {
         if (!AuthService.pendingRefresh) {
             AuthService.pendingRefresh = RestApi.get({
-                controller: 'admin',
+                controller: 'assume',
                 headers: {
                     'X-Requested-With': undefined
                 }

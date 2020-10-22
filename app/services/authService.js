@@ -3,13 +3,12 @@
  * @name  core.service:AuthService
  * @requires ng.$http
  * @requires ng.$timeout
- * @requires core.service:StorageService
  *
  * @description
  *  The service which handles all communication with the Authorization webservice.
  *
  */
-core.service("AuthService", function ($timeout, RestApi) {
+core.service("AuthService", function ($http, $timeout) {
 
     var AuthService = this;
 
@@ -25,13 +24,21 @@ core.service("AuthService", function ($timeout, RestApi) {
      *
      */
     AuthService.getAssumedUser = function (assume, cb) {
-        if (!AuthService.pendingRefresh) {
-            AuthService.pendingRefresh = RestApi.get({
-                controller: 'assume',
-                headers: {
-                    'X-Requested-With': undefined
-                }
-            }).then(function (response) {
+        var url = appConfig.webService + "/assume?netid=" + assume.netid;
+        return $http.get(url, {
+            headers: {
+                jwt: sessionStorage.token,
+                'Accept': 'application/json, text/plain'
+            }
+        }).then(function (response) {
+
+            if (response.data.meta.status === 'REFRESH') {
+
+                return AuthService.getRefreshToken().then(function () {
+                    return AuthService.getAssumedUser(assume, cb);
+                });
+
+            } else {
 
                 if (response.data.meta.status === 'SUCCESS' && response.data.payload.String !== undefined) {
                     sessionStorage.token = response.data.payload.String;
@@ -46,9 +53,8 @@ core.service("AuthService", function ($timeout, RestApi) {
 
                 if (cb) cb();
                 return response;
-            });
-        }
-        return AuthService.pendingRefresh;
+            }
+        });
     };
 
     /**

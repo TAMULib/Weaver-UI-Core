@@ -234,10 +234,57 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.acceptPendingChanges = function () {
-            list.length = 0;
+            var newList = [];
+
+            // create new list from pendingChanges object as actual models
             angular.forEach(pendingChanges, function (modelObj) {
-                list.push(new model(modelObj));
+                newList.push(new model(modelObj));
             });
+
+            // find and extend updated entities and splice out removed entities
+            for (var i = 0; i < newList.length; i++) {
+                var newItem = newList[i];
+
+                var match = false;
+
+                for (var j = 0; j < list.length; j++) {
+                    var item = list[j];
+
+                    if (item.id === newItem.id) {
+                        angular.extend(item, newItem);
+                        match = true;
+                        break; 
+                    }
+                }
+
+                // if no match, entity has been deleted
+                if (!match) {
+                    list.splice(i, 0, newItem);
+                }
+
+            }
+
+            // check for newly created entities and insert them
+            for (var i = list.length - 1; i >= 0; i--) {
+                var item = list[i];
+
+                var match = false;
+
+                for (var j = newList.length - 1; j >= 0; j--) {
+                    var newItem = newList[j];
+
+                    if (newItem.id === item.id) {
+                        match = true;
+                        break; 
+                    }
+                }
+
+                // if no match insert newly created entity
+                if (!match) {
+                    list.splice(i, 1);
+                }
+            }
+
             pendingChanges = undefined;
         };
 

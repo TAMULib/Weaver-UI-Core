@@ -241,14 +241,16 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 newList.push(new model(modelObj));
             });
 
+            var i, j, newItem, match;
+
             // find and extend updated entities and splice out removed entities
-            for (var i = 0; i < newList.length; i++) {
-                var newItem = newList[i];
+            for (i = 0; i < newList.length; i++) {
+                newItem = newList[i];
 
-                var match = false;
+                match = false;
 
-                for (var j = 0; j < list.length; j++) {
-                    var item = list[j];
+                for (j = 0; j < list.length; j++) {
+                    item = list[j];
 
                     if (item.id === newItem.id) {
                         angular.extend(item, newItem);
@@ -265,13 +267,13 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             }
 
             // check for newly created entities and insert them
-            for (var i = list.length - 1; i >= 0; i--) {
-                var item = list[i];
+            for (i = list.length - 1; i >= 0; i--) {
+                item = list[i];
 
-                var match = false;
+                match = false;
 
-                for (var j = newList.length - 1; j >= 0; j--) {
-                    var newItem = newList[j];
+                for (j = newList.length - 1; j >= 0; j--) {
+                    newItem = newList[j];
 
                     if (newItem.id === item.id) {
                         match = true;

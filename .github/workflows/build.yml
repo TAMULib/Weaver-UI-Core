@@ -1,0 +1,45 @@
+name: Build
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install Chrome Drivers"
+        run: sudo apt-get install xvfb
+
+      - name: "Node Cache"
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-cache-node-${{ hashFiles('**/package.json', '**/package-lock.json') }}
+
+      - name: "Node Modules Cache"
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-cache-node_modules-${{ hashFiles('**/package.json', '**/package-lock.json') }}
+
+      - name: "Setup Node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: 6
+
+      - name: "Install Node"
+        run: npm install
+
+      - name: "Node Tests"
+        run: |
+          xvfb-run --auto-servernum npm run test-ci
+          grunt coverage
+
+      - name: "Coverage Report"
+        uses: MikeEdgar/github-action@raw_coverage_file
+        with:
+          github-token: ${{ secrets.github_token }}
+          path-to-file: 'coverage/coveralls.json'
+          coverage-format: raw

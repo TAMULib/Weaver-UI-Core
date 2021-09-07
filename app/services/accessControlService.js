@@ -1,4 +1,4 @@
-core.service("AccessControlService", function ($location, StorageService) {
+core.service("AccessControlService", function ($location, StorageService, UserService) {
 
     var AccessControlService = this;
 
@@ -19,7 +19,12 @@ core.service("AccessControlService", function ($location, StorageService) {
 
         if(allowedUsers === undefined) return;
 
-        var role = StorageService.get("role");
+        var role;
+
+        UserService.userReady().then(function() {
+            UserService.getCurrentUser();
+            role = StorageService.get("role");
+        });
 
         var restrict = allowedUsers.indexOf(role) < 0;
 

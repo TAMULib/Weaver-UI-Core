@@ -24,22 +24,21 @@ core.service("AccessControlService", function ($location, StorageService, UserSe
         UserService.userReady().then(function() {
             UserService.getCurrentUser();
             role = StorageService.get("role");
+        }).then(function() {
+            var restrict = allowedUsers.indexOf(role) < 0;
+
+            var authorizeUrl = StorageService.get("post_authorize_url");
+
+            if (role === 'ROLE_ANONYMOUS') {
+                StorageService.set("post_authorize_url", window.location.pathname);
+                $location.path("/error/401");
+            } else if (authorizeUrl && $location.path() !== "/error/401") {
+                StorageService.delete("post_authorize_url");
+            } else if (restrict) {
+                evt.preventDefault();
+                $location.path("/error/403");
+            }
         });
-
-        var restrict = allowedUsers.indexOf(role) < 0;
-
-        var authorizeUrl = StorageService.get("post_authorize_url");
-
-        if (role === 'ROLE_ANONYMOUS') {
-            StorageService.set("post_authorize_url", window.location.pathname);
-            $location.path("/error/401");
-        } else if (authorizeUrl && $location.path() !== "/error/401") {
-            StorageService.delete("post_authorize_url");
-        } else if (restrict) {
-            evt.preventDefault();
-            $location.path("/error/403");
-        }
-
     };
 
     AccessControlService.getLastRoutePath = function () {

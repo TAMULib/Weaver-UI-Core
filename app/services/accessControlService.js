@@ -1,4 +1,4 @@
-core.service("AccessControlService", function ($location, StorageService) {
+core.service("AccessControlService", function ($location, StorageService, UserService) {
 
     var AccessControlService = this;
 
@@ -19,22 +19,26 @@ core.service("AccessControlService", function ($location, StorageService) {
 
         if(allowedUsers === undefined) return;
 
-        var role = StorageService.get("role");
+        var role;
 
-        var restrict = allowedUsers.indexOf(role) < 0;
+        UserService.userReady().then(function() {
+            UserService.getCurrentUser();
+            role = StorageService.get("role");
+        }).then(function() {
+            var restrict = allowedUsers.indexOf(role) < 0;
 
-        var authorizeUrl = StorageService.get("post_authorize_url");
+            var authorizeUrl = StorageService.get("post_authorize_url");
 
-        if (role === 'ROLE_ANONYMOUS') {
-            StorageService.set("post_authorize_url", window.location.pathname);
-            $location.path("/error/401");
-        } else if (authorizeUrl && $location.path() !== "/error/401") {
-            StorageService.delete("post_authorize_url");
-        } else if (restrict) {
-            evt.preventDefault();
-            $location.path("/error/403");
-        }
-
+            if (role === 'ROLE_ANONYMOUS') {
+                StorageService.set("post_authorize_url", window.location.pathname);
+                $location.path("/error/401");
+            } else if (authorizeUrl && $location.path() !== "/error/401") {
+                StorageService.delete("post_authorize_url");
+            } else if (restrict) {
+                evt.preventDefault();
+                $location.path("/error/403");
+            }
+        });
     };
 
     AccessControlService.getLastRoutePath = function () {

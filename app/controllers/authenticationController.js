@@ -69,9 +69,9 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         }
 
         if (appConfig.mockRole) {
-            $window.open(appConfig.authService + "/token?referrer=" + location.origin + path + "&mock=" + appConfig.mockRole, "_self");
+            $window.open(appConfig.authService + "/token?referrer=" + encodeURIComponent(location.origin + path + location.search) + "&mock=" + appConfig.mockRole, "_self");
         } else {
-            $window.open(appConfig.authService + "/token?referrer=" + location.origin + path, "_self");
+            $window.open(appConfig.authService + "/token?referrer=" + encodeURIComponent(location.origin + path + location.search), "_self");
         }
 
     };

@@ -29,7 +29,7 @@
     "bootstrap": "3.4.1",
     "bootstrap-sass": "3.4.1",
     "express": "4.17.1",
-    "forever": "0.15.3",
+    "forever": "4.0.2",
     "forever-monitor": "1.7.1",
     "html5-boilerplate": "6.1.0",
     "jquery": "3.4.1",

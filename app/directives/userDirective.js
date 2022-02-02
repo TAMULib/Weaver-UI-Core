@@ -87,18 +87,18 @@ core.directive('useruin', function () {
  */
 core.directive('useraffiliation', function (UserService) {
     return {
-        template: '<span>{{ affiliation }}</span>',
+        template: '<span>{{ getUserAffiliation() }}</span>',
         restrict: 'E',
         scope: true,
         controller: 'UserController',
         link: function ($scope, element, attr) {
-            UserService.userReady().then(function () {
+            $scope.getUserAffiliation = function() {
                 if ($scope.user.affiliation) {
-                    $scope.affiliation = $scope.user.affiliation.toUpperCase().split(';')[0];
-                } else {
-                    $scope.affiliation = "UNKNOWN";
+                    return $scope.user.affiliation.toUpperCase().split(';')[0];
                 }
-            });
+
+                return "UNKNOWN";
+            };
         }
     };
 });

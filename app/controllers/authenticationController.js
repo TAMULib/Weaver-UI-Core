@@ -91,8 +91,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         StorageService.set("role", appConfig.anonymousRole);
         $scope.user.logout();
         angular.element(".dropdown").dropdown("toggle");
-        $location.path('/');
-        $window.location.reload();
+        $window.location.assign("/");
     };
 
 });

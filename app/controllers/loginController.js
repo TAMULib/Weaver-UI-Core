@@ -11,9 +11,10 @@ core.controller('LoginController', function ($controller, $location, $scope, $wi
                 var authorizeUrl = StorageService.get("post_authorize_url");
                 if (authorizeUrl) {
                     StorageService.delete("post_authorize_url");
-                    $location.path(authorizeUrl);
+                    $window.location.assign(authorizeUrl);
+                } else {
+                    $window.location.reload();
                 }
-                $window.location.reload();
             });
         });
     };

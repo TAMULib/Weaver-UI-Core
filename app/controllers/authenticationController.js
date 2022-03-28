@@ -17,7 +17,7 @@
  *  Extends {@link core.controller:AbstractController 'AbstractController'}
  *
  **/
-core.controller('AuthenticationController', function ($controller, $location, $scope, $window, UserService, StorageService) {
+core.controller('AuthenticationController', function ($browser, $controller, $location, $scope, $window, UserService, StorageService) {
 
     angular.extend(this, $controller('AbstractController', {
         $scope: $scope
@@ -91,7 +91,7 @@ core.controller('AuthenticationController', function ($controller, $location, $s
         StorageService.set("role", appConfig.anonymousRole);
         $scope.user.logout();
         angular.element(".dropdown").dropdown("toggle");
-        $window.location.assign("/");
+        $window.location.assign($browser.baseHref());
     };
 
 });

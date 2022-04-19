@@ -12,35 +12,86 @@
 const path = require('path');
 const ConcatPlugin = require('@mcler/webpack-concat-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const RemovePlugin = require('remove-files-webpack-plugin');
+
+let appBuildConfig = require(path.resolve(process.cwd(), '.wvr', 'build-config.js')).config;
+appBuildConfig = !!appBuildConfig ? appBuildConfig : {};
+
+const vendorBundle = appBuildConfig.overrideVendorBunlde 
+  ? appBuildConfig.vendorBundle 
+  : [[]].concat(appBuildConfig.vendorBundle);
+const wvrBundle = appBuildConfig.overrideWvrBunlde
+  ? appBuildConfig.wvrBundle 
+  : [[]].concat(appBuildConfig.wvrBundle);
+const appBundle = appBuildConfig.overrideAppBunlde 
+  ? appBuildConfig.appBundle
+  : [
+      [
+        path.resolve(process.cwd(), 'app', '**', '*.js'), 
+        `!${path.resolve(process.cwd(), 'app', 'config', 'appConfig.js')}`,
+        `!${path.resolve(process.cwd(), 'app', 'config', 'apiMapping.js')}`,
+        `!${path.resolve(process.cwd(), 'app', 'resources', '**', '*')}`
+      ]
+    ].concat(appBuildConfig.appBundle);
+
+const plugins = []
+if(vendorBundle.length) {
+  plugins.push(new ConcatPlugin({
+    name: 'vendor.bundle',
+    outputPath: '.',
+    fileName: '[name].js',
+    filesToConcat: vendorBundle,
+    attributes: {
+        async: true
+    }
+  }));
+}
+
+if(wvrBundle.length) {
+  plugins.push(new ConcatPlugin({
+    name: 'wvr.bundle',
+    outputPath: '.',
+    fileName: '[name].js',
+    filesToConcat: wvrBundle,
+    attributes: {
+        async: true
+    }
+  }));
+}
+
+if(appBundle.length) {
+  plugins.push(new ConcatPlugin({
+    name: 'app.bundle',
+    outputPath: '.',
+    fileName: '[name].js',
+    filesToConcat: appBundle,
+    attributes: {
+        async: true
+    }
+  }));
+}
+
+plugins.push(
+  new CopyPlugin({
+  patterns: [
+    { from: path.resolve(process.cwd(), 'app/index.html'), to: path.resolve(process.cwd(), 'dist/index.html') },
+    { from: path.resolve(process.cwd(), 'app/resources'), to: path.resolve(process.cwd(), 'dist/resources') }
+  ],
+}));
+
+plugins.push(new RemovePlugin({
+  after: {
+    // expects what your output folder is `dist`.
+    include: [
+      path.resolve(process.cwd(), 'dist', 'main.js')
+    ]
+  }
+}));
 
 module.exports = {
   mode: 'development',
-  plugins: [
-    new ConcatPlugin({
-      name: 'bundle',
-      outputPath: '.',
-      fileName: '[name].js',
-      filesToConcat: [
-        [
-          path.resolve(process.cwd(), 'app', '**', '*.js'), 
-          `!${path.resolve(process.cwd(), 'app', 'config', 'appConfig.js')}`,
-          `!${path.resolve(process.cwd(), 'app', 'config', 'apiMapping.js')}`,
-          `!${path.resolve(process.cwd(), 'app', 'resources', '**', '*')}`
-        ]
-      ],
-      attributes: {
-          async: true
-      }
-    }),
-    new CopyPlugin({
-      patterns: [
-        { from: path.resolve(process.cwd(), 'app/index.html'), to: path.resolve(process.cwd(), 'dist/index.html') },
-        { from: path.resolve(process.cwd(), 'app/resources'), to: path.resolve(process.cwd(), 'dist/resources') }
-      ],
-    }),
-  ],
+  plugins,
   output: {
-    filename: '[name].bundle.js',
     path: path.resolve(process.cwd(), 'dist')
   },
   resolve: {

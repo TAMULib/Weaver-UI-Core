@@ -3,6 +3,7 @@
 const process = require('process');
 const server = require('./server/server.js');
 const build = require('./build/build.js');
+const clean = require('./build/build.js');
 
 const command = process.argv[2];
 
@@ -23,7 +24,8 @@ for (let i = 0; i < commandArgsArr.length; i++) {
 
 const commands = {
     server,
-    build
+    build,
+    clean
 };
 
 if (commands[command]) {

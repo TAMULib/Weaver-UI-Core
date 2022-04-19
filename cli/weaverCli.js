@@ -1,17 +1,18 @@
 #! /usr/bin/env node
 
-var process = require('process');
-var fs = require('fs');
+const process = require('process');
+const server = require('./server/server.js');
+const build = require('./build/build.js');
 
-var command = process.argv[2];
+const command = process.argv[2];
 
-var commandArgsArr = process.argv.slice(2, process.argv.length);
-var commandArgs = {};
+const commandArgsArr = process.argv.slice(2, process.argv.length);
+const commandArgs = {};
 
-for (var i = 0; i < commandArgsArr.length; i++) {
-    var cmd = commandArgsArr[i];
+for (let i = 0; i < commandArgsArr.length; i++) {
+    let cmd = commandArgsArr[i];
     if (cmd[0] === '-') {
-        var nextEntry = commandArgsArr[i + 1];
+        let nextEntry = commandArgsArr[i + 1];
         if (nextEntry && nextEntry[0] !== '-') {
             commandArgs[cmd] = nextEntry;
         } else {
@@ -20,8 +21,9 @@ for (var i = 0; i < commandArgsArr.length; i++) {
     }
 }
 
-var commands = {
-    server: require('./server.js')
+const commands = {
+    server,
+    build
 };
 
 if (commands[command]) {
@@ -30,10 +32,10 @@ if (commands[command]) {
 } else if (command === '-h') {
     // If the command did not exists but is the '-h' flag, run help on all commands
     console.log('COMMANDS:');
-    var cmdkeys = Object.keys(commands);
+    const cmdkeys = Object.keys(commands);
 
-    for (var i in cmdkeys) {
-        var cmd = commands[cmdkeys[i]];
+    for (let i in cmdkeys) {
+        const cmd = commands[cmdkeys[i]];
         cmd.help();
     }
 } else {

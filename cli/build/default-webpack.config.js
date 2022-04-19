@@ -10,10 +10,35 @@
  * A bit more customization...
  */
 const path = require('path');
+const ConcatPlugin = require('@mcler/webpack-concat-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: 'development',
-  entry:  path.resolve(process.cwd(), 'app', 'app.js'),
+  plugins: [
+    new ConcatPlugin({
+      name: 'bundle',
+      outputPath: '.',
+      fileName: '[name].js',
+      filesToConcat: [
+        [
+          path.resolve(process.cwd(), 'app', '**', '*.js'), 
+          `!${path.resolve(process.cwd(), 'app', 'config', 'appConfig.js')}`,
+          `!${path.resolve(process.cwd(), 'app', 'config', 'apiMapping.js')}`,
+          `!${path.resolve(process.cwd(), 'app', 'resources', '**', '*')}`
+        ]
+      ],
+      attributes: {
+          async: true
+      }
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(process.cwd(), 'app/index.html'), to: path.resolve(process.cwd(), 'dist/index.html') },
+        { from: path.resolve(process.cwd(), 'app/resources'), to: path.resolve(process.cwd(), 'dist/resources') }
+      ],
+    }),
+  ],
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(process.cwd(), 'dist')

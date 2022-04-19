@@ -39,6 +39,8 @@
     "stompjs": "2.3.3"
   },
   "devDependencies": {
+    "@mcler/webpack-concat-plugin": "^4.1.5",
+    "copy-webpack-plugin": "^10.2.4",
     "grunt": "1.4.1",
     "grunt-cli": "^1.4.3",
     "grunt-contrib-jshint": "^3.2.0",

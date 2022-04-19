@@ -12,8 +12,6 @@ const build = (args) => {
   });
 };
 
-
-
 // The run command
 const run = (args) => {
   if (!args['-h' || !args['--help']]) {

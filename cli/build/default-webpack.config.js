@@ -1,147 +1,103 @@
-/**
- * Custom entry point
- */
-//  module.exports = {
-//   mode: 'development',
-//   entry: './app/app.js'
-// }
-
-/**
- * A bit more customization...
- */
+console.log("\n\n\nBUILDING 5\n\n\n");
 const path = require('path');
-const ConcatPlugin = require('@mcler/webpack-concat-plugin');
+const glob = require('glob');
+const fs = require('fs');
+const TerserPlugin = require("terser-webpack-plugin");
+const extract = require("webpack-extract-module-to-global");
 const CopyPlugin = require("copy-webpack-plugin");
 const RemovePlugin = require('remove-files-webpack-plugin');
+
+const TEMP_DIR = './bld-tmp';
 
 let appBuildConfig = require(path.resolve(process.cwd(), '.wvr', 'build-config.js')).config;
 appBuildConfig = !!appBuildConfig ? appBuildConfig : {};
 
-const vendorBundle = appBuildConfig.overrideVendorBunlde 
-  ? appBuildConfig.vendorBundle 
-  : [[]].concat(appBuildConfig.vendorBundle);
-const wvrBundle = appBuildConfig.overrideWvrBunlde
-  ? appBuildConfig.wvrBundle 
-  : [[]].concat(appBuildConfig.wvrBundle);
-const appBundle = appBuildConfig.overrideAppBunlde 
-  ? appBuildConfig.appBundle
-  : [
-      [
-        path.resolve(process.cwd(), 'app', '**', '*.js'), 
-        `!${path.resolve(process.cwd(), 'app', 'config', 'appConfig.js')}`,
-        `!${path.resolve(process.cwd(), 'app', 'config', 'apiMapping.js')}`,
-        `!${path.resolve(process.cwd(), 'app', 'resources', '**', '*')}`
-      ]
-    ].concat(appBuildConfig.appBundle);
+const { entry } = appBuildConfig;
 
-const plugins = []
-if(vendorBundle.length) {
-  plugins.push(new ConcatPlugin({
-    name: 'vendor.bundle',
-    outputPath: '.',
-    fileName: '[name].js',
-    filesToConcat: vendorBundle,
-    attributes: {
-        async: true
-    }
-  }));
+Object.keys(entry)
+  .forEach(bundle => {
+    const prune = [];
+    entry[bundle] = entry[bundle].filter((e => {
+      if (e.startsWith('!')) {
+        prune.push(e.substring(1));
+        return false;
+      }
+      return true;
+    })).flatMap((e) => {
+      return glob.sync(e);
+    }).filter((e) => {
+      return prune.indexOf(e) < 0;
+    });
+  }); 
+
+if (fs.existsSync(TEMP_DIR)) {
+  fs.rmdirSync(TEMP_DIR, { recursive: true, force: true });
+  
 }
+fs.mkdirSync(TEMP_DIR);
 
-if(wvrBundle.length) {
-  plugins.push(new ConcatPlugin({
-    name: 'wvr.bundle',
-    outputPath: '.',
-    fileName: '[name].js',
-    filesToConcat: wvrBundle,
-    attributes: {
-        async: true
-    }
-  }));
-}
-
-if(appBundle.length) {
-  plugins.push(new ConcatPlugin({
-    name: 'app.bundle',
-    outputPath: '.',
-    fileName: '[name].js',
-    filesToConcat: appBundle,
-    attributes: {
-        async: true
-    }
-  }));
-}
-
-plugins.push(
-  new CopyPlugin({
-  patterns: [
-    { from: path.resolve(process.cwd(), 'app/index.html'), to: path.resolve(process.cwd(), 'dist/index.html') },
-    { from: path.resolve(process.cwd(), 'app/resources'), to: path.resolve(process.cwd(), 'dist/resources') }
-  ],
-}));
-
-plugins.push(new RemovePlugin({
-  after: {
-    // expects what your output folder is `dist`.
-    include: [
-      path.resolve(process.cwd(), 'dist', 'main.js')
-    ]
+const orderPaths = (scope, paths) => {
+  const array = [];
+  var i = 0;
+  for (const path of paths) {
+    const index = `${i}`.padStart(8, '0');
+    fs.copyFileSync(path, `${TEMP_DIR}/${scope}-${index}.js`);
+    array.push(`${TEMP_DIR}/${scope}-${index}.js`);
+    i++;
   }
-}));
+  return array;
+}
+
+
+const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
-  mode: 'development',
-  plugins,
+  mode: env,
+  devtool: env === 'development' ? 'source-map' : 'none',
+  context: process.cwd(),
+  entry: {
+    vendor: orderPaths('vendor', entry.vendor),
+    wvr: orderPaths('wvr', entry.wvr),
+    app: orderPaths('app', entry.app)
+  },
   output: {
-    path: path.resolve(process.cwd(), 'dist')
+    path: path.resolve(process.cwd(), 'dist'),
+    filename: '[name].bundle.js',
+  },
+  optimization: {
+    minimize: env === 'production',
+    minimizer: [new TerserPlugin()],
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
+        { from: path.resolve('app/resources'), to: path.resolve('dist', 'resources') }
+      ]}),
+    // new RemovePlugin({
+    //     after: {
+    //       include: [
+    //         path.resolve(process.cwd(), TEMP_DIR)
+    //       ]
+    //     }
+    //   })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: extract.ExtractModuleToGlobal.loader,
+          },
+        ],
+      },
+    ]
   },
   resolve: {
     modules: [
-      'node_modules', // The default
+      'node_modules',
       'app'
     ]
   }
 }
-
-/**
- * Production-like config
- */
-// const path = require('path');
-
-// module.exports = {
-//   mode: 'production',
-//   entry: 'main.js',
-//   output: {
-//     filename: '[name].[hash].bundle.js',
-//     path: path.resolve(__dirname, 'build')
-//   },
-//   resolve: {
-//     modules: [
-//       'node_modules', // The default
-//       'src'
-//     ]
-//   }
-// }
-
-/**
- * Gosh, we basically have two configs.
- * 
- * NOTE: When in production mode, minimization happens automatically.
- */
-// const path = require('path');
-
-// const nodeEnv = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-
-// module.exports = {
-//   mode: nodeEnv,
-//   entry: 'main.js',
-//   output: {
-//     filename: nodeEnv === 'production' ? '[name].[hash].bundle.js' : '[name].bundle.js',
-//     path: path.resolve(__dirname, 'build')
-//   },
-//   resolve: {
-//     modules: [
-//       'node_modules', // The default
-//       'src'
-//     ]
-//   }
-// }

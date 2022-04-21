@@ -67,7 +67,8 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
-        { from: path.resolve('app/resources'), to: path.resolve('dist', 'resources') }
+        { from: path.resolve('app/resources'), to: path.resolve('dist', 'resources') },
+        { from: path.resolve('app/view'), to: path.resolve('dist', 'view') }
       ]
     }),
     new RemovePlugin({

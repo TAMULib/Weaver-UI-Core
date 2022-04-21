@@ -14,7 +14,6 @@ const build = (args) => {
     if (err || stats.hasErrors()) {
      console.log(err);
     }
-    console.log(config);
   });
 };
 

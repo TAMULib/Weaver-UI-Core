@@ -35,11 +35,4 @@ jobs:
       - name: "Node Tests"
         run: |
           xvfb-run --auto-servernum npm run test-ci
-          grunt coverage
-
-      - name: "Coverage Report"
-        uses: MikeEdgar/github-action@raw_coverage_file
-        with:
-          github-token: ${{ secrets.github_token }}
-          path-to-file: 'coverage/coveralls.json'
-          coverage-format: raw
+          npm run test:ci

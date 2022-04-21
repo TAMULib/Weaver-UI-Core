@@ -50,6 +50,7 @@ const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
   mode: env,
+  target: ['web', 'es5'],
   devtool: env === 'development' ? 'source-map' : 'none',
   context: process.cwd(),
   entry,
@@ -62,6 +63,7 @@ module.exports = {
     minimizer: [new TerserPlugin()],
   },
   plugins: [
+    new extract.ExtractModuleToGlobal(),
     new CopyPlugin({
       patterns: [
         { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },

@@ -34,5 +34,4 @@ jobs:
 
       - name: "Node Tests"
         run: |
-          xvfb-run --auto-servernum npm run test-ci
-          npm run test:ci
+          xvfb-run --auto-servernum npm run test:ci

@@ -72,7 +72,11 @@ module.exports = {
       after: {
         include: [
           path.resolve(process.cwd(), TEMP_DIR)
-        ]
+        ],
+        log: false,
+        logWarning: true,
+        logError: true,
+        logDebug: false
       }
     })
   ],

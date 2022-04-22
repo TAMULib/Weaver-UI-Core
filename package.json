@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-alpha.13",
+  "version": "2.2.2-alpha.16",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
@@ -55,5 +55,6 @@
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
     "webpack-extract-module-to-global": "^0.1.0"
-  }
+  },
+  "bundledDependencies": true
 }

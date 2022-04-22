@@ -66,6 +66,7 @@
     "angular-route",
     "angular-sanitize",
     "angular-ui-bootstrap",
+    "bootstrap-sass",
     "sockjs-client",
     "stompjs",
     "copy-webpack-plugin",

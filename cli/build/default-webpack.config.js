@@ -15,15 +15,7 @@ appBuildConfig = !!appBuildConfig ? appBuildConfig : {
 
 const { entry, copy } = appBuildConfig;
 
-const patterns = [
-  { from: path.resolve('node_modules/bootstrap/fonts'), to: path.resolve('dist', 'resources', 'styles', 'bootstrap', 'dist', 'fonts') },
-  { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'resources', 'images') },
-  { from: path.resolve('node_modules/@wvr/core/app/views'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'views') },
-  { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
-  { from: path.resolve('app/resources/fonts'), to: path.resolve('dist', 'resources', 'fonts') },
-  { from: path.resolve('app/resources/images'), to: path.resolve('dist', 'resources', 'images') },
-  { from: path.resolve('app/view'), to: path.resolve('dist', 'view') }
-];
+const patterns = [];
 
 copy.forEach(c => {
   patterns.push({

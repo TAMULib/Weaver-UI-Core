@@ -79,7 +79,17 @@ module.exports = {
   },
   optimization: {
     minimize: env === 'production',
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin(
+      {
+        terserOptions: {
+          ecma: '5',
+          parse: {},
+          compress: {},
+          mangle: false,
+          module: false
+        },
+      }
+    )],
   },
   module: {
     rules: [

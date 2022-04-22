@@ -47,6 +47,9 @@ const orderPaths = (scope, paths) => {
     if (ext === 'js') {
       const index = `${i}`.padStart(8, '0');
       const tempFilePath = `${TEMP_DIR}/${scope}-${index}.${ext}`;
+      if (!fs.existsSync(path)) {
+        console.error(`${path} does not exist!`);
+      }
       fs.copyFileSync(path, tempFilePath);
       array.push(tempFilePath);
     } else {

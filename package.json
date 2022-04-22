@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-alpha.20.26",
+  "version": "2.2.2-alpha.20.29",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "angular-route": "^1.8.2",
     "angular-sanitize": "^1.8.2",
     "angular-ui-bootstrap": "^2.5.6",
-    "bootstrap": "^5.1.3",
+    "bootstrap": "^3.4.1",
     "bootstrap-sass": "^3.4.3",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.7.1",

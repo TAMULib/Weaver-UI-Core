@@ -5,6 +5,7 @@ const extract = require("webpack-extract-module-to-global");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const RemovePlugin = require('remove-files-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const TEMP_DIR = './bld-tmp';
 
@@ -25,10 +26,15 @@ const orderPaths = (scope, paths) => {
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i];
     const ext = path.split('.').pop();
-    const index = `${i}`.padStart(8, '0');
-    const tempFilePath = `${TEMP_DIR}/${scope}-${index}.${ext}`;
-    fs.copyFileSync(path, tempFilePath);
-    array.push(tempFilePath);
+    // es5 JavaScript requires correct order for concatenation
+    if (ext === 'js') {
+      const index = `${i}`.padStart(8, '0');
+      const tempFilePath = `${TEMP_DIR}/${scope}-${index}.${ext}`;
+      fs.copyFileSync(path, tempFilePath);
+      array.push(tempFilePath);
+    } else {
+      array.push(path);
+    }
   }
   return array;
 }
@@ -74,10 +80,24 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // MiniCssExtractPlugin.loader,
+
+          // Creates `style` nodes from JS strings
+          "style-loader",
+          // Translates CSS into CommonJS
+          "css-loader",
+          // Compiles Sass to CSS
+          "sass-loader",
+        ],
+      },
     ]
   },
   plugins: [
     new extract.ExtractModuleToGlobal(),
+    new MiniCssExtractPlugin(),
     new CopyPlugin({
       patterns: [
         { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'wvr', 'resources', 'images') },

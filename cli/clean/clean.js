@@ -6,7 +6,7 @@ const rmdir = (dir) => {
     if (error) {
       console.log("Nothing to clean...")
     } else {
-      fs.rmdirSync(dir, { recursive: true, force: true });
+      fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 };

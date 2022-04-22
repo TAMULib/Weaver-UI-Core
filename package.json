@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-alpha.17",
+  "version": "2.2.2-alpha.18",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
@@ -50,6 +50,7 @@
     "node-sass": "^7.0.1",
     "protractor": "^7.0.0",
     "remove-files-webpack-plugin": "^1.5.0",
+    "resolve-url-loader": "^5.0.0",
     "sass": "^1.50.1",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
@@ -83,6 +84,7 @@
     "node-sass",
     "protractor",
     "remove-files-webpack-plugin",
+    "resolve-url-loader",
     "sass",
     "sass-loader",
     "style-loader",

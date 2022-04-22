@@ -24,9 +24,11 @@ const orderPaths = (scope, paths) => {
   const array = [];
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i];
+    const ext = path.split('.').pop();
     const index = `${i}`.padStart(8, '0');
-    fs.copyFileSync(path, `${TEMP_DIR}/${scope}-${index}.js`);
-    array.push(`${TEMP_DIR}/${scope}-${index}.js`);
+    const tempFilePath = `${TEMP_DIR}/${scope}-${index}.${ext}`;
+    fs.copyFileSync(path, tempFilePath);
+    array.push(tempFilePath);
   }
   return array;
 }
@@ -62,12 +64,27 @@ module.exports = {
     minimize: env === 'production',
     minimizer: [new TerserPlugin()],
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: extract.ExtractModuleToGlobal.loader,
+          },
+        ],
+      },
+    ]
+  },
   plugins: [
     new extract.ExtractModuleToGlobal(),
     new CopyPlugin({
       patterns: [
+        { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'wvr', 'resources', 'images') },
+        { from: path.resolve('node_modules/@wvr/core/app/views'), to: path.resolve('dist', 'wvr', 'view') },
         { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
-        { from: path.resolve('app/resources'), to: path.resolve('dist', 'resources') },
+        { from: path.resolve('app/resources/fonts'), to: path.resolve('dist', 'resources', 'fonts') },
+        { from: path.resolve('app/resources/images'), to: path.resolve('dist', 'resources', 'images') },
         { from: path.resolve('app/view'), to: path.resolve('dist', 'view') }
       ]
     }),
@@ -83,16 +100,4 @@ module.exports = {
       }
     })
   ],
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: [
-          {
-            loader: extract.ExtractModuleToGlobal.loader,
-          },
-        ],
-      },
-    ]
-  }
 }

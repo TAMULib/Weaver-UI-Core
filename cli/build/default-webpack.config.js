@@ -5,8 +5,6 @@ const extract = require("webpack-extract-module-to-global");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const RemovePlugin = require('remove-files-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 
 const TEMP_DIR = './bld-tmp';
 
@@ -18,6 +16,7 @@ appBuildConfig = !!appBuildConfig ? appBuildConfig : {
 const { entry, copy } = appBuildConfig;
 
 const patterns = [
+  { from: path.resolve('node_modules/bootstrap/fonts'), to: path.resolve('dist', 'resources', 'styles', 'bootstrap', 'dist', 'fonts') },
   { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'resources', 'images') },
   { from: path.resolve('node_modules/@wvr/core/app/views'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'views') },
   { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
@@ -119,8 +118,6 @@ module.exports = {
   },
   plugins: [
     new extract.ExtractModuleToGlobal(),
-    // new MiniCssExtractPlugin(),
-    // new FixStyleOnlyEntriesPlugin({ extensions: ['scss'] }),
     new CopyPlugin({
       patterns,
     }),

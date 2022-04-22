@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-alpha.20.30",
+  "version": "2.2.2-alpha.20.32",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
@@ -41,7 +41,6 @@
     "karma-jasmine": "^5.0.0",
     "karma-junit-reporter": "^2.0.1",
     "karma-ng-html2js-preprocessor": "^1.0.0",
-    "mini-css-extract-plugin": "^2.6.0",
     "ng-file-upload": "^12.2.13",
     "node-sass": "^7.0.1",
     "protractor": "^7.0.0",
@@ -54,7 +53,6 @@
     "terser-webpack-plugin": "^5.3.1",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
-    "webpack-extract-module-to-global": "^0.1.0",
-    "webpack-fix-style-only-entries": "^0.6.1"
+    "webpack-extract-module-to-global": "^0.1.0"
   }
 }

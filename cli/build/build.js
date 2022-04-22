@@ -3,16 +3,19 @@ const clean = require('../clean/clean.js');
 
 const build = (args) => {
 
-  if(args["--clean"] || args["-x"]) {
+  if (args["--clean"] || args["-x"]) {
     clean.run([]);
   }
 
   const customConf = args["--config"] || args["-c"];
   const configLocation = customConf ? process.cwd() + customConf : './default-webpack.config.js';
   const config = require(configLocation);
-  webpack(config, (err, stats) => { // [Stats Object](#stats-object)
-    if (err || stats.hasErrors()) {
-     console.log(err);
+  webpack(config, (error, stats) => {
+    if (!!error) {
+      console.log(error);
+    }
+    if (!!stats.errors && stats.errors.length > 0) {
+      console.log(stats.errors);
     }
   });
 };

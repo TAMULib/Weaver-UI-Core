@@ -6,6 +6,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const RemovePlugin = require('remove-files-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 
 const TEMP_DIR = './bld-tmp';
 
@@ -14,7 +15,23 @@ appBuildConfig = !!appBuildConfig ? appBuildConfig : {
   entry: {}
 };
 
-const { entry } = appBuildConfig;
+const { entry, copy } = appBuildConfig;
+
+const patterns = [
+  { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'resources', 'images') },
+  { from: path.resolve('node_modules/@wvr/core/app/views'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'views') },
+  { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
+  { from: path.resolve('app/resources/fonts'), to: path.resolve('dist', 'resources', 'fonts') },
+  { from: path.resolve('app/resources/images'), to: path.resolve('dist', 'resources', 'images') },
+  { from: path.resolve('app/view'), to: path.resolve('dist', 'view') }
+];
+
+copy.forEach(c => {
+  patterns.push({
+    from: path.resolve(c.from),
+    to: path.resolve('dist', c.to),
+  });
+});
 
 if (fs.existsSync(TEMP_DIR)) {
   fs.rmSync(TEMP_DIR, { recursive: true, force: true });
@@ -82,31 +99,27 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'resources/styles/app.css'
+        },
         use: [
-          'style-loader',
           {
-            loader: 'css-loader',
+            loader: 'sass-loader',
             options: {
-              url: false
-            }
+              sourceMap: false,
+            },
           },
-          'sass-loader'
         ],
       },
     ]
   },
   plugins: [
     new extract.ExtractModuleToGlobal(),
-    new MiniCssExtractPlugin(),
+    // new MiniCssExtractPlugin(),
+    // new FixStyleOnlyEntriesPlugin({ extensions: ['scss'] }),
     new CopyPlugin({
-      patterns: [
-        { from: path.resolve('node_modules/@wvr/core/app/resources/images'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'resources', 'images') },
-        { from: path.resolve('node_modules/@wvr/core/app/views'), to: path.resolve('dist', 'node_modules', '@wvr', 'core', 'app', 'views') },
-        { from: path.resolve('app/index.html'), to: path.resolve('dist', 'index.html') },
-        { from: path.resolve('app/resources/fonts'), to: path.resolve('dist', 'resources', 'fonts') },
-        { from: path.resolve('app/resources/images'), to: path.resolve('dist', 'resources', 'images') },
-        { from: path.resolve('app/view'), to: path.resolve('dist', 'view') }
-      ]
+      patterns,
     }),
     new RemovePlugin({
       after: {

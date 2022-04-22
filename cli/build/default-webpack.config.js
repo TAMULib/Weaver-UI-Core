@@ -79,7 +79,7 @@ const env = process.env.NODE_ENV || 'development';
 module.exports = {
   mode: env,
   target: ['web', 'es5'],
-  devtool: env === 'development' ? 'source-map' : 'none',
+  devtool: env === 'development' ? 'source-map' : undefined,
   context: process.cwd(),
   entry,
   output: {

@@ -2,10 +2,6 @@ const Webpack = require("webpack");
 const WebpackDevServer = require('webpack-dev-server');
 
 function start(args) {
-  if (args['--clean'] || args['-x']) {
-    clean.run([]);
-  }
-
   console.log('Starting...');
 
   const customConf = args['--config'] || args['-c'];

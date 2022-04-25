@@ -10,7 +10,6 @@ function run(args) {
 
     var start = !(args["--stop"] ? args["--stop"] : false);
 
-
     if (start) {
       startServer(args);
     } else {
@@ -20,7 +19,6 @@ function run(args) {
   } else {
     help();
   }
-
 }
 
 function stopServer(args) {
@@ -84,9 +82,9 @@ function help() {
 }
 
 function getTime() {
-  return new Date().toISOString().
-    replace(/T/, ' '). // replace T with a space
-    replace(/\..+/, ''); // delete the dot and everything after
+  return new Date().toISOString()
+    .replace(/T/, ' ') // replace T with a space
+    .replace(/\..+/, ''); // delete the dot and everything after
 }
 
 exports.run = run;

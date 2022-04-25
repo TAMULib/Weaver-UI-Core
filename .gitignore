@@ -15,8 +15,4 @@ tmp/
 
 npm-debug.log
 package-lock.json
-
-app/config/appConfig.js
-
-app/resources/styles/*
-!app/resources/styles/sass/
+yarn.lock

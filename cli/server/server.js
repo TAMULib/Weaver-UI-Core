@@ -23,7 +23,7 @@ function run(args) {
 
 }
 
-function stopServer() {
+function stopServer(args) {
   var uid = args["--uid"] ? args["--uid"] : null;
 
   if (uid) {

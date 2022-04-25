@@ -50,7 +50,7 @@ function startServer(args) {
       logFile: process.cwd() + path.sep + "weaver-server.log"
     });
   } else {
-    child = new(forever.Monitor)(webserverLocation, {
+    child = new (forever.Monitor)(webserverLocation, {
       args: [port, base],
       uid: uid
     });
@@ -85,8 +85,8 @@ function help() {
 
 function getTime() {
   return new Date().toISOString().
-  replace(/T/, ' '). // replace T with a space
-  replace(/\..+/, ''); // delete the dot and everything after
+    replace(/T/, ' '). // replace T with a space
+    replace(/\..+/, ''); // delete the dot and everything after
 }
 
 exports.run = run;

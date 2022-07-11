@@ -6,17 +6,23 @@ const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const RemovePlugin = require('remove-files-webpack-plugin');
 
+// temp build directory, intended to be cleaned up after successful build
 const TEMP_DIR = './bld-tmp';
 
+// convention driven require of location by the client side apps build config
 let appBuildConfig = require(path.resolve(process.cwd(), '.wvr', 'build-config.js')).config;
 appBuildConfig = !!appBuildConfig ? appBuildConfig : {
   entry: {}
 };
 
-const { entry, copy } = appBuildConfig;
+const {
+  copy,  // copy patterns
+  entry, // webpack default entry point
+} = appBuildConfig;
 
 const patterns = [];
 
+// prepare copy patterns to dist directory
 copy.forEach(c => {
   patterns.push({
     from: path.resolve(c.from),
@@ -29,6 +35,14 @@ if (fs.existsSync(TEMP_DIR)) {
 }
 fs.mkdirSync(TEMP_DIR);
 
+/**
+ * Used to order static JavaScript from legacy Gruntfile.js matching dev index.html file.
+ * ES5 to ES6 limitation of plugins inability to declare order of concatenated ES5 code.
+ *
+ * @param {*} scope bundle
+ * @param {*} paths static assets
+ * @returns ordered list of static assets renamed to maintain order through the default webpack entry point
+ */
 const orderPaths = (scope, paths) => {
   const array = [];
   for (let i = 0; i < paths.length; i++) {
@@ -50,6 +64,7 @@ const orderPaths = (scope, paths) => {
   return array;
 }
 
+// iterate over app build defined entry points
 for (const bundle of Object.keys(entry)) {
   const prune = [];
   entry[bundle] = orderPaths(bundle, entry[bundle].filter((e => {
@@ -67,6 +82,7 @@ for (const bundle of Object.keys(entry)) {
 
 const env = process.env.NODE_ENV || 'development';
 
+// see webpack https://webpack.js.org/configuration/
 module.exports = {
   mode: env,
   target: ['web', 'es5'],

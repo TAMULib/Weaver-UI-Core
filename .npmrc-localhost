@@ -1,2 +1,4 @@
 # Work-around NPM trying to fake authentication and allow anonymous publishing.
+# This file must be copied to the .npmrc of the project in order to work.
 //localhost:4873/:_authToken="fake"
+registry=http://localhost:4873/

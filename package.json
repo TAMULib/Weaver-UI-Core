@@ -16,7 +16,8 @@
     "preupdate-webdriver": "npm install",
     "update-webdriver": "webdriver-manager update",
     "preprotractor": "npm run update-webdriver",
-    "protractor": "protractor e2e-tests/protractor.conf.js"
+    "protractor": "protractor e2e-tests/protractor.conf.js",
+    "start:npm-local": "verdaccio --listen localhost:4873 --config ./verdaccio-config.yaml"
   },
   "dependencies": {
     "angular": "1.8.2",
@@ -52,6 +53,8 @@
     "karma-jasmine": "4.0.2",
     "karma-junit-reporter": "2.0.1",
     "karma-ng-html2js-preprocessor": "1.0.0",
-    "protractor": "7.0.0"
+    "protractor": "7.0.0",
+    "verdaccio": "^5.13.1",
+    "verdaccio-memory": "^10.3.0"
   }
 }

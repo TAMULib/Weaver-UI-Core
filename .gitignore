@@ -21,3 +21,5 @@ app/config/appConfig.js
 app/bower_components
 app/resources/styles/*
 !app/resources/styles/sass/
+
+.verdaccio

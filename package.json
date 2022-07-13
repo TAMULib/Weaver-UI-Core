@@ -13,7 +13,9 @@
     "test:watch": "karma start karma.conf.js",
     "test:ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=ChromeHeadless",
     "start:registry": "verdaccio --listen localhost:4873 --config ./verdaccio-config.yaml",
-    "publish:local": "shx cp .npmrc-localhost .npmrc && npm publish ; shx rm -f .npmrc"
+    "publish:local:pre": "shx cp .npmrc-localhost .npmrc",
+    "publish:local": "npm publish",
+    "publish:local:post": "shx rm -f .npmrc"
   },
   "dependencies": {
     "angular": "^1.8.2",

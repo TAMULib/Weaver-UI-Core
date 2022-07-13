@@ -18,7 +18,9 @@
     "preprotractor": "npm run update-webdriver",
     "protractor": "protractor e2e-tests/protractor.conf.js",
     "start:registry": "verdaccio --listen localhost:4873 --config ./verdaccio-config.yaml",
-    "publish:local": "shx cp .npmrc-localhost .npmrc && npm publish ; shx rm -f .npmrc"
+    "publish:local": "npm publish",
+    "prepublish:local": "shx cp .npmrc-localhost .npmrc",
+    "postpublish:local": "shx rm -f .npmrc"
   },
   "dependencies": {
     "angular": "1.8.2",

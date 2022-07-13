@@ -1,24 +1,38 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const resolve = require('path').resolve;
 
-const rmdir = (dir) => {
-  fs.access(dir, (error) => {
-    if (error) {
-      console.log("Nothing to clean...")
-    } else {
-      fs.rmSync(dir, { recursive: true, force: true });
-    }
-  });
+let appBuildConfig = require(resolve(process.cwd(), '.wvr', 'build-config.js')).config;
+appBuildConfig = !!appBuildConfig ? appBuildConfig : {
+  path: 'dist',
+  publicPath: '/',
+  copy: [],
+  entry: {},
 };
 
+const { path } = appBuildConfig;
+
+const rmdir = (dir) => {
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+};
+
+const clean = (args) => {
+  console.log('Cleaning...');
+  rmdir(resolve(process.cwd(), path));
+}
+
 const run = (args) => {
-  console.log("Cleaning...");
-  rmdir(path.resolve(process.cwd(), 'dist'));
+  if (args['-h' || args['--help']]) {
+    help();
+  } else {
+    clean(args);
+  }
 }
 
 const help = () => {
-  console.log("wrv clean []");
+  console.log('wrv clean []');
 }
 
-exports.run = run;
 exports.help = help;
+exports.run = run;

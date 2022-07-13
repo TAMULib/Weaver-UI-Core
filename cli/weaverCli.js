@@ -3,7 +3,7 @@
 const process = require('process');
 const server = require('./server/server.js');
 const build = require('./build/build.js');
-const clean = require('./build/build.js');
+const clean = require('./clean/clean.js');
 
 const command = process.argv[2];
 
@@ -28,12 +28,12 @@ const commands = {
   clean
 };
 
-if (commands[command]) {
+if (command in commands) {
   // If the command exists, run it
   commands[command].run(commandArgs);
-} else if (command === '-h') {
+} else if (command === '-h' || command === '--help') {
   // If the command did not exists but is the '-h' flag, run help on all commands
-  console.log('COMMANDS:');
+  console.log('Commands: ');
   const cmdkeys = Object.keys(commands);
 
   for (let i in cmdkeys) {
@@ -41,7 +41,7 @@ if (commands[command]) {
     cmd.help();
   }
 } else {
-  // Finnally, show an error
-  console.log('ERROR: ' + command + ' not found.');
+  // Finally, show an error
+  console.log(`Error: ${command} not found.`);
   console.log('-h for help');
 }

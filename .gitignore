@@ -15,9 +15,7 @@ tmp/
 
 npm-debug.log
 package-lock.json
+yarn.lock
 
-app/config/appConfig.js
-
-app/bower_components
-app/resources/styles/*
-!app/resources/styles/sass/
+.npmrc
+.verdaccio

@@ -1,0 +1,61 @@
+# https://verdaccio.org/docs/configuration/
+
+# Path to a directory with all packages.
+storage: .verdaccio/storage
+
+# Path to a directory with plugins to include.
+plugins: .verdaccio/plugins
+
+web:
+  title: Verdaccio - Weaver - Localhost
+
+  # Disable login requirement for localhost.
+  login: false
+
+# List of other known repositories to use.
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: false
+
+# For verdaccio-memory, designate memory limit.
+# Comment this out to store package in .verdaccio directory rather than in memory.
+store:
+  memory:
+    limit: 10000
+
+packages:
+  '@wvr/*':
+    # Choices: "$all", "$anonymous", "$authenticated".
+    access: $all
+    publish: $all
+    unpublish: $all
+
+  '**':
+    access: $all
+
+    # Proxy non-local packages to 'npmjs' registry.
+    proxy: npmjs
+
+# Allow for publishing while offline.
+publish:
+  allow_offline: true
+
+server:
+  keepAliveTimeout: 60
+
+security:
+  api:
+    jwt:
+      sign:
+        expiresIn: 15d
+        notBefore: 0
+  web:
+    sign:
+      expiresIn: 1h
+
+middlewares:
+  audit:
+    enabled: true
+
+logs: { type: stdout, format: pretty, level: http }

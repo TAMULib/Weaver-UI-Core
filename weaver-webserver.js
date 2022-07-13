@@ -12,9 +12,9 @@ var args = process.argv.slice(2, process.argv.length);
 var port = args[0] ? args[0] : 8080;
 var base = args[1] ? args[1] : '/';
 
-var root = process.cwd() + path.sep + 'app';
+var root = process.cwd() + path.sep + 'dist';
 
-router.use(express.static('app'));
+router.use(express.static('dist'));
 
 router.use(function (req, res, next) {
     if (req.get("X-Requested-With")) {

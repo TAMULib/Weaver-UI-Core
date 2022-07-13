@@ -6,7 +6,7 @@ module.exports = function (config) {
             '**/*.html': ['ng-html2js']
         },
 
-        reporters: ['coverage'],
+        reporters: ['coverage', 'coveralls'],
 
         basePath: './',
 
@@ -47,6 +47,7 @@ module.exports = function (config) {
         plugins: [
             'karma-chrome-launcher',
             'karma-coverage',
+            'karma-coveralls',
             'karma-firefox-launcher',
             'karma-jasmine',
             'karma-junit-reporter',

@@ -11,7 +11,11 @@
   "scripts": {
     "test": "karma start karma.conf.js --single-run",
     "test:watch": "karma start karma.conf.js",
-    "test:ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=ChromeHeadless"
+    "test:ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=ChromeHeadless",
+    "start:registry": "verdaccio --listen localhost:4873 --config ./verdaccio-config.yaml",
+    "publish:local": "npm publish",
+    "prepublish:local": "shx cp .npmrc-localhost .npmrc",
+    "postpublish:local": "shx rm -f .npmrc"
   },
   "dependencies": {
     "angular": "^1.8.2",
@@ -54,5 +58,10 @@
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
     "webpack-extract-module-to-global": "^0.1.0"
+  },
+  "devDependencies": {
+    "shx": "^0.3.4",
+    "verdaccio": "^5.13.2",
+    "verdaccio-memory": "^10.3.0"
   }
 }

@@ -7,8 +7,8 @@ services:
   registry:
     build:
       dockerfile: Dockerfile
-      args:
-        COMMAND: 'start:registry'
+    environment:
+      - COMMAND=start:registry
     ports:
       - 4873:4873
     networks:
@@ -17,8 +17,8 @@ services:
   publish:
     build:
       dockerfile: Dockerfile
-      args:
-        COMMAND: 'publish:registry'
+    environment:
+      - COMMAND=publish:registry
     networks:
       weaver:
     depends_on:

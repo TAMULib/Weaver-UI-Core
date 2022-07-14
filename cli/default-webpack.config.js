@@ -20,10 +20,14 @@ const patterns = [];
 
 // prepare copy patterns to dist directory
 copy.forEach(c => {
-  patterns.push({
+  const pattern = {
     from: resolve(c.from),
-    to: resolve(path, c.to),
-  });
+    to: resolve(path, c.to)
+  };
+  if (c.transform && c.transform instanceof Function) {
+    pattern.transform = c.transform;
+  }
+  patterns.push(pattern);
 });
 
 for (const bundle of Object.keys(entry)) {

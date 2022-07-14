@@ -1,6 +1,6 @@
 # Settings.
 ARG USER_ID=3001
-ARG USER_NAME=catalog
+ARG USER_NAME=weaver
 ARG HOME_DIR=/$USER_NAME
 ARG SOURCE_DIR=$HOME_DIR/core
 ARG COMMAND='start:registry'
@@ -11,6 +11,8 @@ ARG USER_NAME
 ARG HOME_DIR
 ARG SOURCE_DIR
 ARG COMMAND
+
+ENV COMMAND ${COMMAND}
 
 # Create the group (use a high ID to attempt to avoid conflits).
 RUN groupadd -g $USER_ID $USER_NAME

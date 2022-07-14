@@ -11,3 +11,10 @@
 docker-compose up
 ```
 
+When needing to develop on Weaver-UI-Core. Increment version in package.json and run following commands.
+
+```
+docker-compose build publish
+docker-compose run publish
+```
+> This will rebuild publishing image and publish to registry container.

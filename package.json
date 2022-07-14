@@ -12,10 +12,9 @@
     "test": "karma start karma.conf.js --single-run",
     "test:watch": "karma start karma.conf.js",
     "test:ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=ChromeHeadless",
-    "start:registry": "verdaccio --listen localhost:4873 --config ./verdaccio-config.yaml",
-    "publish:local": "npm publish",
-    "prepublish:local": "shx cp .npmrc-localhost .npmrc",
-    "postpublish:local": "shx rm -f .npmrc"
+    "start:registry": "verdaccio --config ./verdaccio-config.yaml",
+    "publish:local": "npm publish --registry http://localhost:4873",
+    "publish:registry": "npm publish --registry http://registry:4873"
   },
   "dependencies": {
     "angular": "^1.8.2",

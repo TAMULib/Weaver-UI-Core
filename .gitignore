@@ -17,5 +17,4 @@ npm-debug.log
 package-lock.json
 yarn.lock
 
-.npmrc
 .verdaccio

@@ -1,0 +1,27 @@
+version: '3.7'
+
+networks:
+  weaver:
+
+services:
+  registry:
+    build:
+      dockerfile: Dockerfile
+      context: './'
+    environment:
+      - COMMAND=start:registry
+    ports:
+      - 4873:4873
+    networks:
+      weaver:
+
+  publish:
+    build:
+      dockerfile: Dockerfile
+      context: './'
+    environment:
+      - COMMAND=publish:registry
+    networks:
+      weaver:
+    depends_on:
+      - registry

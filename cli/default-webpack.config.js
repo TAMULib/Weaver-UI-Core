@@ -1,8 +1,10 @@
+var fs = require('fs');
 const glob = require('glob');
+const join = require('path').join;
 const resolve = require('path').resolve;
 const extract = require("webpack-extract-module-to-global");
-const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 let appBuildConfig = require(resolve(process.cwd(), '.wvr', 'build-config.js')).config;
 appBuildConfig = !!appBuildConfig ? appBuildConfig : {
@@ -16,9 +18,8 @@ const extractLoader = extract.ExtractModuleToGlobal.loader;
 
 const { path, publicPath, copy, entry } = appBuildConfig;
 
-const patterns = [];
-
 // prepare copy patterns to dist directory
+const patterns = [];
 copy.forEach(c => {
   const pattern = {
     from: resolve(c.from),
@@ -30,8 +31,18 @@ copy.forEach(c => {
   patterns.push(pattern);
 });
 
+// configure weaver temp build directory
+const tempPath = './.wvr/tmp';
+if (fs.existsSync(tempPath)) {
+  fs.rmSync(tempPath, { recursive: true });
+}
+fs.mkdirSync(tempPath, { recursive: true });
+
+let i = 0;
+
 for (const bundle of Object.keys(entry)) {
   const prune = [];
+  // extrapolate entry files per bundle
   entry[bundle] = entry[bundle].filter((e => {
     if (e.startsWith('!')) {
       prune.push(e.substring(1));
@@ -45,11 +56,16 @@ for (const bundle of Object.keys(entry)) {
   }).map((e) => {
     const ext = e.split('.').pop();
     if (ext === 'js') {
-      return `!${extractLoader}?modules!${e}`;
+      // rename all js files to preserve order through build
+      const entry = join(tempPath, `${(++i).toString().padStart(10, '0')}.js`);
+      fs.copyFileSync(e, entry);
+      return `!${extractLoader}?modules!${resolve(entry)}`;
     }
     return e;
   });
 }
+
+console.log(entry);
 
 const env = process.env.NODE_ENV || 'development';
 

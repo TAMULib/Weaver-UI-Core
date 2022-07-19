@@ -6,6 +6,7 @@ networks:
 
 services:
   registry:
+    image: registry
     hostname: registry
     build:
       dockerfile: Dockerfile

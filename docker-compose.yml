@@ -1,10 +1,12 @@
 version: '3.7'
 
 networks:
-  weaver:
+  default:
+    name: weaver
 
 services:
   registry:
+    hostname: registry
     build:
       dockerfile: Dockerfile
       context: './'
@@ -12,8 +14,6 @@ services:
       - COMMAND=start:registry
     ports:
       - 4873:4873
-    networks:
-      weaver:
 
   publish:
     build:
@@ -21,7 +21,5 @@ services:
       context: './'
     environment:
       - COMMAND=publish:registry
-    networks:
-      weaver:
     depends_on:
       - registry

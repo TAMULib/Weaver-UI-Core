@@ -13,6 +13,8 @@ services:
       context: './'
     environment:
       - COMMAND=start:registry
+    volumes:
+      - ./.verdaccio/storage:/weaver/source/.verdaccio/storage
     ports:
       - 4873:4873
 

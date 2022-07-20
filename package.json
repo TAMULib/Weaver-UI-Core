@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "shx": "^0.3.4",
-    "verdaccio": "^5.13.3",
-    "verdaccio-memory": "^10.3.0"
+    "verdaccio": "^5.13.3"
   }
 }

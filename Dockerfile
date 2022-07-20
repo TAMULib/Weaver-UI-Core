@@ -11,10 +11,10 @@ ARG HOME_DIR
 ARG SOURCE_DIR
 
 # Create the group (use a high ID to attempt to avoid conflits).
-RUN groupadd -o -g $USER_ID $USER_NAME
+RUN groupadd --non-unique -g $USER_ID $USER_NAME
 
 # Create the user (use a high ID to attempt to avoid conflits).
-RUN useradd -o -d $HOME_DIR -m -u $USER_ID -g $USER_ID $USER_NAME
+RUN useradd --non-unique -d $HOME_DIR -m -u $USER_ID -g $USER_ID $USER_NAME
 
 # Update the system.
 RUN apt-get update && apt-get upgrade -y

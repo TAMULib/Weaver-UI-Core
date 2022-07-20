@@ -16,15 +16,18 @@ web:
 uplinks:
   npmjs:
     url: https://registry.npmjs.org/
-    cache: false
+    cache: true
+
+    # Set max cache age to 40 days.
+    maxage: 40d
 
 listen: 0.0.0.0:4873
 
 # For verdaccio-memory, designate memory limit.
-# Comment this out to store package in .verdaccio directory rather than in memory.
-store:
-  memory:
-    limit: 10000
+# Uncomment this to store package in memory rather than the .verdaccio directory.
+#store:
+#  memory:
+#    limit: 20000
 
 packages:
   '@wvr/*':

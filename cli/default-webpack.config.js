@@ -65,8 +65,6 @@ for (const bundle of Object.keys(entry)) {
   });
 }
 
-console.log(entry);
-
 const env = process.env.NODE_ENV || 'development';
 
 // see webpack https://webpack.js.org/configuration/

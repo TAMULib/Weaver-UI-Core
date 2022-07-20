@@ -18,3 +18,25 @@ docker-compose build publish
 docker-compose run publish
 ```
 > This will rebuild publishing image and publish to registry container.
+
+# Known Limitations
+
+## Docker Volumes Under Linux
+
+Docker Volumes are created within the Container using the USER_ID specified in the Dockerfile.
+The host system running the Docker must have a matching USER_ID or access denied errors will occur.
+Change the USER_ID argument to match the USER_ID of the user running the container to avoid this problem.
+Example:
+```
+# id -u
+1000
+
+# docker-compose build --build-arg "USER_ID=$(id -u)"
+```
+The directory on the host that represents the Docker Volume may be created and owned as root on the host system.
+When this happens just perform a `sudo chown` command similar to this:
+```
+# sudo chown -R username:groupname .verdaccio
+```
+
+Problems may still occur if the given user ID is not available on either system.

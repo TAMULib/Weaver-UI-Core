@@ -24,7 +24,7 @@ uplinks:
 listen: 0.0.0.0:4873
 
 # For verdaccio-memory, designate memory limit.
-# Uncomment this to store package in mempry rather than the .verdaccio directory.
+# Uncomment this to store package in memory rather than the .verdaccio directory.
 #store:
 #  memory:
 #    limit: 20000

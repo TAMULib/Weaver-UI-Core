@@ -7,16 +7,18 @@ const CopyPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 let appBuildConfig = require(resolve(process.cwd(), '.wvr', 'build-config.js')).config;
+
 appBuildConfig = !!appBuildConfig ? appBuildConfig : {
   path: 'dist',
   publicPath: '/',
   copy: [],
   entry: {},
+  terserOptions: {},
 };
 
-const extractLoader = extract.ExtractModuleToGlobal.loader;
+const { path = 'dist', publicPath = '/', copy = [], entry = {}, terserOptions = {} } = appBuildConfig;
 
-const { path, publicPath, copy, entry } = appBuildConfig;
+const extractLoader = extract.ExtractModuleToGlobal.loader;
 
 // prepare copy patterns to dist directory
 const patterns = [];
@@ -100,13 +102,7 @@ module.exports = {
     minimize: env === 'production',
     minimizer: [new TerserPlugin(
       {
-        terserOptions: {
-          ecma: 5,
-          parse: {},
-          compress: {},
-          mangle: false,
-          module: false
-        },
+        terserOptions,
       }
     )],
   },

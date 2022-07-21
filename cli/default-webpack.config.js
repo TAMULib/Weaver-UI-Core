@@ -101,7 +101,7 @@ module.exports = {
     minimizer: [new TerserPlugin(
       {
         terserOptions: {
-          ecma: '5',
+          ecma: 5,
           parse: {},
           compress: {},
           mangle: false,

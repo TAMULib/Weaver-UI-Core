@@ -19,6 +19,7 @@ services:
       - 4873:4873
 
   publish:
+    image: registry
     build:
       dockerfile: Dockerfile
       context: './'

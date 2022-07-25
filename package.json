@@ -59,5 +59,8 @@
   "devDependencies": {
     "shx": "^0.3.4",
     "verdaccio": "^5.13.3"
+  },
+  "overrides": {
+    "glob-stream": "^7.0.0"
   }
 }

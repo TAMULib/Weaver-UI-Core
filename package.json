@@ -17,6 +17,7 @@
     "publish:registry": "npm publish --registry http://registry:4873"
   },
   "dependencies": {
+    "@lhci/cli": "^0.9.0",
     "angular": "^1.8.3",
     "angular-loader": "^1.8.3",
     "angular-messages": "^1.8.3",
@@ -31,6 +32,7 @@
     "express": "^4.18.1",
     "html5-boilerplate": "^8.0.0",
     "https": "^1.0.0",
+    "jasmine-core": "^4.3.0",
     "jasmine-promise-matchers": "2.6.0",
     "jquery": "^3.6.0",
     "jshint-stylish": "^2.2.1",
@@ -42,6 +44,8 @@
     "karma-jasmine": "^5.1.0",
     "karma-junit-reporter": "^2.0.1",
     "karma-ng-html2js-preprocessor": "^1.0.0",
+    "lighthouse": "^9.6.3",
+    "lighthouse-badges": "^1.1.23",
     "ng-file-upload": "^12.2.13",
     "node-sass": "^7.0.1",
     "protractor": "^7.0.0",

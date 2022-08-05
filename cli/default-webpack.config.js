@@ -115,7 +115,7 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'resources/styles/app.css'
+          filename: 'resources/styles/[name].css'
         },
         use: [
           {

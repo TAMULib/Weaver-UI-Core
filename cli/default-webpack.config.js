@@ -25,10 +25,23 @@ const patterns = [];
 copy.forEach(c => {
   const pattern = {
     from: resolve(c.from),
-    to: resolve(path, c.to)
   };
   if (c.transform && c.transform instanceof Function) {
     pattern.transform = c.transform;
+  }
+  if (c.transformAll && c.transformAll instanceof Function) {
+    pattern.transformAll = c.transformAll;
+  }
+  if (c.filter && c.filter instanceof Function) {
+    pattern.filter = c.filter;
+  }
+  if (c.info && c.info instanceof Function) {
+    pattern.info = c.info;
+  }
+  if (c.to && c.to instanceof Function) {
+    pattern.to = c.to;
+  } else {
+    pattern.to = resolve(path, c.to);
   }
   patterns.push(pattern);
 });

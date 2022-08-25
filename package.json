@@ -17,6 +17,7 @@
     "publish:registry": "npm publish --registry http://registry:4873"
   },
   "dependencies": {
+    "@lhci/cli": "^0.9.0",
     "angular": "^1.8.3",
     "angular-loader": "^1.8.3",
     "angular-messages": "^1.8.3",
@@ -24,13 +25,14 @@
     "angular-route": "^1.8.2",
     "angular-sanitize": "^1.8.2",
     "angular-ui-bootstrap": "^2.5.6",
-    "bootstrap": "^3.4.1",
-    "bootstrap-sass": "^3.4.3",
+    "bootstrap": "3.4.1",
+    "bootstrap-sass": "3.4.1",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "express": "^4.18.1",
     "html5-boilerplate": "^8.0.0",
     "https": "^1.0.0",
+    "jasmine-core": "^4.3.0",
     "jasmine-promise-matchers": "2.6.0",
     "jquery": "^3.6.0",
     "jshint-stylish": "^2.2.1",
@@ -42,16 +44,18 @@
     "karma-jasmine": "^5.1.0",
     "karma-junit-reporter": "^2.0.1",
     "karma-ng-html2js-preprocessor": "^1.0.0",
+    "lighthouse": "^9.6.4",
+    "lighthouse-badges": "^1.1.24",
     "ng-file-upload": "^12.2.13",
     "node-sass": "^7.0.1",
     "protractor": "^7.0.0",
-    "sass": "^1.53.0",
+    "sass": "^1.54.0",
     "sass-loader": "^13.0.2",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.3",
-    "webpack": "^5.73.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
     "webpack-extract-module-to-global": "^0.1.0"
@@ -59,5 +63,8 @@
   "devDependencies": {
     "shx": "^0.3.4",
     "verdaccio": "^5.13.3"
+  },
+  "overrides": {
+    "glob-stream": "^7.0.0"
   }
 }

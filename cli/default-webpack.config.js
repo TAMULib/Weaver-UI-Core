@@ -14,10 +14,19 @@ appBuildConfig = !!appBuildConfig ? appBuildConfig : {
   copy: [],
   entry: {},
   terserOptions: {},
-  stats: {}
+  stats: {},
+  client: {},
 };
 
-const { path = 'dist', publicPath = '/', copy = [], entry = {}, terserOptions = {}, stats = {} } = appBuildConfig;
+const {
+  path = 'dist',
+  publicPath = '/',
+  copy = [],
+  entry = {},
+  terserOptions = {},
+  stats = {},
+  client = {},
+} = appBuildConfig;
 
 const extractLoader = extract.ExtractModuleToGlobal.loader;
 

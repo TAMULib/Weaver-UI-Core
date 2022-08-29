@@ -14,9 +14,10 @@ appBuildConfig = !!appBuildConfig ? appBuildConfig : {
   copy: [],
   entry: {},
   terserOptions: {},
+  stats: {}
 };
 
-const { path = 'dist', publicPath = '/', copy = [], entry = {}, terserOptions = {} } = appBuildConfig;
+const { path = 'dist', publicPath = '/', copy = [], entry = {}, terserOptions = {}, stats = {} } = appBuildConfig;
 
 const extractLoader = extract.ExtractModuleToGlobal.loader;
 
@@ -87,6 +88,7 @@ const env = process.env.NODE_ENV || 'development';
 
 // see webpack https://webpack.js.org/configuration/
 module.exports = {
+  stats,
   mode: env,
   devtool: env === 'development' ? 'source-map' : undefined,
   context: process.cwd(),

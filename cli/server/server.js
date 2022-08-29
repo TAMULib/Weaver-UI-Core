@@ -14,7 +14,6 @@ function start(args) {
   const webpackConfig = require(configLocation);
 
   const devServerOptions = {
-    ...webpackConfig.stats,
     ...webpackConfig.devServer,
     port,
   };

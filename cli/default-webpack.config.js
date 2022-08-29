@@ -103,6 +103,7 @@ module.exports = {
     publicPath,
   },
   devServer: {
+    stats,
     static: {
       directory: resolve(process.cwd(), path),
       serveIndex: true,

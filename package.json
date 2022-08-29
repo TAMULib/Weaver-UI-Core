@@ -4,13 +4,13 @@
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
-  "private": false,
-  "bin": {
-    "wvr": "cli/weaverCli.js"
-  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
+  },
+  "private": false,
+  "bin": {
+    "wvr": "cli/weaverCli.js"
   },
   "scripts": {
     "test": "karma start karma.conf.js --single-run",

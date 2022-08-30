@@ -7,7 +7,7 @@
 
 # Dependencies
 
-- [Node 16](https://nodejs.org/en/) or grater
+- [Node 16](https://nodejs.org/en/) or greater
 - npm 8 or greater
 
 > [Downloading and installing Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)

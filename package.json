@@ -1,9 +1,13 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-rc.8",
+  "version": "2.2.2-rc.9",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "private": false,
   "bin": {
     "wvr": "cli/weaverCli.js"
@@ -14,7 +18,8 @@
     "test:ci": "karma start karma.conf.js --no-auto-watch --single-run --browsers=ChromeHeadless",
     "start:registry": "verdaccio --config ./verdaccio-config.yaml",
     "publish:local": "npm publish --registry http://localhost:4873",
-    "publish:registry": "npm publish --registry http://registry:4873"
+    "publish:registry": "npm publish --registry http://registry:4873",
+    "publish:next": "npm publish --tag next"
   },
   "dependencies": {
     "@lhci/cli": "^0.9.0",

@@ -41,9 +41,7 @@ core.directive("validatedinput", function ($q, $timeout) {
             }
 
             if ($scope.id === undefined && ($scope.noId === 'false' || $scope.noId === undefined)) {
-                $scope.id = $scope.property;
-            } else {
-                $scope.id = Date.now();
+                $scope.id = $scope.property + Date.now();
             }
 
             var getForm = function () {

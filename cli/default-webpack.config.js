@@ -66,9 +66,6 @@ fs.mkdirSync(tempPath, { recursive: true });
 let i = 0;
 
 for (const bundle of Object.keys(entry)) {
-  if (bundle === 'mirador') {
-    continue;
-  }
   const prune = [];
   // extrapolate entry files per bundle
   entry[bundle] = entry[bundle].filter((e => {

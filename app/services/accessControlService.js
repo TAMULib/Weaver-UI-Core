@@ -1,8 +1,14 @@
-core.service("AccessControlService", function ($location, StorageService, UserService) {
+core.service("AccessControlService", function ($location, $timeout, StorageService, UserService) {
 
     var AccessControlService = this;
 
+    AccessControlService.isAuthenticated = false;
+
     AccessControlService.lastRoutePath = "";
+
+    UserService.userEvents().then(null, null, function () {
+        AccessControlService.isAuthenticated = true;
+    });
 
     AccessControlService.checkRoute = function (evt, next, current) {
 
@@ -17,14 +23,11 @@ core.service("AccessControlService", function ($location, StorageService, UserSe
 
         var allowedUsers = next.$$route.access;
 
-        if(allowedUsers === undefined) return;
+        if (allowedUsers === undefined) return;
 
-        var role;
+        var process = function () {
+            var role = StorageService.get("role");
 
-        UserService.userReady().then(function() {
-            UserService.getCurrentUser();
-            role = StorageService.get("role");
-        }).then(function() {
             var restrict = allowedUsers.indexOf(role) < 0;
 
             var authorizeUrl = StorageService.get("post_authorize_url");
@@ -37,6 +40,17 @@ core.service("AccessControlService", function ($location, StorageService, UserSe
             } else if (restrict) {
                 evt.preventDefault();
                 $location.path("/error/403");
+            }
+        };
+
+        $timeout(() => {
+            if (AccessControlService.isAuthenticated) {
+                UserService.userReady().then(function () {
+                    UserService.getCurrentUser();
+                    process();
+                });
+            } else {
+                process();
             }
         });
     };

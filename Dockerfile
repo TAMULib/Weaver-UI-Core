@@ -3,7 +3,7 @@ ARG USER_ID=3001
 ARG USER_NAME=weaver
 ARG SOURCE_DIR=/$USER_NAME/source
 
-FROM node:lts-slim as build
+FROM node:lts-alpine3.14 as build
 ARG USER_ID
 ARG USER_NAME
 ARG SOURCE_DIR

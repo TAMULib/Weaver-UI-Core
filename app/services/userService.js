@@ -13,7 +13,7 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
 
         return WsApi.fetch(currentUser.getMapping().instantiate).then(function (res) {
             var body = !res.body ? {} : angular.fromJson(res.body);
-            var credentials = { role: !currentUser.role ? "ROLE_ANONYMOUS" : currentUser.role };
+            var credentials = { role: !currentUser.role ? appConfig.anonymousRole : currentUser.role };
 
             // Only change credentials when packet structure is valid.
             if (!!body.payload && !!body.payload.Credentials) {

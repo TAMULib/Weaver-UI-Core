@@ -70,6 +70,8 @@
     "verdaccio": "^5.13.3"
   },
   "overrides": {
-    "glob-stream": "^7.0.0"
+    "glob-stream": "^7.0.0",
+    "minimatch": "^3.1.2",
+    "qs": "^6.11.0"
   }
 }

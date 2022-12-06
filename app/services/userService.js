@@ -12,16 +12,16 @@ core.service("UserService", function ($q, StorageService, User, WsApi) {
         userEvents.notify('FETCH');
 
         return WsApi.fetch(currentUser.getMapping().instantiate).then(function (res) {
-            var body = !res.body ? {} : angular.fromJson(res.body);
-            var credentials = { role: !currentUser.role ? appConfig.anonymousRole : currentUser.role };
+            var body = !!res && !!res.body ? angular.fromJson(res.body) : {};
+            var credentials = { role: !!currentUser.role ? currentUser.role : appConfig.anonymousRole };
 
             // Only change credentials when packet structure is valid.
-            if (!!body.payload && !!body.payload.Credentials) {
+            if (!!body && !!body.payload && !!body.payload.Credentials) {
               delete sessionStorage.role;
               credentials = angular.fromJson(res.body).payload.Credentials;
             }
 
-            currentUser.anonymous = !credentials.role || credentials.role === appConfig.anonymousRole ? true : false;
+            currentUser.anonymous = !credentials.role || credentials.role === appConfig.anonymousRole;
 
             // Cannot have a token for the anonymous role.
             if (currentUser.anonymous) {

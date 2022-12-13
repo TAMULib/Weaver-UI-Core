@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.2-rc.13",
+  "version": "2.2.2-rc.14",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",
@@ -70,6 +70,8 @@
     "verdaccio": "^5.13.3"
   },
   "overrides": {
-    "glob-stream": "^7.0.0"
+    "glob-stream": "^7.0.0",
+    "minimatch": "^3.1.2",
+    "qs": "^6.11.0"
   }
 }

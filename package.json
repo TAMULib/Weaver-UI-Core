@@ -22,7 +22,7 @@
     "publish:next": "npm publish --tag next"
   },
   "dependencies": {
-    "@lhci/cli": "^0.9.0",
+    "@lhci/cli": "^0.11.0",
     "angular": "^1.8.3",
     "angular-loader": "^1.8.3",
     "angular-messages": "^1.8.3",

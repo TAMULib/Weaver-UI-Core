@@ -94,6 +94,21 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
             return abstractRepo.getContents();
         };
 
+        abstractRepo.findAll = function () {
+            return $q(function (resolve) {
+                if (forceLoad) {
+                    fetch();
+                    forceLoad = false;
+
+                    defer.promise.then(function() {
+                        resolve(abstractRepo.getContents());
+                    });
+                } else {
+                    resolve(abstractRepo.getContents());
+                }
+            });
+        };
+
         abstractRepo.getContents = function () {
             return list;
         };
@@ -261,7 +276,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     if (item.id === newItem.id) {
                         angular.extend(item, newItem);
                         match = true;
-                        break; 
+                        break;
                     }
                 }
 
@@ -283,7 +298,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
                     if (newItem.id === item.id) {
                         match = true;
-                        break; 
+                        break;
                     }
                 }
 

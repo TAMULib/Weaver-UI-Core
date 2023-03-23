@@ -64,7 +64,7 @@ core.service("WsApi", function ($q, $location, $rootScope, AlertService, RestApi
      * @name  core.service:WsApi#WsApi.listen
      * @methodOf core.service:WsApi
      * @param {object} apiReq
-     *  An apireq which containes the channel, controller and method
+     *  An apireq which contains the channel, controller and method
      *  which should be listened to.
      * @returns {Promsie} A promise from a websocket subscription subscription
      *

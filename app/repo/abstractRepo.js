@@ -20,6 +20,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var pendingChanges;
 
+        var forceLoad = true;
+
         $rootScope.$on("$routeChangeSuccess", function () {
             angular.forEach(actionCbs, function (actionCbs) {
                 actionCbs.length = 0;
@@ -85,8 +87,9 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.getAll = function () {
-            if (mapping.lazy) {
+            if (forceLoad) {
                 fetch();
+                forceLoad = false;
             }
             return abstractRepo.getContents();
         };
@@ -148,6 +151,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         };
 
         abstractRepo.reset = function () {
+            forceLoad = false;
             defer = $q.defer();
             fetch();
             return defer.promise;
@@ -506,6 +510,7 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         if (!mapping.lazy) {
             fetch();
+            forceLoad = false;
         }
 
         return abstractRepo;

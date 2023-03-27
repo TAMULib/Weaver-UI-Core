@@ -81,10 +81,12 @@ for (const bundle of Object.keys(entry)) {
   }).map((e) => {
     const ext = e.split('.').pop();
     if (ext === 'js') {
-      // rename all js files to preserve order through build
+      // Rename all js files (but not directories) to preserve order through build.
       const entry = join(tempPath, `${(++i).toString().padStart(10, '0')}.js`);
-      fs.copyFileSync(e, entry);
-      return `!${extractLoader}?modules!${resolve(entry)}`;
+      if (fs.statSync(e).isFile()) {
+        fs.copyFileSync(e, entry);
+        return `!${extractLoader}?modules!${resolve(entry)}`;
+      }
     }
     return e;
   });

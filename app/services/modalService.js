@@ -1,15 +1,25 @@
-core.service("ModalService", function () {
+core.service("ModalService", function ($timeout) {
 
     var ModalService = this;
 
-    var body = document.querySelector('body');
+    var bodyElement = angular.element('body');
+
+    bodyElement.on('keydown', function (event) {
+        if (modalElement && event.code === 'Tab') {
+            $timeout(function () {
+                if (!modalElement.has(angular.element(':focus')).length) {
+                    modalElement.find(':input:first').focus();
+                }
+            });
+        }
+    });
 
     var modalElement;
 
-    var closeOnEscape = function(event) {
-        if (modalElement && event.code === 'Escape') {
-            ModalService.closeModal();
+    var handleKeydown = function (event) {
+        if (event.code === 'Escape') {
             event.preventDefault();
+            ModalService.closeModal();
         }
     };
 
@@ -17,19 +27,18 @@ core.service("ModalService", function () {
         modalElement = angular.element(id);
         modalElement.modal('show');
         modalElement.on('shown.bs.modal', function (e) {
-            modalElement.find(":input:not(:button):visible:enabled:not([readonly]):first").focus();
+            modalElement.find(':input:not(:button):visible:enabled:not([readonly]):first, :input:first').focus();
+
+            modalElement.on('keydown', handleKeydown);
         });
-        if (modalElement.data('keyboard')) {
-            body.addEventListener('keydown', closeOnEscape);
-        }
     };
 
     ModalService.closeModal = function () {
         if (modalElement) {
             modalElement.modal('hide');
-            if (modalElement.data('keyboard')) {
-                body.removeEventListener('keydown', closeOnEscape);
-            }
+            modalElement.off('keydown');
+            modalElement.off('shown.bs.modal');
+            modalElement = undefined;
         }
     };
 

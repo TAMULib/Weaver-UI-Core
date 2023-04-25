@@ -62,15 +62,11 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
 
                 if (fetch) {
                     if (fetchingPromise === undefined) {
-                        console.log('fetching', mapping.instantiate);
                         fetchingPromise = WsApi.fetch(mapping.instantiate);
-                    } else {
-                        console.log('piggy backing', mapping.instantiate);
                     }
                     fetchingPromise.then(function (res) {
                         processResponse(res);
                         $timeout(function() {
-                            console.log('clearing', mapping.instantiate);
                             fetchingPromise = undefined;
                         }, 2500);
                     }, function (error) {

@@ -386,16 +386,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
         var fetch = function () {
             if (abstractRepo.mapping.all !== undefined) {
                 if (fetchingAllPromise === undefined) {
-                    console.log('fetching', abstractRepo.mapping.all);
                     fetchingAllPromise = WsApi.fetch(abstractRepo.mapping.all);
-                } else  {
-                    console.log('piggy backing', abstractRepo.mapping.all);
                 }
                 fetchingAllPromise.then(function (res) {
                     build(unwrap(res)).then(function () {
                         defer.resolve(res);
                         $timeout(function() {
-                            console.log('clearing', abstractRepo.mapping.all);
                             fetchingAllPromise = undefined;
                         }, 2500);
                     });

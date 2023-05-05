@@ -14,7 +14,6 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
         }).then(
             // success callback
             function (response) {
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
             // error callback

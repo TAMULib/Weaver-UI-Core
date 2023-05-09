@@ -392,13 +392,12 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                     build(unwrap(res)).then(function () {
                         defer.resolve(res);
 
-                        var timeout = !!abstractRepo.mapping.timeout && typeof abstractRepo.mapping.timeout === 'Number'
+                        var timeout = !!abstractRepo.mapping.timeout && typeof abstractRepo.mapping.timeout === 'number'
                             ? abstractRepo.mapping.timeout
-                            : 0;
+                            : -1;
 
-                        console.log(timeout, abstractRepo.mapping, typeof abstractRepo.mapping.timeout);
-
-                        if (timeout) {
+                        if (timeout > -1) {
+                            console.log(timeout, abstractRepo.mapping, typeof abstractRepo.mapping.timeout);
                             $timeout(function () {
                                 fetchingAllPromise = undefined;
                             }, timeout);

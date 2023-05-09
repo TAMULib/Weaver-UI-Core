@@ -67,13 +67,12 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
                     fetchingPromise.then(function (res) {
                         processResponse(res);
 
-                        var timeout = !!mapping.timeout && typeof mapping.timeout === 'Number'
+                        var timeout = !!mapping.timeout && typeof mapping.timeout === 'number'
                             ? mapping.timeout
-                            : 0;
+                            : -1;
 
-                        console.log(timeout, mapping, typeof mapping.timeout);
-
-                        if (timeout) {
+                        if (timeout > -1) {
+                            console.log(timeout, mapping, typeof mapping.timeout);
                             $timeout(function () {
                                 fetchingPromise = undefined;
                             }, timeout);

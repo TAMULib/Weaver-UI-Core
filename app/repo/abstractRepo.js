@@ -391,9 +391,18 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
                 fetchingAllPromise.then(function (res) {
                     build(unwrap(res)).then(function () {
                         defer.resolve(res);
-                        $timeout(function() {
-                            fetchingAllPromise = undefined;
-                        }, 2500);
+
+                        var timeout = !!abstractRepo.mapping.timeout && typeof abstractRepo.mapping.timeout === 'Number'
+                            ? abstractRepo.mapping.timeout
+                            : 0;
+
+                        console.log(timeout, abstractRepo.mapping, typeof abstractRepo.mapping.timeout);
+
+                        if (timeout) {
+                            $timeout(function () {
+                                fetchingAllPromise = undefined;
+                            }, timeout);
+                        }
                     });
                 }, function (error) {
                     fetchingAllPromise = undefined;

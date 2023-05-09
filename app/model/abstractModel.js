@@ -66,9 +66,18 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, Mod
                     }
                     fetchingPromise.then(function (res) {
                         processResponse(res);
-                        $timeout(function() {
-                            fetchingPromise = undefined;
-                        }, 2500);
+
+                        var timeout = !!mapping.timeout && typeof mapping.timeout === 'Number'
+                            ? mapping.timeout
+                            : 0;
+
+                        console.log(timeout, mapping, typeof mapping.timeout);
+
+                        if (timeout) {
+                            $timeout(function () {
+                                fetchingPromise = undefined;
+                            }, timeout);
+                        }
                     }, function (error) {
                         fetchingPromise = undefined;
                         defer.reject(error);

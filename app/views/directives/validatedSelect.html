@@ -1,56 +1,59 @@
 <div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
 
-    <label for="select-{{label}}">{{label}}</label>
+  <label ng-if="label" for="{{!!id ? id : 'select' + '-label'}}" ng-attr-id="{{!!id ? id + '-label' : undefined}}">{{label}}</label>
 
-   <select
-     ng-if="!optionproperty"
-     ng-attr-id="{{id}}"
-     name="{{property}}"
-     class="form-control"
-     aria-describedby="{{label}}"
-     ng-disabled="disabled"
-     ng-model="model[property]"
-     ng-options="option for option in options"
-     ng-blur="blur($event)"
-     ng-change="change()"
-     ng-required="validations[property].required.value">
-   </select>
+  <select
+    ng-if="!optionproperty"
+    ng-attr-id="{{id}}"
+    name="{{property}}"
+    class="form-control"
+    ng-attr-aria-labelledby="{{!!id && !!label ? id + '-label' : undefined}}"
+    ng-attr-aria-describedby="{{!!id && !!hint ? id + '-hint' : undefined}}"
+    ng-disabled="disabled"
+    ng-model="model[property]"
+    ng-options="option for option in options"
+    ng-blur="blur($event)"
+    ng-change="change()"
+    ng-required="validations[property].required.value">
+  </select>
 
-   <select
-     ng-if="optionproperty && !optionvalue"
-     ng-attr-id="{{id}}"
-     name="{{property}}"
-     class="form-control"
-     aria-describedby="{{label}}"
-     ng-disabled="disabled"
-     ng-model="model[property]"
-     ng-options="option as option[optionproperty] for option in options track by option.id"
-     ng-blur="blur($event)"
-     ng-change="change()"
-     ng-required="validations[property].required.value">
-   </select>
+  <select
+    ng-if="optionproperty && !optionvalue"
+    ng-attr-id="{{id}}"
+    name="{{property}}"
+    class="form-control"
+    ng-attr-aria-labelledby="{{!!id && !!label ? id + '-label' : undefined}}"
+    ng-attr-aria-describedby="{{!!id && !!hint ? id + '-hint' : undefined}}"
+    ng-disabled="disabled"
+    ng-model="model[property]"
+    ng-options="option as option[optionproperty] for option in options track by option.id"
+    ng-blur="blur($event)"
+    ng-change="change()"
+    ng-required="validations[property].required.value">
+  </select>
 
-   <select
-     ng-if="optionproperty && optionvalue"
-     ng-attr-id="{{id}}"
-     name="{{property}}"
-     class="form-control"
-     aria-describedby="{{label}}"
-     ng-disabled="disabled"
-     ng-model="model[property]"
-     ng-options="option[optionvalue] as option[optionproperty] for option in options"
-     ng-blur="blur($event)"
-     ng-change="change()"
-     ng-required="validations[property].required.value">
-   </select>
+  <select
+    ng-if="optionproperty && optionvalue"
+    ng-attr-id="{{id}}"
+    name="{{property}}"
+    class="form-control"
+    ng-attr-aria-labelledby="{{!!id && !!label ? id + '-label' : undefined}}"
+    ng-attr-aria-describedby="{{!!id && !!hint ? id + '-hint' : undefined}}"
+    ng-disabled="disabled"
+    ng-model="model[property]"
+    ng-options="option[optionvalue] as option[optionproperty] for option in options"
+    ng-blur="blur($event)"
+    ng-change="change()"
+    ng-required="validations[property].required.value">
+  </select>
 
-   <small ng-if="hint" class="form-text text-muted">{{hint}}</small>
+  <small ng-if="hint" ng-attr-id="{{!!id ? id + '-hint' : undefined}}" class="form-text text-muted">{{hint}}</small>
 
-   <validationmessage
-     type="input"
-     property="{{property}}"
-     form="form"
-     validations="validations"
-     results="results">
-   </validationmessage>
- </div>
+  <validationmessage
+    type="input"
+    property="{{property}}"
+    form="form"
+    validations="validations"
+    results="results">
+  </validationmessage>
+</div>

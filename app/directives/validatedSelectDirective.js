@@ -18,7 +18,7 @@ core.directive("validatedselect", function () {
             "change": "&",
             "validations": "=",
             "results": "=",
-            "hint": "="
+            "hint": "@"
         },
         link: function ($scope, element, attr) {
 

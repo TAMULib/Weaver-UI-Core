@@ -13,7 +13,8 @@ core.directive("validatedtextarea", function () {
             "form": "=",
             "confirm": "&",
             "validations": "=",
-            "results": "="
+            "results": "=",
+            "hint": "@"
         },
         link: function ($scope, element, attr) {
 

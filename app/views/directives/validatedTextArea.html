@@ -1,6 +1,6 @@
 <div class="form-group" ng-class="{ 'has-error': form[property].$invalid && form[property].$dirty }">
 
-  <label for="textarea-{{label}}">{{label}}</label>
+  <label ng-if="label" for="{{!!id ? id : 'textarea' + '-label'}}" ng-attr-id="{{!!id ? id + '-label' : undefined}}">{{label}}</label>
 
   <textarea
     ng-attr-id="{{id}}"
@@ -9,12 +9,15 @@
     ng-model="model[property]"
     rows="{{rows}}"
     ng-blur="blur($event)"
-    aria-describedby="{{label}}"
+    ng-attr-aria-labelledby="{{!!id && !!label ? id + '-label' : undefined}}"
+    ng-attr-aria-describedby="{{!!id && !!hint ? id + '-hint' : undefined}}"
     ng-required="validations[property].required.value"
     ng-minlength="validations[property].minlength.value"
     ng-maxlength="validations[property].maxlength.value"
     ng-pattern="validations[property].pattern.value">
   </textarea>
+
+  <span ng-if="hint" ng-attr-id="{{!!id ? id + '-hint' : undefined}}">{{ hint }}</span>
 
   <validationmessage
     type="input"

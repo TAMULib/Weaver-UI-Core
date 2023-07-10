@@ -20,6 +20,8 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var pendingChanges;
 
+        var fetchingAllPromise;
+
         var forceLoad = true;
 
         $rootScope.$on("$routeChangeSuccess", function () {
@@ -383,10 +385,27 @@ core.service("AbstractRepo", function ($q, $rootScope, $timeout, ApiResponseActi
 
         var fetch = function () {
             if (abstractRepo.mapping.all !== undefined) {
-                WsApi.fetch(abstractRepo.mapping.all).then(function (res) {
+                if (fetchingAllPromise === undefined) {
+                    fetchingAllPromise = WsApi.fetch(abstractRepo.mapping.all);
+                }
+                fetchingAllPromise.then(function (res) {
                     build(unwrap(res)).then(function () {
                         defer.resolve(res);
+
+                        var timeout = !!abstractRepo.mapping.timeout && typeof abstractRepo.mapping.timeout === 'number'
+                            ? abstractRepo.mapping.timeout
+                            : -1;
+
+                        if (timeout > -1) {
+                            console.log(timeout, abstractRepo.mapping, typeof abstractRepo.mapping.timeout);
+                            $timeout(function () {
+                                fetchingAllPromise = undefined;
+                            }, timeout);
+                        }
                     });
+                }, function (error) {
+                    fetchingAllPromise = undefined;
+                    defer.reject(error);
                 });
             }
         };

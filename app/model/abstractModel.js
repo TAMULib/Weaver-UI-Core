@@ -1,4 +1,4 @@
-core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
+core.factory("AbstractModel", function ($injector, $rootScope, $q, $timeout, ModelCache, ModelUpdateService, ValidationStore, WsApi) {
 
     return function AbstractModel(repoName) {
 
@@ -30,6 +30,8 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
 
         var dirty = false;
 
+        var fetchingPromise;
+
         $rootScope.$on("$routeChangeSuccess", function () {
             listenCallbacks.length = 0;
         });
@@ -59,9 +61,24 @@ core.factory("AbstractModel", function ($injector, $rootScope, $q, ModelCache, M
                 }
 
                 if (fetch) {
-                    WsApi.fetch(mapping.instantiate).then(function (res) {
+                    if (fetchingPromise === undefined) {
+                        fetchingPromise = WsApi.fetch(mapping.instantiate);
+                    }
+                    fetchingPromise.then(function (res) {
                         processResponse(res);
+
+                        var timeout = !!mapping.timeout && typeof mapping.timeout === 'number'
+                            ? mapping.timeout
+                            : -1;
+
+                        if (timeout > -1) {
+                            console.log(timeout, mapping, typeof mapping.timeout);
+                            $timeout(function () {
+                                fetchingPromise = undefined;
+                            }, timeout);
+                        }
                     }, function (error) {
+                        fetchingPromise = undefined;
                         defer.reject(error);
                     });
                 }

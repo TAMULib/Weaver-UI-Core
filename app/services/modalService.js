@@ -35,6 +35,11 @@ core.service("ModalService", function ($timeout) {
             modalElement.off('shown.bs.modal');
             modalElement = undefined;
         }
+
+        // forcefully restore the body element
+        var body = angular.element('body');
+        body.removeClass('modal-open');
+        body.css('padding-right', '');
     };
 
     return ModalService;

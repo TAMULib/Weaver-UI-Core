@@ -30,10 +30,20 @@ core.service("ModalService", function ($timeout) {
     };
 
     ModalService.closeModal = function () {
-        if (modalElement) {
+        if (!!modalElement) {
             modalElement.modal('hide');
             modalElement.off('shown.bs.modal');
             modalElement = undefined;
+        }
+
+        // forcefully restore the body element
+        bodyElement.removeClass('modal-open');
+        bodyElement.css('padding-right', '');
+
+        // forcefully remove modal-backdrop div with
+        var backdropElement = angular.element('div.modal-backdrop');
+        if (!!backdropElement) {
+            backdropElement.remove();
         }
     };
 

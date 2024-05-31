@@ -77,6 +77,7 @@ core.service("AuthService", function ($http, $timeout) {
             }
 
             AuthService.pendingRefresh = $http.get(url, {
+                withCredentials: true,
                 headers: {
                     'X-Requested-With': undefined
                 }

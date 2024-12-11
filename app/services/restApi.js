@@ -16,6 +16,23 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
 
     var restApi = this;
 
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#buildUrl
+     * @methodOf core.service:RestApi
+     * @private
+     *
+     * @param {object|string} req
+     *  A request object or a string representing the URL.
+     *  - If an object, it should contain:
+     *    - `controller` {string} The name of the controller.
+     *    - `method` {string} (optional) The method to be called on the controller.
+     *    - `query` {object} (optional) An object representing query parameters.
+     * @returns {string} The constructed URL.
+     *
+     * @description
+     * Constructs a URL based on the provided request object or string.
+     */
     var buildUrl = function (req) {
         var url = typeof req === 'string' ? req : appConfig.webService + "/" + req.controller + (req.method ? "/" + req.method : "");
         if (req.query) {
@@ -30,11 +47,37 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
         return url;
     };
 
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#getMeta
+     * @methodOf core.service:RestApi
+     * @private
+     *
+     * @param {object} response
+     *  The HTTP response object.
+     * @returns {object} The meta information extracted from the response.
+     *
+     * @description
+     * Extracts meta information from the HTTP response object.
+     */
     var getMeta = function (response) {
         return !!response.data.meta ? response.data.meta
             : { status: response.statusText, message: 'Request was successful' };
     };
 
+    /**
+     * @ngdoc method
+     * @name core.service:RestApi#handleError
+     * @methodOf core.service:RestApi
+     * @private
+     *
+     * @param {object} error
+     *  The error object from the HTTP response.
+     * @returns {object} An object containing meta information and the error payload.
+     *
+     * @description
+     * Handles errors by adding an alert and returning an error object.
+     */
     var handleError = function (error) {
         AlertService.addAlertServiceError(error);
         return {
@@ -51,11 +94,16 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @methodOf core.service:RestApi
      *
      * @param {object} req
-     * 	a request object
-     * @returns {Promise} returns a promise
+     *  A request object containing the following properties:
+     *  - `controller` {string} The name of the controller.
+     *  - `method` {string} (optional) The method to be called on the controller.
+     *  - `query` {object} (optional) An object representing query parameters.
+     *  - `data` {object} (optional) Data to be sent with the request.
+     *  - `skipErrorHandling` {boolean} (optional) If true, skips the default error handling.
+     * @returns {Promise} Returns a promise that resolves with the response data.
      *
      * @description
-     *	Initiates a get request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
+     * Initiates a GET request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
      */
     restApi.anonymousGet = function (req) {
 
@@ -91,11 +139,16 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @methodOf core.service:RestApi
      *
      * @param {object} req
-     * 	a request object
+     *  A request object containing the following properties:
+     *  - `controller` {string} The name of the controller.
+     *  - `method` {string} (optional) The method to be called on the controller.
+     *  - `query` {object} (optional) An object representing query parameters.
+     *  - `data` {object} (optional) Data to be sent with the request.
+     *  - `skipErrorHandling` {boolean} (optional) If true, skips the default error handling.
      * @returns {Promise} returns a promise
      *
      * @description
-     *	Initiates a post request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
+     * Initiates a POST request on behalf of a user whose role is 'ROLE_ANONYMOUS'.
      */
     restApi.anonymousPost = function (req) {
 
@@ -132,11 +185,17 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @ngdoc method
      * @name core.service:RestApi#get
      * @methodOf core.service:RestApi
-     * @param {object} req a request object
+     * @param {object} req
+     *  A request object containing the following properties:
+     *  - `controller` {string} The name of the controller.
+     *  - `method` {string} (optional) The method to be called on the controller.
+     *  - `query` {object} (optional) An object representing query parameters.
+     *  - `data` {object} (optional) Data to be sent with the request.
+     *  - `skipErrorHandling` {boolean} (optional) If true, skips the default error handling.
      * @returns {Promise} returns a promise
      *
      * @description
-     *	Initiates a get request to the configured web service on behalf of an authenticated user.
+     * Initiates a GET request to the configured web service on behalf of an authenticated user.
      */
     restApi.get = function (req) {
         return restApi.makeReq(req, HttpMethodVerbs.GET);
@@ -150,11 +209,17 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @ngdoc method
      * @name core.service:RestApi#post
      * @methodOf core.service:RestApi
-     * @param {object} req a request object
+     * @param {object} req
+     *  A request object containing the following properties:
+     *  - `controller` {string} The name of the controller.
+     *  - `method` {string} (optional) The method to be called on the controller.
+     *  - `query` {object} (optional) An object representing query parameters.
+     *  - `data` {object} (optional) Data to be sent with the request.
+     *  - `skipErrorHandling` {boolean} (optional) If true, skips the default error handling.
      * @returns {Promise} returns a promise
      *
      * @description
-     *	Initiates a post request to the configured web service on behalf of an authenticated user.
+     * Initiates a POST request to the configured web service on behalf of an authenticated user.
      */
     restApi.post = function (req) {
         return restApi.makeReq(req, HttpMethodVerbs.POST);

@@ -35,6 +35,16 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             : { status: response.statusText, message: 'Request was successful' };
     };
 
+    var handleError = function (error) {
+        AlertService.addAlertServiceError(error);
+        return {
+            meta: {
+                status: 'ERROR'
+            },
+            payload: error.data
+        };
+    };
+
     /**
      * @ngdoc method
      * @name core.service:RestApi#anonymousGet
@@ -68,13 +78,9 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                AlertService.addAlertServiceError(error);
-                return {
-                    meta: {
-                        status: 'ERROR'
-                    },
-                    payload: error.data
-                };
+                return req.skipErrorHandling
+                    ? Promise.reject(error)
+                    : handleError(error);
             }
         );
     };
@@ -115,13 +121,9 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                AlertService.addAlertServiceError(error);
-                return {
-                    meta: {
-                        status: 'ERROR'
-                    },
-                    payload: error.data
-                };
+                return req.skipErrorHandling
+                    ? Promise.reject(error)
+                    : handleError(error);
             }
         );
     };
@@ -224,13 +226,9 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
             },
             // error callback
             function (error) {
-                AlertService.addAlertServiceError(error);
-                return {
-                    meta: {
-                        status: 'ERROR'
-                    },
-                    payload: error.data
-                };
+                return req.skipErrorHandling
+                    ? Promise.reject(error)
+                    : handleError(error);
             }
         );
     };

@@ -93,8 +93,8 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @name core.service:RestApi#anonymousGet
      * @methodOf core.service:RestApi
      *
-     * @param {object} req
-     *  A request object containing the following properties:
+     * @param {object|string} req
+     *  A request URL string or object containing the following properties:
      *  - `controller` {string} The name of the controller.
      *  - `method` {string} (optional) The method to be called on the controller.
      *  - `query` {object} (optional) An object representing query parameters.
@@ -138,8 +138,8 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @name core.service:RestApi#anonymousPost
      * @methodOf core.service:RestApi
      *
-     * @param {object} req
-     *  A request object containing the following properties:
+     * @param {object|string} req
+     *  A request URL string or object containing the following properties:
      *  - `controller` {string} The name of the controller.
      *  - `method` {string} (optional) The method to be called on the controller.
      *  - `query` {object} (optional) An object representing query parameters.
@@ -185,8 +185,8 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @ngdoc method
      * @name core.service:RestApi#get
      * @methodOf core.service:RestApi
-     * @param {object} req
-     *  A request object containing the following properties:
+     * @param {object|string} req
+     *  A request URL string or object containing the following properties:
      *  - `controller` {string} The name of the controller.
      *  - `method` {string} (optional) The method to be called on the controller.
      *  - `query` {object} (optional) An object representing query parameters.
@@ -209,8 +209,8 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
      * @ngdoc method
      * @name core.service:RestApi#post
      * @methodOf core.service:RestApi
-     * @param {object} req
-     *  A request object containing the following properties:
+     * @param {object|string} req
+     *  A request URL string object containing the following properties:
      *  - `controller` {string} The name of the controller.
      *  - `method` {string} (optional) The method to be called on the controller.
      *  - `query` {object} (optional) An object representing query parameters.

@@ -30,6 +30,11 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
         return url;
     };
 
+    var getMeta = function (response) {
+        return !!response.data.meta ? response.data.meta
+            : { status: response.statusText, message: 'Request was successful' };
+    };
+
     /**
      * @ngdoc method
      * @name core.service:RestApi#anonymousGet
@@ -58,7 +63,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
         }).then(
             // success callback
             function (response) {
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                AlertService.add(getMeta(response), response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
             // error callback
@@ -105,7 +110,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
         }).then(
             // success callback
             function (response) {
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                AlertService.add(getMeta(response), response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
             // error callback
@@ -197,7 +202,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
         return $http(restObj).then(
             // success callback
             function (response) {
-                if (response.data.meta.status === 'REFRESH') {
+                if (!!response.data.meta && response.data.meta.status === 'REFRESH') {
                     if (sessionStorage.assumedUser) {
                         return AuthService.getAssumedUser(angular.fromJson(sessionStorage.assumedUser)).then(function () {
                             restObj.headers.jwt = sessionStorage.token;
@@ -214,7 +219,7 @@ core.service("RestApi", function ($http, AlertService, AuthService, HttpMethodVe
                         });
                     }
                 }
-                AlertService.add(response.data.meta, response.config.url.replace(appConfig.webService + "/", ""));
+                AlertService.add(getMeta(response), response.config.url.replace(appConfig.webService + "/", ""));
                 return response.data;
             },
             // error callback

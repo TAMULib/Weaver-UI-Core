@@ -85,6 +85,10 @@ for (const bundle of Object.keys(entry)) {
       const entry = join(tempPath, `${(++i).toString().padStart(10, '0')}.js`);
       if (fs.statSync(e).isFile()) {
         fs.copyFileSync(e, entry);
+        console.log("incoming filename:");
+        console.log(e);
+        console.log("outgoing filename:");
+        console.log(`!${extractLoader}?modules!${resolve(entry)}`);
         return `!${extractLoader}?modules!${resolve(entry)}`;
       }
     }

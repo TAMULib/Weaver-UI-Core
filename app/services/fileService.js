@@ -100,10 +100,23 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                     },
                     // error callback
                     function (error) {
+                        let errorMessage = "";
+                        if (error.data instanceof ArrayBuffer) {
+                            let decoder = new TextDecoder("utf-8");
+                            let result = decoder.decode(error.data);
+                            try {
+                                apiResponse = JSON.parse(result);
+                                errorMessage = apiResponse.meta.message;
+                                error.data.message = errorMessage;
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
                         AlertService.addAlertServiceError(error);
                         return {
                             meta: {
-                                status: 'ERROR'
+                                status: 'ERROR',
+                                message: errorMessage
                             },
                             payload: error.data
                         };

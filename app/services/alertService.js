@@ -100,10 +100,8 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      * @ngdoc method
      * @name  core.service:AlertService#Alert
      * @methodOf core.service:AlertService
-     * @param {string} message
-     *  message on the API response
-     * @param {string} type
-     *  mapped response type on the API response
+     * @param {Meta} meta
+     *  meta details on the API response
      * @param {string} channel
      *  channel on which the response returned
      * @returns {Alert} returns a new Alert.
@@ -111,16 +109,17 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      * @description
      *  Constructor for an Alert.
      */
-    var Alert = function (message, type, channel) {
+    var Alert = function (meta, channel) {
         this.id = keys.pop();
-        this.message = message ? message : '';
-        this.type = type ? type : 'UNKNOWN';
-        this.channel = channel ? channel : 'unassigned';
+        this.message = meta.message | 'An error has occurred. Click the Report button to report the error to your admin.';
+        this.stacktrace = meta.stacktrace;
+        this.type = meta.status | 'UNKNOWN';
+        this.channel = channel | 'unassigned';
         this.time = new Date().getTime();
-        if (classes[type] === undefined) {
+        if (classes[this.type] === undefined) {
             this.class = classes.DEFAULT;
         } else {
-            this.class = classes[type];
+            this.class = classes[this.type];
         }
         return this;
     };
@@ -201,7 +200,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      *
      */
     var add = function (facet, meta, channel) {
-        var alert = new Alert(meta.message, meta.status, channel);
+        var alert = new Alert(meta, channel);
 
         if (store[facet] !== undefined) {
             // add alert to store by facet

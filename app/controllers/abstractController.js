@@ -174,6 +174,9 @@ core.controller('AbstractController', function ($scope, $window, ModalService, S
                     '\ntime: ' + new Date(alert.time) +
                     '\ntype: ' + alert.type +
                     '\nmessage: ' + alert.message;
+                if (alert.stacktrace) {
+                    body += '\nstacktrace: ' + alert.stacktrace;
+                }
                 $window.location.href = "mailto:" + coreConfig.alerts.email +
                     "?subject=" + escape(subject) +
                     "&body=" + escape(body);

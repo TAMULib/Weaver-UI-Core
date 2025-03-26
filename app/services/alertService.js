@@ -111,10 +111,10 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     var Alert = function (meta, channel) {
         this.id = keys.pop();
-        this.message = meta.message | 'An error has occurred. Click the Report button to report the error to your admin.';
+        this.message = angular.isDefined(meta.message) ? meta.message : 'An error has occurred. Click the Report button to report the error to your admin.';
         this.stacktrace = meta.stacktrace;
-        this.type = meta.status | 'UNKNOWN';
-        this.channel = channel | 'unassigned';
+        this.type = angular.isDefined(meta.status) ? meta.status : 'UNKNOWN';
+        this.channel = angular.isDefined(channel)  ? channel : 'unassigned';
         this.time = new Date().getTime();
         if (classes[this.type] === undefined) {
             this.class = classes.DEFAULT;

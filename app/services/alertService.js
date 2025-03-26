@@ -111,7 +111,8 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     var Alert = function (meta, channel) {
         this.id = keys.pop();
-        this.message = angular.isDefined(meta.message) ? meta.message : 'An error has occurred. Click the Report button to report the error to your admin.';
+        this.message = angular.isDefined(meta.message) && meta.message !== 'null'
+            ? meta.message : 'An error has occurred. Click the Report button to report the error to your admin.';
         this.stacktrace = meta.stacktrace;
         this.type = angular.isDefined(meta.status) ? meta.status : 'UNKNOWN';
         this.channel = angular.isDefined(channel)  ? channel : 'unassigned';

@@ -1,6 +1,6 @@
 {
   "name": "@wvr/core",
-  "version": "2.2.8-rc2",
+  "version": "2.3.0-rc1",
   "description": "Weaver AngularJs Core Module",
   "repository": " https://github.com/TAMULib/Weaver-UI-Core.git",
   "license": "MIT",

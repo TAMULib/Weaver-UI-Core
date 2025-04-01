@@ -111,8 +111,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
      */
     var Alert = function (meta, channel) {
         this.id = keys.pop();
-        this.message = angular.isDefined(meta.message) && meta.message !== 'null'
-            ? meta.message : 'An error has occurred. Click the Report button to report the error to your admin.';
+        this.message = parseMessage(meta);
         this.stacktrace = meta.stacktrace;
         this.type = angular.isDefined(meta.status) ? meta.status : 'UNKNOWN';
         this.channel = angular.isDefined(channel)  ? channel : 'unassigned';
@@ -123,6 +122,11 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             this.class = classes[this.type];
         }
         return this;
+    };
+
+    var parseMessage = function (meta) {
+        return angular.isDefined(meta) && angular.isDefined(meta.message) && meta.message !== null && meta.message.toLowerCase().trim() !== 'null'
+            ? meta.message : 'An error has occurred. Click the Report button to report the error to your admin.';
     };
 
     /**
@@ -229,7 +233,7 @@ core.service("AlertService", function ($q, $interval, $timeout) {
             channel = error.data.path;
 
             if (isUndefined(message)) {
-                message = isDefined(error.data.meta) && isDefined(error.data.meta.message) ? error.data.meta.message : error.statusText;
+                message = isDefined(error.data.meta) ? parseMessage(error.data.meta) : error.statusText;
             }
         } else {
             status = error.status;

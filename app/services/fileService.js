@@ -10,7 +10,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             method: 'GET',
             url: url,
             headers: headers,
-            responseType: 'arraybuffer'
+            responseType: 'blob'
         }).then(
             // success callback
             function (response) {
@@ -64,10 +64,10 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             method: 'GET',
             url: url,
             headers: headers,
-            responseType: 'arraybuffer'
+            responseType: 'blob'
         };
 
-        // Since there is no reasonable way to get the meta status from an arraybuffer response we must refresh token first.
+        // Since there is no reasonable way to get the meta status from an blob response we must refresh token first.
         // This will ensure the token is not expired. The correct solution to this would be to use proper status codes rather
         // than indicating 200 for all responses and encoding status in meta of the response!!!
         if (sessionStorage.assumedUser) {

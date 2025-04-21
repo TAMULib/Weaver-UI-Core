@@ -101,26 +101,32 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                     // error callback
                     function (error) {
                         console.log(error);
+                        const handleAndReturn = (error) => {
+                            AlertService.addAlertServiceError(error);
+
+                            return {
+                                meta: {
+                                    status: 'ERROR',
+                                    message: error.data?.message || 'An unknown error occurred.'
+                                },
+                                payload: error.data
+                            };
+                        }
+
                         if (error.data instanceof Blob) {
                             // Use the blob's text() method which returns a promise
                             return error.data.text().then(result => {
                                 try {
                                     apiResponse = JSON.parse(result);
-                                    errorMessage = apiResponse.meta.message;
-                                    error.data.message = errorMessage;
+                                    error.data.message = apiResponse.meta.message;
                                 } catch (e) {
                                     console.log(e);
                                 }
 
-                                AlertService.addAlertServiceError(error);
-                                return {
-                                    meta: {
-                                        status: 'ERROR',
-                                        message: errorMessage
-                                    },
-                                    payload: error.data
-                                };
+                                return handleAndReturn(error)
                             });
+                        } else {
+                            return Promise.resolve(handleAndReturn(error));
                         }
                     }
                 );

@@ -4,6 +4,14 @@ core.controller('RegistrationController', function ($controller, $location, $sco
         $scope: $scope
     }));
 
+    const reportSuccess = function (data) {
+        if (data?.meta?.status === 'SUCCESS') {
+            $timeout(function () {
+                AlertService.add(data.meta, 'auth/register');
+            });
+        }
+    };
+
     $scope.reset = function () {
         $scope.user.clearValidationResults();
         for (var key in $scope.forms) {
@@ -23,10 +31,8 @@ core.controller('RegistrationController', function ($controller, $location, $sco
     $scope.verifyEmail = function (email) {
         $scope.user.verifyEmail(email).then(function (data) {
             $scope.reset();
-            $timeout(function () {
-                AlertService.add(data.meta, 'auth/register');
-            });
 
+            reportSuccess(data);
         });
     };
 
@@ -40,9 +46,7 @@ core.controller('RegistrationController', function ($controller, $location, $sco
 
             $location.path("/");
 
-            $timeout(function () {
-                AlertService.add(data.meta, 'auth/register');
-            });
+            reportSuccess(data);
         });
     };
 

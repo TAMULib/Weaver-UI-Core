@@ -10,7 +10,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             method: 'GET',
             url: url,
             headers: headers,
-            responseType: 'arraybuffer'
+            responseType: 'blob'
         }).then(
             // success callback
             function (response) {
@@ -64,10 +64,10 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             method: 'GET',
             url: url,
             headers: headers,
-            responseType: 'arraybuffer'
+            responseType: 'blob'
         };
 
-        // Since there is no reasonable way to get the meta status from an arraybuffer response we must refresh token first.
+        // Since there is no reasonable way to get the meta status from an blob response we must refresh token first.
         // This will ensure the token is not expired. The correct solution to this would be to use proper status codes rather
         // than indicating 200 for all responses and encoding status in meta of the response!!!
         if (sessionStorage.assumedUser) {
@@ -100,26 +100,28 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                     },
                     // error callback
                     function (error) {
-                        let errorMessage = "";
-                        if (error.data instanceof ArrayBuffer) {
-                            let decoder = new TextDecoder("utf-8");
-                            let result = decoder.decode(error.data);
-                            try {
-                                apiResponse = JSON.parse(result);
-                                errorMessage = apiResponse.meta.message;
-                                error.data.message = errorMessage;
-                            } catch (e) {
-                                console.log(e);
-                            }
+                        console.log(error);
+                        if (error.data instanceof Blob) {
+                            // Use the blob's text() method which returns a promise
+                            return error.data.text().then(result => {
+                                try {
+                                    apiResponse = JSON.parse(result);
+                                    errorMessage = apiResponse.meta.message;
+                                    error.data.message = errorMessage;
+                                } catch (e) {
+                                    console.log(e);
+                                }
+
+                                AlertService.addAlertServiceError(error);
+                                return {
+                                    meta: {
+                                        status: 'ERROR',
+                                        message: errorMessage
+                                    },
+                                    payload: error.data
+                                };
+                            });
                         }
-                        AlertService.addAlertServiceError(error);
-                        return {
-                            meta: {
-                                status: 'ERROR',
-                                message: errorMessage
-                            },
-                            payload: error.data
-                        };
                     }
                 );
             });

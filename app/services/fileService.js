@@ -160,19 +160,19 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                         if (response?.data instanceof Blob) {
                             return response.data.text().then(text => {
                                 return findEmbeddedJSON(text, 5000)
-                                  .then(embedded => {
-                                    // extracted embedded JSON → use its meta.message
-                                    response.data.message = embedded.meta?.message;
-                                    // this is required because the status header has already
-                                    // been committed to the output stream
-                                    response.status = 500;
+                                    .then(embedded => {
+                                        // extracted embedded JSON → use its meta.message
+                                        response.data.message = embedded.meta?.message;
+                                        // this is required because the status header has already
+                                        // been committed to the output stream
+                                        response.status = 500;
 
-                                    return handleAndReturn(response);
-                                  })
-                                  .catch(_ => {
-                                    // no embedded JSON extracted → continue with download
-                                    return response.data;
-                                  });
+                                        return handleAndReturn(response);
+                                    })
+                                    .catch(_ => {
+                                        // no embedded JSON extracted → continue with download
+                                        return response.data;
+                                    });
                             });
                         } else {
                             // if not Blob return same as before

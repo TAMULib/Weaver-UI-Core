@@ -2,7 +2,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
 
     /**
      * Scans backwards from the last '}' in a string to find a well-formed JSON object,
-     * but only examines up to `maxScanLength` characters before that '}'.
+     * but only examines up to `maxScanLength` characters for the opening '{'.
      * If the entire text is valid JSON, this function rejects so you can handle it
      * in your error block instead of treating it as embedded JSON.
      *
@@ -47,6 +47,83 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
         });
     };
 
+    /**
+     * Handle and return $http error. Adds error alert.
+     *
+     * @param {*} error $http download error callback
+     * @returns newly created ERROR ApiResponse from $http error
+     */
+    function handleAndReturn(error) {
+        console.error(error);
+        AlertService.addAlertServiceError(error);
+
+        return {
+            meta: {
+                status: 'ERROR',
+                message: error.data?.message || 'An unknown error occurred.'
+            },
+            payload: error.data
+        };
+    };
+
+    /**
+     * Process download and check for any embedded JSON as an error.
+     *
+     * @param {*} response successful callback from $http download
+     * @returns response.data unless containing embedded JSON
+     */
+    function processDownload(response) {
+        if (response?.data instanceof Blob) {
+            return response.data.text().then(text => {
+                return findEmbeddedJSON(text, 5000)
+                    .then(embedded => {
+                        // return if embedded ApiResponse is not an ERROR
+                        if (embedded?.meta?.status !== 'ERROR') {
+                            return response.data;
+                        }
+                        // extracted embedded JSON → use its meta.message
+                        response.data.message = embedded?.meta?.message;
+                        // this is required because the status header has already
+                        // been committed to the output stream
+                        response.status = 500;
+
+                        return handleAndReturn(response);
+                    })
+                    .catch(_ => {
+                        // no embedded JSON extracted → continue with download
+                        return response.data;
+                    });
+            });
+        } else {
+            // if not Blob return same as before
+            return response.data;
+        }
+    };
+
+    /**
+     * Process error response.
+     *
+     * @param {*} error error callback from $http download
+     * @returns promise with error handled
+     */
+    function processDownloadError(error) {
+        if (error.data instanceof Blob) {
+            // Use the blob's text() method which returns a promise
+            return error.data.text().then(result => {
+                try {
+                    const apiResponse = JSON.parse(result);
+                    error.data.message = apiResponse.meta.message;
+                } catch (e) {
+                    console.log(e);
+                }
+
+                return handleAndReturn(error)
+            });
+        } else {
+            return Promise.resolve(handleAndReturn(error));
+        }
+    };
+
     this.anonymousDownload = function (req) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
@@ -60,19 +137,9 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             responseType: 'blob'
         }).then(
             // success callback
-            function (response) {
-                return response.data;
-            },
+            processDownload,
             // error callback
-            function (error) {
-                AlertService.addAlertServiceError(error);
-                return {
-                    meta: {
-                        status: 'ERROR'
-                    },
-                    payload: error.data
-                };
-            }
+            processDownloadError
         );
     };
 
@@ -122,81 +189,22 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                 restObj.headers.jwt = sessionStorage.token;
                 return $http(restObj).then(
                     // success callback
-                    function (response) {
-                        return response.data;
-                    },
+                    processDownload,
                     // error callback
-                    function (error) {
-                        AlertService.addAlertServiceError(error);
-                        return {
-                            meta: {
-                                status: 'ERROR'
-                            },
-                            payload: error.data
-                        };
-                    }
+                    processDownloadError
                 );
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
                 restObj.headers.jwt = sessionStorage.token;
 
-                const handleAndReturn = (error) => {
-                    console.error(error);
-                    AlertService.addAlertServiceError(error);
-
-                    return {
-                        meta: {
-                            status: 'ERROR',
-                            message: error.data?.message || 'An unknown error occurred.'
-                        },
-                        payload: error.data
-                    };
-                };
+                
 
                 return $http(restObj).then(
                     // success callback
-                    function (response) {
-                        if (response?.data instanceof Blob) {
-                            return response.data.text().then(text => {
-                                return findEmbeddedJSON(text, 5000)
-                                    .then(embedded => {
-                                        // extracted embedded JSON → use its meta.message
-                                        response.data.message = embedded.meta?.message;
-                                        // this is required because the status header has already
-                                        // been committed to the output stream
-                                        response.status = 500;
-
-                                        return handleAndReturn(response);
-                                    })
-                                    .catch(_ => {
-                                        // no embedded JSON extracted → continue with download
-                                        return response.data;
-                                    });
-                            });
-                        } else {
-                            // if not Blob return same as before
-                            return response.data;
-                        }
-                    },
+                    processDownload,
                     // error callback
-                    function (error) {
-                        if (error.data instanceof Blob) {
-                            // Use the blob's text() method which returns a promise
-                            return error.data.text().then(result => {
-                                try {
-                                    apiResponse = JSON.parse(result);
-                                    error.data.message = apiResponse.meta.message;
-                                } catch (e) {
-                                    console.log(e);
-                                }
-
-                                return handleAndReturn(error)
-                            });
-                        } else {
-                            return Promise.resolve(handleAndReturn(error));
-                        }
-                    }
+                    processDownloadError
                 );
             });
         }

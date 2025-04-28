@@ -1,53 +1,6 @@
 core.service("FileService", function ($http, $q, AlertService, AuthService, Upload) {
 
     /**
-     * Scans backwards from the last '}' in a string to find a well-formed JSON object,
-     * but only examines up to `maxScanLength` characters for the opening '{'.
-     * If the entire text is valid JSON, this function rejects so you can handle it
-     * in your error block instead of treating it as embedded JSON.
-     *
-     * @param {string} str
-     * @param {number} maxScanLength  // maximum number of chars to scan backwards
-     * @returns {Promise<any>}
-     */
-    function findEmbeddedJSON(str, maxScanLength) {
-        return new Promise((resolve, reject) => {
-            // 1) Locate the last closing brace
-            const end = str.lastIndexOf('}');
-            if (end === -1) {
-                return reject('No closing "}" found in string');
-            }
-
-            // 2) If full text is valid JSON, reject immediately
-            try {
-                JSON.parse(str);
-                return reject('Full text is valid JSON; no embedded extraction needed');
-            } catch (_) {
-                // not pure JSON → proceed to scan for embedded
-            }
-
-            // 3) Compute scanning window
-            const scanLimit = Math.max(0, end - maxScanLength);
-            let start = str.lastIndexOf('{', end);
-
-            // 4) Walk backwards until we hit scanLimit
-            while (start >= scanLimit) {
-                const chunk = str.slice(start, end + 1);
-                try {
-                    const obj = JSON.parse(chunk);
-
-                    return resolve(obj);
-                } catch (_) {
-                    start = str.lastIndexOf('{', start - 1);
-                }
-            }
-
-            // 5) No embedded JSON found within the allowed window
-            return reject(`No valid JSON found within the last ${maxScanLength} characters`);
-        });
-    };
-
-    /**
      * Handle and return $http error. Adds error alert.
      *
      * @param {*} error $http download error callback
@@ -67,37 +20,13 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
     };
 
     /**
-     * Process download and check for any embedded JSON as an error.
+     * Return download data.
      *
      * @param {*} response successful callback from $http download
-     * @returns response.data unless containing embedded JSON
+     * @returns response.data
      */
     function processDownload(response) {
-        if (response?.data instanceof Blob) {
-            return response.data.text().then(text => {
-                return findEmbeddedJSON(text, 5000)
-                    .then(embedded => {
-                        // return if embedded ApiResponse is not an ERROR
-                        if (embedded?.meta?.status !== 'ERROR') {
-                            return response.data;
-                        }
-                        // extracted embedded JSON → use its meta.message
-                        response.data.message = embedded?.meta?.message;
-                        // this is required because the status header has already
-                        // been committed to the output stream
-                        response.status = 500;
-
-                        return handleAndReturn(response);
-                    })
-                    .catch(_ => {
-                        // no embedded JSON extracted → continue with download
-                        return response.data;
-                    });
-            });
-        } else {
-            // if not Blob return same as before
-            return response.data;
-        }
+        return response.data;
     };
 
     /**

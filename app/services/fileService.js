@@ -1,5 +1,58 @@
 core.service("FileService", function ($http, $q, AlertService, AuthService, Upload) {
 
+    /**
+     * Handle and return $http error. Adds error alert.
+     *
+     * @param {*} error $http download error callback
+     * @returns newly created ERROR ApiResponse from $http error
+     */
+    function handleAndReturn(error) {
+        console.error(error);
+        AlertService.addAlertServiceError(error);
+
+        return {
+            meta: {
+                status: 'ERROR',
+                message: error.data?.message || 'An unknown error occurred.'
+            },
+            payload: error.data
+        };
+    };
+
+    /**
+     * Return download data.
+     *
+     * @param {*} response successful callback from $http download
+     * @returns response.data
+     */
+    function processDownload(response) {
+        return response.data;
+    };
+
+    /**
+     * Process error response.
+     *
+     * @param {*} error error callback from $http download
+     * @returns promise with error handled
+     */
+    function processDownloadError(error) {
+        if (error.data instanceof Blob) {
+            // Use the blob's text() method which returns a promise
+            return error.data.text().then(result => {
+                try {
+                    const apiResponse = JSON.parse(result);
+                    error.data.message = apiResponse.meta.message;
+                } catch (e) {
+                    console.log(e);
+                }
+
+                return handleAndReturn(error)
+            });
+        } else {
+            return Promise.resolve(handleAndReturn(error));
+        }
+    };
+
     this.anonymousDownload = function (req) {
 
         var url = appConfig.webService + "/" + req.controller + "/" + req.method;
@@ -13,19 +66,9 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
             responseType: 'blob'
         }).then(
             // success callback
-            function (response) {
-                return response.data;
-            },
+            processDownload,
             // error callback
-            function (error) {
-                AlertService.addAlertServiceError(error);
-                return {
-                    meta: {
-                        status: 'ERROR'
-                    },
-                    payload: error.data
-                };
-            }
+            processDownloadError
         );
     };
 
@@ -75,60 +118,22 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                 restObj.headers.jwt = sessionStorage.token;
                 return $http(restObj).then(
                     // success callback
-                    function (response) {
-                        return response.data;
-                    },
+                    processDownload,
                     // error callback
-                    function (error) {
-                        AlertService.addAlertServiceError(error);
-                        return {
-                            meta: {
-                                status: 'ERROR'
-                            },
-                            payload: error.data
-                        };
-                    }
+                    processDownloadError
                 );
             });
         } else {
             return AuthService.getRefreshToken().then(function () {
                 restObj.headers.jwt = sessionStorage.token;
+
+                
+
                 return $http(restObj).then(
                     // success callback
-                    function (response) {
-                        return response.data;
-                    },
+                    processDownload,
                     // error callback
-                    function (error) {
-                        console.log(error);
-                        const handleAndReturn = (error) => {
-                            AlertService.addAlertServiceError(error);
-
-                            return {
-                                meta: {
-                                    status: 'ERROR',
-                                    message: error.data?.message || 'An unknown error occurred.'
-                                },
-                                payload: error.data
-                            };
-                        }
-
-                        if (error.data instanceof Blob) {
-                            // Use the blob's text() method which returns a promise
-                            return error.data.text().then(result => {
-                                try {
-                                    apiResponse = JSON.parse(result);
-                                    error.data.message = apiResponse.meta.message;
-                                } catch (e) {
-                                    console.log(e);
-                                }
-
-                                return handleAndReturn(error)
-                            });
-                        } else {
-                            return Promise.resolve(handleAndReturn(error));
-                        }
-                    }
+                    processDownloadError
                 );
             });
         }

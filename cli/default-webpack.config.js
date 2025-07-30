@@ -1,4 +1,5 @@
-var fs = require('fs');
+const fs = require('fs');
+const git = require('git-rev-sync');
 const glob = require('glob');
 const join = require('path').join;
 const resolve = require('path').resolve;
@@ -93,6 +94,36 @@ for (const bundle of Object.keys(entry)) {
 }
 
 const env = process.env.NODE_ENV || 'development';
+
+// Generate git info JSON file to be copied by pattern defined by the weaver app
+const generateGitInfo = () => {
+    const gitInfoPath = path.resolve(__dirname, 'git-info.json');
+
+    const safeGit = (method, fallback) => {
+        try { return git[method](); } catch { return fallback; }
+    };
+
+    const gitInfo = {
+        branch: safeGit('branch', 'unknown'),
+        commit: safeGit('long', 'unknown'),
+        shortCommit: safeGit('short', 'unknown'),
+        tag: safeGit('tag', null),
+        date: new Date().toISOString(),
+        isDirty: safeGit('isDirty', false),
+        message: safeGit('message', 'unknown'),
+        count: safeGit('count', 0)
+    };
+
+    try {
+        fs.writeFileSync(gitInfoPath, JSON.stringify(gitInfo, null, 2));
+        console.log('Git info written to git-info.json');
+    } catch (error) {
+        console.error('Failed to write git-info.json:', error.message);
+    }
+};
+
+// Generate git info before webpack starts
+generateGitInfo();
 
 // see webpack https://webpack.js.org/configuration/
 module.exports = {

@@ -97,7 +97,7 @@ const env = process.env.NODE_ENV || 'development';
 
 // Generate git info JSON file to be copied by pattern defined by the weaver app
 const generateGitInfo = () => {
-    const gitInfoPath = path.resolve(__dirname, 'git-info.json');
+    const gitInfoPath = './.wvr/tmp/git-info.json';
 
     const safeGit = (method, fallback) => {
         try { return git[method](); } catch { return fallback; }

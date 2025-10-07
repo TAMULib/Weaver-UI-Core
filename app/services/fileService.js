@@ -38,6 +38,7 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
     function processDownloadError(error) {
         if (error.data instanceof Blob) {
             // Use the blob's text() method which returns a promise
+            /*
             return error.data.text().then(result => {
                 try {
                     const apiResponse = JSON.parse(result);
@@ -47,7 +48,11 @@ core.service("FileService", function ($http, $q, AlertService, AuthService, Uplo
                 }
 
                 return handleAndReturn(error)
-            });
+            });*/
+            let error = {};
+            error.data.message = "There was an error with the download.";
+            error.data.status = 500;
+            return handleAndReturn(error);
         } else {
             return Promise.resolve(handleAndReturn(error));
         }
